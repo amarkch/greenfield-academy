@@ -1,0 +1,77 @@
+[
+	{
+		"teacher_name": "Priya Sharma",
+		"teacher_phone": "+91 98765 43210",
+		"class_teacher_of": "UKG",
+		"teaching_class": [
+			{
+				"class_name": "UKG",
+				"subject_id": "SUB_ENG_01"
+			},
+			{
+				"class_name": "one",
+				"subject_id": "SUB_MTH_02"
+			}
+		]
+	},
+	{
+		"teacher_name": "Rajesh Kumar",
+		"teacher_phone": "+91 91234 56789",
+		"class_teacher_of": "five",
+		"teaching_class": [
+			{
+				"class_name": "four",
+				"subject_id": "SUB_SCI_04"
+			},
+			{
+				"class_name": "five",
+				"subject_id": "SUB_SCI_04"
+			}
+		]
+	},
+	{
+		"teacher_name": "Ananya Borah",
+		"teacher_phone": "+91 99887 76655",
+		"class_teacher_of": "LKG",
+		"teaching_class": [
+			{
+				"class_name": "LKG",
+				"subject_id": "SUB_ART_01"
+			},
+			{
+				"class_name": "one",
+				"subject_id": "SUB_ART_02"
+			}
+		]
+	},
+	{
+		"teacher_name": "Vikram Singh",
+		"teacher_phone": "+91 98111 22334",
+		"class_teacher_of": "eight",
+		"teaching_class": [
+			{
+				"class_name": "seven",
+				"subject_id": "SUB_MTH_05"
+			},
+			{
+				"class_name": "eight",
+				"subject_id": "SUB_MTH_05"
+			}
+		]
+	},
+	{
+		"teacher_name": "Meenakshi Das",
+		"teacher_phone": "+91 97000 11223",
+		"class_teacher_of": "three",
+		"teaching_class": [
+			{
+				"class_name": "two",
+				"subject_id": "SUB_ENG_03"
+			},
+			{
+				"class_name": "three",
+				"subject_id": "SUB_ENG_03"
+			}
+		]
+	}
+]

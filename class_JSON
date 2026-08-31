@@ -1,0 +1,87 @@
+[
+	{ 
+		class_name: "UKG",
+		subjects: 
+		[{
+			subject_name: "Basic Motor Skills",
+			subject_id: "UKG-M01",
+			subject_teacher: "Ms. Daisy",
+			chapter_completed: 2,
+			chapters: [
+			{
+				chapter_name: "Colors and Shapes",
+				chapter_status: [{started: 1, completed: 1, home_work_given: 1, q_a_discussed: 1}],
+				number_of_home_work_submitted: 22
+			}
+			]
+		}]
+	},
+	{ 
+		class_name: "two",
+		subjects: 
+		[{
+			subject_name: "Environmental Studies",
+			subject_id: "EVS-02",
+			subject_teacher: "Mr. John Doe",
+			chapter_completed: 3,
+			chapters: [
+			{
+				chapter_name: "Plants Around Us",
+				chapter_status: [{started: 1, completed: 1, home_work_given: 1, q_a_discussed: 1}],
+				number_of_home_work_submitted: 30
+			}
+			]
+		}]
+	},
+	{ 
+		class_name: "five",
+		subjects: 
+		[{
+			subject_name: "Computer Basics",
+			subject_id: "CS-05",
+			subject_teacher: "Ms. Sarah Jenkins",
+			chapter_completed: 1,
+			chapters: [
+			{
+				chapter_name: "Introduction to HTML",
+				chapter_status: [{started: 1, completed: 1, home_work_given: 1, q_a_discussed: 1}],
+				number_of_home_work_submitted: 28
+			}
+			]
+		}]
+	},
+	{ 
+		class_name: "eight",
+		subjects: 
+		[{
+			subject_name: "Mathematics",
+			subject_id: "MATH-08",
+			subject_teacher: "Mr. Alan Turing",
+			chapter_completed: 4,
+			chapters: [
+			{
+				chapter_name: "Algebraic Expressions",
+				chapter_status: [{started: 1, completed: 1, home_work_given: 1, q_a_discussed: 1}],
+				number_of_home_work_submitted: 35
+			}
+			]
+		}]
+	},
+	{ 
+		class_name: "ten",
+		subjects: 
+		[{
+			subject_name: "Web Development",
+			subject_id: "CS-10",
+			subject_teacher: "Mr. Robert Smith",
+			chapter_completed: 2,
+			chapters: [
+			{
+				chapter_name: "Advanced HTML & CSS",
+				chapter_status: [{started: 1, completed: 1, home_work_given: 1, q_a_discussed: 1}],
+				number_of_home_work_submitted: 40
+			}
+			]
+		}]
+	}
+] 

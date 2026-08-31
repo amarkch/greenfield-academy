@@ -1,0 +1,56 @@
+{
+	student_name: "",
+	student_roll: "",
+	student_id: "",
+	class: "",
+	gurdain: "",
+	gurdain_phone: "",
+	subjects: [
+	{
+		sub_id: "English",
+		exams: [{exam_name:"", marks:""}]
+		chapters: [{chapter_name:"", home_work_done: 0}]
+	},
+	{
+		sub_id: "Assamese",
+		exams: [{exam_name:"", marks:""}]
+		chapters: [{chapter_name:"", home_work_done: 0}]
+	},
+	]
+}
+
+{ 
+	class_name: "",
+	subjects: 
+	[{
+		subject_name: "",
+		subject_id: "",
+		subject_teacher: "",
+		chapter_completed: 0;
+		chapters: [
+		{
+			chapter_name: "HTML",
+			chapter_status: [{started:0, completed:0, home_work_given:0, q_a_discussed: 0}]
+			number_of_home_work_submitted: 0;
+		},
+		{
+			chapter_name: "HTML",
+			chapter_status: [{started:0, completed:0, home_work_given:0, q_a_discussed: 0}]
+			number_of_home_work_submitted: 0;
+		}
+		]
+	}]
+}
+
+{
+	teacher_name: "",
+	teacher_phone: "",
+	class_teacher_of: 0,
+	teaching_class: [
+		{class_name:"", subject_id:""}
+	]
+
+}
+
+
+

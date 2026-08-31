@@ -1,0 +1,114 @@
+[
+	{
+		"student_name": "Bhaskar Saikia",
+		"student_roll": "12",
+		"student_id": "STU-2026-089",
+		"class": "8",
+		"gurdain": "Deben Saikia",
+		"gurdain_phone": "+91-9864012345",
+		"subjects": [
+			{
+				"sub_id": "English",
+				"exams": [
+					{
+						"exam_name": "Unit Test 1",
+						"marks": "24/25"
+					},
+					{
+						"exam_name": "Half Yearly",
+						"marks": "85/100"
+					}
+				],
+				"chapters": [
+					{
+						"chapter_name": "The Fun They Had",
+						"home_work_done": 1
+					},
+					{
+						"chapter_name": "The Sound of Music",
+						"home_work_done": 1
+					}
+				]
+			},
+			{
+				"sub_id": "Assamese",
+				"exams": [
+					{
+						"exam_name": "Unit Test 1",
+						"marks": "22/25"
+					},
+					{
+						"exam_name": "Half Yearly",
+						"marks": "90/100"
+					}
+				],
+				"chapters": [
+					{
+						"chapter_name": "Bihu - The Life and Culture",
+						"home_work_done": 1
+					},
+					{
+						"chapter_name": "Lachit Barphukan",
+						"home_work_done": 0
+					}
+				]
+			}
+		]
+	},
+	{
+		"student_name": "Ananya Gogoi",
+		"student_roll": "15",
+		"student_id": "STU-2026-090",
+		"class": "8",
+		"gurdain": "Pradip Gogoi",
+		"gurdain_phone": "+91-9864054321",
+		"subjects": [
+			{
+				"sub_id": "English",
+				"exams": [
+					{
+						"exam_name": "Unit Test 1",
+						"marks": "23/25"
+					},
+					{
+						"exam_name": "Half Yearly",
+						"marks": "88/100"
+					}
+				],
+				"chapters": [
+					{
+						"chapter_name": "The Fun They Had",
+						"home_work_done": 1
+					},
+					{
+						"chapter_name": "The Sound of Music",
+						"home_work_done": 1
+					}
+				]
+			},
+			{
+				"sub_id": "Assamese",
+				"exams": [
+					{
+						"exam_name": "Unit Test 1",
+						"marks": "25/25"
+					},
+					{
+						"exam_name": "Half Yearly",
+						"marks": "95/100"
+					}
+				],
+				"chapters": [
+					{
+						"chapter_name": "Bihu - The Life and Culture",
+						"home_work_done": 1
+					},
+					{
+						"chapter_name": "Lachit Barphukan",
+						"home_work_done": 1
+					}
+				]
+			}
+		]
+	}
+]
