@@ -8,15 +8,27 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://amarkch1990_db_user:d09ZQp5K6U6lDxpW@cluster0.ppud2xq.mongodb.net/?appName=Cluster0";
 // Middleware to parse JSON bodies
-const corsOptions = {
-  origin: ['https://greenfield-academy.onrender.com/', 'https://www.greenfield-academy.onrender.com/'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-};
+const allowedOrigins = [
+  'https://greenfieldttb.com',
+  'https://www.greenfieldttb.com',
+  'https://greenfield-academy.onrender.com'
+];
 
-app.use(cors(corsOptions));
-app.use(express.json());
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error('CORS policy violation'), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
+app.options('*', cors());
+
 
 // Helper function to read data
 const readData = () => {
