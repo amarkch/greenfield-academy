@@ -151,7 +151,7 @@ app.get('/api/get-teachers-list', async (req, res) => {
 
       // Crucial: Add 'await' so the query finishes before the client closes
       const result = await client.db("gfa").collection("faculty").find({});
-
+      console.log(result);
       // Send a successful response back to the frontend
       return res.status(201).json({ 
         success: true, 
