@@ -52,6 +52,36 @@ app.post('/api/data', (req, res) => {
   }
 });
 
+app.get('/api/create-file/:a', async (req, res) => {
+  const { filename, content } = {filename: "fa.text", content: req.params.a};
+  console.log(content);
+  
+
+  try {
+    // Sanitize filename to prevent directory traversal vulnerabilities
+    const safeFilename = path.basename(filename);
+    const filePath = path.join('./', safeFilename);
+
+    await fs.writeFileSync(filePath, content);
+    
+    return res.status(201).json({ 
+      success: true, 
+      message: `File '${safeFilename}' created successfully.` 
+    });
+  } catch (error) {
+    console.error('File creation error:', error);
+    return res.status(500).json({ error: 'Internal server error while creating the file.' });
+  }
+});
+
+app.get('/', (req, res) => {
+  try {
+    res.status(200).json({ success: true, message: 'Greenfield is up and running'});
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error saving data' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
