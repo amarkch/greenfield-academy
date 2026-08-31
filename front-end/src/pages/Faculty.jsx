@@ -92,7 +92,7 @@ export default function Faculty() {
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 14, color: C.ink }}>{f.name}</div>
-                <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{f.subject} · {f.experience}</div>
+                <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{f.email} · {f.phone}</div>
               </div>
               <ChevronRight size={16} color={C.slate} />
             </Link>
