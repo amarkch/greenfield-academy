@@ -82,98 +82,58 @@ app.post('/api/data', (req, res) => {
 
 
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-app.post('/api/insert-teacher-data', async (req, res) => {
-  const client = new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    }
-  });
 
-  async function run() {
-    try {
-      await client.connect();
-      console.log("Conneected", req.body);
-      const name = req.body.name;
-      const subjects = req.body.subjects; // Fixed: was previously assigning req.body.username twice
-      const qualification = req.body.qualification;
-      const phone = req.body.phone;
-      const email = req.body.email;
 
-      // Crucial: Add 'await' so the query finishes before the client closes
-      const result = await client.db("gfa").collection("faculty").insertOne({
-        "name": name,
-        "subjects": subjects,
-        "qualification": qualification,
-        "phone": phone,
-        "email": email
-      });
-
-      console.log('Inserted document ID:', result.insertedId);
-
-      // Send a successful response back to the frontend
-      return res.status(201).json({ 
-        success: true, 
-        message: 'Teacher data inserted successfully', 
-        id: result.insertedId 
-      });
-
-    } catch (error) {
-      console.error('Database insertion error:', error);
-      // Send an error response back so the frontend knows it failed
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Failed to insert teacher data' 
-      });
-    } finally {
-      await client.close();
-    }
+// Initialize client once outside the route handler
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
   }
-
-  run().catch(console.dir);
 });
+
+let dbConnection;
+
+async function connectDB() {
+  if (!dbConnection) {
+    await client.connect();
+    dbConnection = client.db("gfa");
+  }
+  return dbConnection;
+}
 
 app.get('/api/get-teachers-list', async (req, res) => {
-  const client = new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    }
-  });
-
-  async function run() {
-    try {
-      await client.connect();
-      
-
-      // Crucial: Add 'await' so the query finishes before the client closes
-      const result = await client.db("gfa").collection("faculty").find({});
-      console.log(result);
-      // Send a successful response back to the frontend
-      return res.status(201).json({ 
-        success: true, 
-        data:  result
-      });
-
-    } catch (error) {
-      console.error('Database insertion error:', error);
-      // Send an error response back so the frontend knows it failed
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Failed to insert teacher data' 
-      });
-    } finally {
-      await client.close();
-    }
+  try {
+    const db = await connectDB();
+    const teachers = await db.collection('faculty').find().toArray();
+    res.json(teachers);
+  } catch (error) {
+    console.error('Database retrieval error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to fetch teacher data' 
+    });
   }
-
-  run().catch(console.dir);
 });
 
-
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+app.post('/api/add-teacher', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const result = await db.collection('faculty').insertOne(req.body);
+    res.status(201).json({ 
+      success: true, 
+      insertedId: result.insertedId 
+    });
+  } catch (error) {
+    console.error('Database insertion error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to insert teacher data' 
+    });
+  }
+});
 
 app.get('/api/create-file/:a', async (req, res) => {
   const { filename, content } = {filename: "fa.text", content: req.params.a};
