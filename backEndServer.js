@@ -118,7 +118,7 @@ app.get('/api/get-teachers-list', async (req, res) => {
 });
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-app.post('/api/add-teacher', async (req, res) => {
+app.post('/api/insert-teacher-data', async (req, res) => {
   try {
     const db = await connectDB();
     const name = req.body.name;
