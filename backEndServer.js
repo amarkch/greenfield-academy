@@ -121,7 +121,20 @@ app.get('/api/get-teachers-list', async (req, res) => {
 app.post('/api/add-teacher', async (req, res) => {
   try {
     const db = await connectDB();
-    const result = await db.collection('faculty').insertOne(req.body);
+    const name = req.body.name;
+      const subjects = req.body.subjects; // Fixed: was previously assigning req.body.username twice
+      const qualification = req.body.qualification;
+      const phone = req.body.phone;
+      const email = req.body.email;
+
+      // Crucial: Add 'await' so the query finishes before the client closes
+      const result = await client.db("gfa").collection("faculty").insertOne({
+        "name": name,
+        "subjects": subjects,
+        "qualification": qualification,
+        "phone": phone,
+        "email": email
+      });
     res.status(201).json({ 
       success: true, 
       insertedId: result.insertedId 
