@@ -9,7 +9,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://amarkch1990_db_user:d09ZQp5K6U6lDxpW@cluster0.ppud2xq.mongodb.net/?appName=Cluster0";
 // Middleware to parse JSON bodies
 const corsOptions = {
-  origin: ['https://greenfieldttb.com/', 'https://www.greenfieldttb.com/'],
+  origin: ['https://greenfield-academy.onrender.com/', 'https://www.greenfield-academy.onrender.com/'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
