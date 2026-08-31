@@ -337,6 +337,13 @@ const GreenfieldAcademy = () => {
             >
               Faculty
             </Link>
+
+            <Link
+              to={`/teacher-data/`}
+              className="ga-nav-link"
+            >
+              Enter Faculty Data
+            </Link>
               
               
               <button className="ga-nav-link" onClick={() => handleNavClick('Parents')}>Parents</button>
