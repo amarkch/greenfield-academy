@@ -9,6 +9,7 @@ import Faculty from "./pages/Faculty.jsx";
 import Students from "./pages/Students.jsx";
 import FacultyDetail from "./pages/FacultyDetail.jsx";
 import StudentDetail from "./pages/StudentDetail.jsx";
+import InsertTeacherData from "./pages/InsertTeacherData.jsx";
 
 
 export default function App() {
@@ -24,6 +25,8 @@ export default function App() {
           <Route path="/students" element={<Students />} />
           <Route path="/faculty/:id" element={<FacultyDetail />} />
           <Route path="/student/:id" element={<StudentDetail />} />
+          <Route path="/teacher-data" element={<InsertTeacherData />} />
+          
         </Route>
       </Routes>
     </BrowserRouter>

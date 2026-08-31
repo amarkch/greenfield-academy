@@ -100,78 +100,54 @@ export const activityFeed = [
 
 export const faculty = [
   {
-    id: "tridib-bora",
-    name: "Mr. Tridib Bora",
-    subject: "Mathematics",
-    color: C.marigold,
-    qualification: "M.Sc. Mathematics, B.Ed.",
-    phone: "+911234567890",
-    email: "Tridib.Bora@kaksha.edu",
-    schedule: [
-      { day: "Monday", time: "9:00 – 9:45 AM", class: "VIII" },
-      { day: "Wednesday", time: "10:00 – 10:45 AM", class: "VIII" },
-      { day: "Friday", time: "9:00 – 9:45 AM", class: "VIII" },
+    "name": "Mr. Tridib Bora",
+    "subject": [
+      "class-v-mathematics",
+      "class-vi-mathematics"
     ],
+    "qualification": "M.Sc. Mathematics, B.Ed.",
+    "phone": "",
+    "email": ""
   },
   {
-    id: "Bishal-Malakar",
-    name: "Mr. Bishal Malakar",
-    subject: "Science",
-    color: C.mint,
-    qualification: "M.Sc. Chemistry",
-    phone: "+911234567890",
-    email: "Bishal.Malakar@kaksha.edu",
-    about:
-      "Mr. Malakar teaches integrated Science with a focus on hands-on lab demonstrations. He also coordinates the annual Science Exhibition.",
-    schedule: [
-      { day: "Tuesday", time: "11:00 – 11:45 AM", class: "VIII" },
-      { day: "Thursday", time: "9:00 – 9:45 AM", class: "VIII" },
+    "name": "Mr. Amar Jyoti Kachari",
+    "subject": [
+      "class-v-computer",
+      "class-vi-computer",
+      "class-vii-computer",
+      "class-viii-computer",
+      "class-ix-computer",
+      "class-x-computer",
     ],
+    "qualification": "MCA Computer Science",
+    "phone": "",
+    "email": ""
   },
   {
-    id: "Mou-Chen",
-    name: "Ms. Mou Chen",
-    subject: "English",
-    color: C.coral,
-    qualification: "M.A. English Literature, B.Ed.",
-    phone: "+911234567890",
-    email: "Mou.Chen@kaksha.edu",
-    about:
-      "Ms. Chen teaches English language and literature, and mentors the school's creative writing circle and annual literary magazine.",
-    schedule: [
-      { day: "Monday", time: "11:00 – 11:45 AM", class: "VIII" },
-      { day: "Thursday", time: "10:00 – 10:45 AM", class: "VIII" },
+    "name": "Mrs. Doli Bora",
+    "subject": [
+      "class-one-english",
+      "class-nur-numeracy",
+      "class-v-assamese",
+      "class-x-hindi",
+      "class-lkg-awreness",
     ],
+    "qualification": "",
+    "phone": "",
+    "email": ""
   },
   {
-    id: "Sishu-Rai",
-    name: "Mr. Sishu Rai",
-    subject: "Hindi",
-    color: C.violet,
-    qualification: "M.A. Hindi, B.Ed.",
-    phone: "+911234567890",
-    email: "Sishu.Rai@kaksha.edu",
-    about:
-      "Mr. Rai has taught Hindi language and literature for over a decade and organises the school's annual Hindi Diwas celebrations.",
-    schedule: [
-      { day: "Tuesday", time: "9:00 – 9:45 AM", class: "VIII" },
-      { day: "Friday", time: "11:00 – 11:45 AM", class: "VIII" },
+    "name": "Mr. Utpal Saikia",
+    "subject": [
+      "class-two-english",
+      "class-one-mathematics",
+      "class-vi-social-g",
+      "class-two-eng-curssive",
+      "class-lkg-awreness",
     ],
-  },
-  {
-    id: "Babin-Rahman",
-    name: "Mrs. Babin Rahman",
-    subject: "Social Studies",
-    color: C.sky,
-    qualification: "M.A. History",
-    phone: "+911234567890",
-    email: "Babin.Rahman@kaksha.edu",
-    about:
-      "Mrs. Rahman teaches History, Geography, and Civics, and leads the annual Model United Nations chapter for middle school.",
-    schedule: [
-      { day: "Wednesday", time: "9:00 – 9:45 AM", class: "VIII" },
-      { day: "Friday", time: "10:00 – 10:45 AM", class: "VIII" },
-    ],
+    "qualification": "",
+    "phone": "",
+    "email": ""
   },
 ];
 

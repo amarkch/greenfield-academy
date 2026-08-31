@@ -5,7 +5,8 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
-
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://amarkch1990_db_user:d09ZQp5K6U6lDxpW@cluster0.ppud2xq.mongodb.net/?appName=Cluster0";
 // Middleware to parse JSON bodies
 app.use(express.json());
 
@@ -50,6 +51,47 @@ app.post('/api/data', (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error saving data' });
   }
+});
+
+
+
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+app.post('/api/insert-teacher-data', async (req, res) => {
+  const client = new MongoClient(uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    }
+  });
+  async function run() {
+    try {
+      // Connect the client to the server (optional starting in v4.7)
+      await client.connect();
+      const name = req.body.username;
+      const subjects = req.body.username;
+      const qualification = req.body.qualification;
+      const phone = req.body.phone;
+      const email = req.body.email;
+
+      const allDocs = client.db("gfa").collection("faculty").insertOne({
+        "name": name,
+        "subjects": subjects,
+        "qualification": qualification,
+        "phone": phone,
+        "email": email
+      });
+
+      // 4. Output the results
+      console.log('Found documents:');
+      console.log(allDocs);
+    } finally {
+      // Ensures that the client will close when you finish/error
+      await client.close();
+    }
+  }
+  run().catch(console.dir);
 });
 
 app.get('/api/create-file/:a', async (req, res) => {
