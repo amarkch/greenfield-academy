@@ -11,13 +11,21 @@ const uri = "mongodb+srv://amarkch1990_db_user:d09ZQp5K6U6lDxpW@cluster0.ppud2xq
 const allowedOrigins = [
   'https://greenfieldttb.com',
   'https://www.greenfieldttb.com',
-  'https://greenfield-academy.onrender.com'
+  'https://greenfield-academy.onrender.com',
+  'http://localhost:4000/'
 ];
+// 1. Parse incoming JSON payloads
+app.use(express.json());
 
+// 2. Parse URL-encoded payloads (if sending data from standard HTML forms)
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
+    if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      return callback(null, true);
+    }
     if (allowedOrigins.indexOf(origin) === -1) {
       return callback(new Error('CORS policy violation'), false);
     }
@@ -83,17 +91,19 @@ app.post('/api/insert-teacher-data', async (req, res) => {
       deprecationErrors: true,
     }
   });
+
   async function run() {
     try {
-      // Connect the client to the server (optional starting in v4.7)
       await client.connect();
-      const name = req.body.username;
-      const subjects = req.body.username;
+      console.log("Conneected", req.body);
+      const name = req.body.name;
+      const subjects = req.body.subjects; // Fixed: was previously assigning req.body.username twice
       const qualification = req.body.qualification;
       const phone = req.body.phone;
       const email = req.body.email;
 
-      const allDocs = client.db("gfa").collection("faculty").insertOne({
+      // Crucial: Add 'await' so the query finishes before the client closes
+      const result = await client.db("gfa").collection("faculty").insertOne({
         "name": name,
         "subjects": subjects,
         "qualification": qualification,
@@ -101,16 +111,30 @@ app.post('/api/insert-teacher-data', async (req, res) => {
         "email": email
       });
 
-      // 4. Output the results
-      console.log('Found documents:');
-      console.log(allDocs);
+      console.log('Inserted document ID:', result.insertedId);
+
+      // Send a successful response back to the frontend
+      return res.status(201).json({ 
+        success: true, 
+        message: 'Teacher data inserted successfully', 
+        id: result.insertedId 
+      });
+
+    } catch (error) {
+      console.error('Database insertion error:', error);
+      // Send an error response back so the frontend knows it failed
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to insert teacher data' 
+      });
     } finally {
-      // Ensures that the client will close when you finish/error
       await client.close();
     }
   }
+
   run().catch(console.dir);
 });
+
 
 app.get('/api/create-file/:a', async (req, res) => {
   const { filename, content } = {filename: "fa.text", content: req.params.a};
