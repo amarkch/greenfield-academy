@@ -8,6 +8,14 @@ const DATA_FILE = path.join(__dirname, 'data.json');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://amarkch1990_db_user:d09ZQp5K6U6lDxpW@cluster0.ppud2xq.mongodb.net/?appName=Cluster0";
 // Middleware to parse JSON bodies
+const corsOptions = {
+  origin: ['https://yourdomain.com', 'https://www.yourdomain.com'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Helper function to read data
