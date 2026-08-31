@@ -147,12 +147,7 @@ app.get('/api/get-teachers-list', async (req, res) => {
   async function run() {
     try {
       await client.connect();
-      console.log("Conneected", req.body);
-      const name = req.body.name;
-      const subjects = req.body.subjects; // Fixed: was previously assigning req.body.username twice
-      const qualification = req.body.qualification;
-      const phone = req.body.phone;
-      const email = req.body.email;
+      
 
       // Crucial: Add 'await' so the query finishes before the client closes
       const result = await client.db("gfa").collection("faculty").find({});
