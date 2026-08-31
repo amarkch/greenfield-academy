@@ -27,8 +27,6 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
-app.options('*', cors());
-
 
 // Helper function to read data
 const readData = () => {
