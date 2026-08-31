@@ -135,6 +135,50 @@ app.post('/api/insert-teacher-data', async (req, res) => {
   run().catch(console.dir);
 });
 
+app.post('/api/get-teachers-list', async (req, res) => {
+  const client = new MongoClient(uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    }
+  });
+
+  async function run() {
+    try {
+      await client.connect();
+      console.log("Conneected", req.body);
+      const name = req.body.name;
+      const subjects = req.body.subjects; // Fixed: was previously assigning req.body.username twice
+      const qualification = req.body.qualification;
+      const phone = req.body.phone;
+      const email = req.body.email;
+
+      // Crucial: Add 'await' so the query finishes before the client closes
+      const result = await client.db("gfa").collection("faculty").find({});
+
+      // Send a successful response back to the frontend
+      return res.status(201).json({ 
+        success: true, 
+        result 
+      });
+
+    } catch (error) {
+      console.error('Database insertion error:', error);
+      // Send an error response back so the frontend knows it failed
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Failed to insert teacher data' 
+      });
+    } finally {
+      await client.close();
+    }
+  }
+
+  run().catch(console.dir);
+});
+
+
 
 app.get('/api/create-file/:a', async (req, res) => {
   const { filename, content } = {filename: "fa.text", content: req.params.a};
