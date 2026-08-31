@@ -135,7 +135,7 @@ app.post('/api/insert-teacher-data', async (req, res) => {
   run().catch(console.dir);
 });
 
-app.post('/api/get-teachers-list', async (req, res) => {
+app.get('/api/get-teachers-list', async (req, res) => {
   const client = new MongoClient(uri, {
     serverApi: {
       version: ServerApiVersion.v1,
