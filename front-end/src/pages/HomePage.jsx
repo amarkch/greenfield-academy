@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { C, fontDisplay, fontBody } from "../theme.js";
+
 const GreenfieldAcademy = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   // Register service worker on component mount
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -14,6 +17,7 @@ const GreenfieldAcademy = () => {
   }, []);
 
   const handleNavClick = (portalName) => {
+    setMobileMenuOpen(false);
     alert(`Navigating to ${portalName} Portal`);
   };
 
@@ -46,7 +50,7 @@ const GreenfieldAcademy = () => {
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding: 20px;
+          padding: 16px;
           width: 100%;
         }
 
@@ -70,17 +74,18 @@ const GreenfieldAcademy = () => {
           flex-direction: row;
           align-items: center;
           justify-content: space-between;
-          padding: 40px 60px;
-          gap: 20px;
+          padding: 40px 50px;
+          gap: 30px;
         }
 
+        /* Top Nav & Hamburger Styles */
         .ga-top-nav {
           position: absolute;
           top: 25px;
           right: 40px;
           display: flex;
           gap: 20px;
-          z-index: 3;
+          z-index: 10;
         }
 
         .ga-nav-link {
@@ -102,6 +107,16 @@ const GreenfieldAcademy = () => {
           opacity: 0.7;
         }
 
+        .ga-menu-toggle {
+          display: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 1.5rem;
+          color: #0b6623;
+          z-index: 11;
+        }
+
         .ga-left-content {
           flex: 1;
           max-width: 560px;
@@ -113,54 +128,57 @@ const GreenfieldAcademy = () => {
 
         .ga-coming-soon {
           font-family: 'Oswald', sans-serif;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
           text-transform: uppercase;
           letter-spacing: 3px;
           color: #bb0000;
-          margin-bottom: 8px;
+          margin-bottom: 6px;
           font-weight: 600;
         }
 
         .ga-banner-title {
           font-family: 'Bentham', serif;
-          font-size: clamp(2.5rem, 5vw, 5.2rem);
+          font-size: clamp(2.2rem, 4.5vw, 4.8rem);
           font-weight: 400;
           color: #0b6623;
-          margin-bottom: 6px;
+          margin-bottom: 8px;
           letter-spacing: 1px;
-          line-height: 1.02;
+          line-height: 1.05;
         }
 
         .ga-banner-subtitle {
           font-family: 'Noto Serif Todhri', serif;
-          font-size: clamp(0.95rem, 1.2vw, 1.15rem);
+          font-size: clamp(0.9rem, 1.1vw, 1.1rem);
           font-weight: 400;
           color: #4a5568;
-          margin-bottom: 22px;
-          line-height: 1.45;
+          margin-bottom: 20px;
+          line-height: 1.5;
         }
 
         .ga-banner-buttons {
           display: flex;
-          gap: 15px;
+          gap: 12px;
           justify-content: flex-start;
           flex-wrap: wrap;
         }
 
-        .ga-btn-primary {
+        .ga-btn-primary, .ga-btn-secondary {
           font-family: 'Oswald', sans-serif;
           text-transform: uppercase;
           letter-spacing: 1px;
-          padding: 10px 22px;
+          padding: 10px 20px;
           font-size: 0.9rem;
           font-weight: 500;
           border-radius: 4px;
           cursor: pointer;
           text-decoration: none;
+          transition: all 0.3s ease;
+        }
+
+        .ga-btn-primary {
           background-color: #0b6623;
           color: #ffffff;
           border: 2px solid #0b6623;
-          transition: all 0.3s ease;
         }
 
         .ga-btn-primary:hover {
@@ -169,19 +187,9 @@ const GreenfieldAcademy = () => {
         }
 
         .ga-btn-secondary {
-          font-family: 'Oswald', sans-serif;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          padding: 10px 22px;
-          font-size: 0.9rem;
-          font-weight: 500;
-          border-radius: 4px;
-          cursor: pointer;
-          text-decoration: none;
           background-color: transparent;
           color: #0b6623;
           border: 2px solid #0b6623;
-          transition: all 0.3s ease;
         }
 
         .ga-btn-secondary:hover {
@@ -189,54 +197,53 @@ const GreenfieldAcademy = () => {
         }
 
         .ga-right-image-container {
-          flex: 0 0 42%;
-          height: 100%;
+          flex: 0 0 40%;
           display: flex;
           align-items: center;
-          justify-content: flex-end;
+          justify-content: center;
           z-index: 2;
         }
 
         .ga-banner-image {
           width: 100%;
-          max-height: 430px;
+          max-height: 380px;
           object-fit: cover;
           border-radius: 8px;
         }
 
         .ga-content-section {
-          padding: 40px 20px 20px;
+          padding: 30px 15px 15px;
           text-align: center;
-          max-width: 900px;
+          max-width: 800px;
         }
 
         .ga-section-title {
-          font-size: clamp(1.8rem, 3vw, 2.2rem);
+          font-size: clamp(1.6rem, 2.5vw, 2.1rem);
           color: #0b6623;
-          margin-bottom: 15px;
+          margin-bottom: 12px;
           font-family: 'Bentham', serif;
         }
 
         .ga-section-text {
-          font-size: 1.05rem;
-          line-height: 1.8;
+          font-size: 1rem;
+          line-height: 1.7;
           color: #555;
         }
 
         .ga-cards-container {
           display: flex;
-          gap: 30px;
+          gap: 20px;
           justify-content: center;
           max-width: 1200px;
           width: 100%;
-          margin: 30px auto 50px;
+          margin: 20px auto 40px;
           flex-wrap: wrap;
         }
 
         .ga-section-image-card {
           flex: 1;
-          min-width: 280px;
-          max-width: 450px;
+          min-width: 260px;
+          max-width: 500px;
           background-color: #ffffff;
           border-radius: 12px;
           overflow: hidden;
@@ -248,46 +255,69 @@ const GreenfieldAcademy = () => {
 
         .ga-section-image {
           width: 100%;
-          height: 280px;
+          height: 240px;
           object-fit: cover;
           object-position: top;
           display: block;
         }
 
+        /* Responsive Media Query for Tablets and Mobiles */
         @media screen and (max-width: 992px) {
           .ga-banner-wrapper {
             flex-direction: column;
             padding: 30px 20px;
-            height: auto;
             text-align: center;
+            align-items: stretch;
           }
 
           .ga-top-nav {
-            position: static;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 75%;
+            max-width: 300px;
+            height: 100vh;
+            background-color: #ffffff;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+            flex-direction: column;
             justify-content: center;
-            margin-bottom: 20px;
-            width: 100%;
+            align-items: center;
+            gap: 25px;
+            padding: 40px;
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+          }
+
+          .ga-top-nav.mobile-open {
+            transform: translateX(0);
+          }
+
+          .ga-menu-toggle {
+            display: block;
+            position: absolute;
+            top: 20px;
+            right: 20px;
           }
 
           .ga-left-content {
             max-width: 100%;
-            padding-left: 0;
             align-items: center;
-            margin-bottom: 30px;
+            margin-top: 15px;
+            margin-bottom: 25px;
           }
 
           .ga-banner-buttons {
             justify-content: center;
+            width: 100%;
           }
 
           .ga-right-image-container {
-            flex: none;
             width: 100%;
-            justify-content: center;
+            margin-top: 15px;
           }
 
           .ga-banner-image {
-            max-height: 350px;
+            max-height: 280px;
           }
         }
 
@@ -297,12 +327,7 @@ const GreenfieldAcademy = () => {
           }
 
           .ga-banner-wrapper {
-            padding: 20px 15px;
-          }
-
-          .ga-top-nav {
-            gap: 15px;
-            font-size: 0.85rem;
+            padding: 50px;
           }
 
           .ga-banner-buttons {
@@ -315,8 +340,8 @@ const GreenfieldAcademy = () => {
             text-align: center;
           }
 
-          .ga-cards-container {
-            gap: 20px;
+          .ga-section-image {
+            height: 200px;
           }
         }
       `}</style>
@@ -324,29 +349,29 @@ const GreenfieldAcademy = () => {
       <div className="ga-page-wrapper">
         <div className="ga-container">
           <header className="ga-banner-wrapper">
-            <nav className="ga-top-nav">
-            <Link
-              to={`/students/`}
-              className="ga-nav-link"
+            {/* Mobile Menu Toggle Button */}
+            <button 
+              className="ga-menu-toggle" 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Menu"
             >
-              Student
-            </Link>
-            <Link
-              to={`/faculty/`}
-              className="ga-nav-link"
-            >
-              Faculty
-            </Link>
+              {mobileMenuOpen ? '✕' : '☰'}
+            </button>
 
-            <Link
-              to={`/teacher-data/`}
-              className="ga-nav-link"
-            >
-              Enter Faculty Data
-            </Link>
-              
-              
-              <button className="ga-nav-link" onClick={() => handleNavClick('Parents')}>Parents</button>
+            {/* Top Navigation Links */}
+            <nav className={`ga-top-nav ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+              <Link to="/students/" className="ga-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                Student
+              </Link>
+              <Link to="/faculty/" className="ga-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                Faculty
+              </Link>
+              <Link to="/teacher-data/" className="ga-nav-link" onClick={() => setMobileMenuOpen(false)}>
+                Enter Faculty Data
+              </Link>
+              <button className="ga-nav-link" onClick={() => handleNavClick('Parents')}>
+                Parents
+              </button>
             </nav>
 
             <div className="ga-left-content">

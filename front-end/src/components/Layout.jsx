@@ -16,9 +16,28 @@ export default function Layout() {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div style={{ minHeight: "100vh", background: C.paper, display: "flex" }}>
+    <div style={{ minHeight: "100vh", background: C.paper, display: "flex", flexDirection: "column" }}>
+      <style>{`
+        * {
+          box-sizing: border-box;
+        }
+
+        .layout-main {
+          flex: 1;
+          padding: 28px 32px 60px;
+          max-width: 1200px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        @media screen and (max-width: 768px) {
+          .layout-main {
+            padding: 10px 0;
+          }
+        }
+      `}</style>
       
-      <main style={{ flex: 1, padding: "28px 32px 60px", maxWidth: 1200, margin: "0 auto" }}>
+      <main className="layout-main">
         <Outlet />
       </main>
     </div>
