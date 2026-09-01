@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
 import { students } from "../data/mockData.js";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 2);
@@ -10,7 +11,8 @@ function initials(name) {
 
 export default function Students() {
   return (
-    <div style={{ animation: "fadeIn 0.4s ease", padding: "0 12px", boxSizing: "border-box" }}>
+    <div style={{ animation: "fadeIn 0.4s ease", padding: "0 12px", paddingTop: "50px", boxSizing: "border-box" }}>
+      <GreenfieldHeaderBar />
       {/* Header section with responsive margins */}
       <div style={{ marginBottom: "clamp(16px, 4vw, 24px)" }}>
         <p style={{ fontFamily: fontBody, color: C.slate, fontSize: "clamp(12px, 3vw, 14px)", margin: 0 }}>Class VIII-B</p>

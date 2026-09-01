@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 function InsertTeacherData() {
   const [formData, setFormData] = useState({
     name: '',
@@ -69,6 +69,7 @@ function InsertTeacherData() {
 
   return (
     <div style={styles.container}>
+      <GreenfieldHeaderBar />
       <div style={styles.card}>
         <h2 style={styles.title}>Teachers Registration</h2>
         <p style={styles.subtitle}>Please fill out the details below</p>

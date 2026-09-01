@@ -32,7 +32,7 @@ export default function Layout() {
 
         @media screen and (max-width: 768px) {
           .layout-main {
-            padding: 10px 0;
+            padding: 0;
           }
         }
       `}</style>

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
 import { C, fontDisplay, fontBody } from "../theme.js";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+import GreenfieldHomePageHeaderBar from "../components/GreenfieldHomePageHeaderBar.jsx";
 
 const GreenfieldAcademy = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   // Register service worker on component mount
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -15,11 +14,6 @@ const GreenfieldAcademy = () => {
       });
     }
   }, []);
-
-  const handleNavClick = (portalName) => {
-    setMobileMenuOpen(false);
-    alert(`Navigating to ${portalName} Portal`);
-  };
 
   const handleActionClick = (actionName) => {
     if (actionName === 'Apply') {
@@ -74,47 +68,15 @@ const GreenfieldAcademy = () => {
           flex-direction: row;
           align-items: center;
           justify-content: space-between;
-          padding: 40px 50px;
+          padding: 50px 50px 40px 50px;
           gap: 30px;
         }
 
-        /* Top Nav & Hamburger Styles */
-        .ga-top-nav {
+        .ga-header-bar-top-right {
           position: absolute;
-          top: 25px;
-          right: 40px;
-          display: flex;
-          gap: 20px;
+          top: 20px;
+          right: 30px;
           z-index: 10;
-        }
-
-        .ga-nav-link {
-          font-family: 'Oswald', sans-serif;
-          font-size: 0.95rem;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: #0b6623;
-          text-decoration: none;
-          font-weight: 500;
-          cursor: pointer;
-          background: none;
-          border: none;
-          padding: 0;
-          transition: opacity 0.2s ease;
-        }
-
-        .ga-nav-link:hover {
-          opacity: 0.7;
-        }
-
-        .ga-menu-toggle {
-          display: none;
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-size: 1.5rem;
-          color: #0b6623;
-          z-index: 11;
         }
 
         .ga-left-content {
@@ -265,38 +227,14 @@ const GreenfieldAcademy = () => {
         @media screen and (max-width: 992px) {
           .ga-banner-wrapper {
             flex-direction: column;
-            padding: 30px 20px;
+            padding: 60px 20px 30px 20px;
             text-align: center;
             align-items: stretch;
           }
 
-          .ga-top-nav {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 75%;
-            max-width: 300px;
-            height: 100vh;
-            background-color: #ffffff;
-            box-shadow: -5px 0 25px rgba(0,0,0,0.15);
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 25px;
-            padding: 40px;
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(100%);
-          }
-
-          .ga-top-nav.mobile-open {
-            transform: translateX(0);
-          }
-
-          .ga-menu-toggle {
-            display: block;
-            position: absolute;
-            top: 20px;
-            right: 20px;
+          .ga-header-bar-top-right {
+            top: 15px;
+            right: 15px;
           }
 
           .ga-left-content {
@@ -323,11 +261,11 @@ const GreenfieldAcademy = () => {
 
         @media screen and (max-width: 576px) {
           .ga-page-wrapper {
-            padding: 10px;
+            padding: 0px;
           }
 
           .ga-banner-wrapper {
-            padding: 50px;
+            padding: 60px 20px 30px 20px;
           }
 
           .ga-banner-buttons {
@@ -348,32 +286,12 @@ const GreenfieldAcademy = () => {
 
       <div className="ga-page-wrapper">
         <div className="ga-container">
+          
           <header className="ga-banner-wrapper">
-            {/* Mobile Menu Toggle Button */}
-            <button 
-              className="ga-menu-toggle" 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Menu"
-            >
-              {mobileMenuOpen ? '✕' : '☰'}
-            </button>
-
-            {/* Top Navigation Links */}
-            <nav className={`ga-top-nav ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-              <Link to="/students/" className="ga-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                Student
-              </Link>
-              <Link to="/faculty/" className="ga-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                Faculty
-              </Link>
-              <Link to="/teacher-data/" className="ga-nav-link" onClick={() => setMobileMenuOpen(false)}>
-                Enter Faculty Data
-              </Link>
-              <button className="ga-nav-link" onClick={() => handleNavClick('Parents')}>
-                Parents
-              </button>
-            </nav>
-
+            <div className="ga-header-bar-top-right">
+              <GreenfieldHomePageHeaderBar />  
+            </div>
+            
             <div className="ga-left-content">
               <div className="ga-coming-soon">Coming Soon</div>
               <h1 className="ga-banner-title">

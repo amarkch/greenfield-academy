@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Loader2, AlertCircle } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 2);
@@ -35,7 +36,8 @@ export default function Faculty() {
   }, []);
 
   return (
-    <div style={{ animation: "fadeIn 0.4s ease", padding: "20px" }}>
+    <div style={{ animation: "fadeIn 0.4s ease", padding: "20px", paddingTop: "50px" }}>
+      <GreenfieldHeaderBar />
       <div style={{ marginBottom: 24 }}>
         <p style={{ fontFamily: fontBody, color: C.slate, fontSize: 14, margin: 0 }}>Class VIII-B</p>
         <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 26, color: C.ink, margin: "4px 0 0" }}>Faculty</h1>
