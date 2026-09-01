@@ -58,6 +58,7 @@ const GreenfieldAcademy = () => {
 
         .ga-banner-wrapper {
           width: 100%;
+
           position: relative;
           border-radius: 12px;
           overflow: hidden;
@@ -103,19 +104,19 @@ const GreenfieldAcademy = () => {
           font-size: clamp(2.2rem, 4.5vw, 4.8rem);
           font-weight: 400;
           color: #0b6623;
-          margin-bottom: 8px;
+          margin: 80px 0;
           letter-spacing: 1px;
           line-height: 1.05;
         }
 
         .ga-banner-subtitle {
           font-family: 'Noto Serif Todhri', serif;
-          font-size: clamp(1.5rem, 1.5vw, 1.5rem);
+          font-size: clamp(1.4rem, 1.4vw, 1.4rem);
           font-weight: 400;
           color: #4a5568;
           margin-bottom: 20px;
           line-height: 1.5;
-          padding: 30px 0px;
+          padding: 0px;
         }
 
         .ga-banner-buttons {
@@ -139,14 +140,14 @@ const GreenfieldAcademy = () => {
         }
 
         .ga-btn-primary {
-          background-color: #0b6623;
+          background-color: #7DCCAD;
           color: #ffffff;
-          border: 2px solid #0b6623;
+          border: 2px solid #24B1B1;
         }
 
         .ga-btn-primary:hover {
-          background-color: #084e1b;
-          border-color: #084e1b;
+          background-color: #7DCCAD;
+          border-color: #24B1B1;
         }
 
         .ga-btn-secondary {
@@ -168,10 +169,14 @@ const GreenfieldAcademy = () => {
         }
 
         .ga-banner-image {
-          width: 100%;
           max-height: 380px;
           object-fit: cover;
           border-radius: 8px;
+          margin: 30px;
+        }
+
+        .ga-banner-boy-image {
+          display: none
         }
 
         .ga-content-section {
@@ -223,12 +228,30 @@ const GreenfieldAcademy = () => {
           object-position: top;
           display: block;
         }
+        .modle {
+          display: none;
+        }
 
         /* Responsive Media Query for Tablets and Mobiles */
         @media screen and (max-width: 992px) {
+          .ga-banner-title
+          {
+            margin: 10px 0;
+            margin-bottom:30px;
+          }
+          .desk {
+            display: none;
+          }
+            .ga-banner-boy-image {
+              max-height: 350px;
+              object-fit: cover;
+              display: block;
+              margin-bottom: 15px;
+            }
+
           .ga-banner-subtitle {
-            padding: 40px;
-            font-size: clamp(1.1rem, 1.1vw, 1.1rem);
+            padding: 10px 20px;
+            font-size: clamp(0.8rem, 0.8vw, 0.8rem);
           }
           .ga-banner-wrapper {
             flex-direction: column;
@@ -281,7 +304,9 @@ const GreenfieldAcademy = () => {
 
           .ga-btn-primary, .ga-btn-secondary {
             width: 70%;
+            font-weight: 900;
             text-align: center;
+
           }
 
           .ga-section-image {
@@ -299,6 +324,13 @@ const GreenfieldAcademy = () => {
             </div>
             
             <div className="ga-left-content">
+              <div className="ga-right-image-container mobile">
+              <img 
+                src="/images/the-boy.png" 
+                alt="Student studying code sketches" 
+                className="ga-banner-boy-image" 
+              />
+            </div>
               <h1 className="ga-banner-title">
                 GREENFIELD <br />
                 ACADEMY
@@ -310,16 +342,16 @@ const GreenfieldAcademy = () => {
               </p>
               
               <div className="ga-banner-buttons">
-                <button className="ga-btn-secondary" onClick={() => handleActionClick('Apply')}>
+                <button className="ga-btn-primary" onClick={() => handleActionClick('Apply')}>
                   Discover More
                 </button>
                 
               </div>
             </div>
 
-            <div className="ga-right-image-container">
+            <div className="ga-right-image-container desk">
               <img 
-                src="https://res.cloudinary.com/ds72vzw9j/image/upload/v1787856193/im2_wzrrdm.jpg" 
+                src="/images/the-boy.png" 
                 alt="Student studying code sketches" 
                 className="ga-banner-image" 
               />
