@@ -193,52 +193,55 @@ const styles = {
     minHeight: '100vh',
     backgroundColor: '#f8fafc',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    padding: '20px'
+    padding: '16px', // Reduced padding for smaller screens
+    boxSizing: 'border-box'
   },
   card: {
     background: '#ffffff',
-    padding: '32px',
+    padding: '24px', // Adjusted for mobile view compactness
     borderRadius: '12px',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     width: '100%',
-    maxWidth: '480px'
+    maxWidth: '480px',
+    boxSizing: 'border-box',
+    margin: '0 auto'
   },
   title: {
     margin: '0 0 4px 0',
-    fontSize: '24px',
+    fontSize: '22px', // Scaled down slightly for mobile screens
     fontWeight: '700',
     color: '#0f172a'
   },
   subtitle: {
-    margin: '0 0 24px 0',
-    fontSize: '14px',
+    margin: '0 0 20px 0',
+    fontSize: '13px',
     color: '#64748b'
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px'
+    gap: '14px'
   },
   inputGroup: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px'
+    gap: '6px',
+    width: '100%'
   },
   label: {
-    fontSize: '13px',
+    fontSize: '12px',
     fontWeight: '600',
     color: '#334155',
     textTransform: 'uppercase',
     letterSpacing: '0.05em'
   },
   input: {
-    padding: '10px 14px',
+    padding: '12px 14px', // Increased touch target height for mobile ergonomics
     borderRadius: '6px',
     border: '1px solid #cbd5e1',
-    fontSize: '15px',
+    fontSize: '16px', // 16px prevents iOS Safari from auto-zooming on input focus
     color: '#1e293b',
     outline: 'none',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
     width: '100%',
     boxSizing: 'border-box'
   },
@@ -246,7 +249,8 @@ const styles = {
     display: 'flex',
     gap: '8px',
     marginBottom: '6px',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '100%'
   },
   addButton: {
     background: 'none',
@@ -255,7 +259,7 @@ const styles = {
     fontSize: '13px',
     fontWeight: '600',
     cursor: 'pointer',
-    padding: '4px 0',
+    padding: '6px 0',
     alignSelf: 'flex-start'
   },
   removeButton: {
@@ -263,20 +267,22 @@ const styles = {
     color: '#b91c1c',
     border: 'none',
     borderRadius: '6px',
-    padding: '10px 12px',
+    padding: '12px 14px', // Matched height with input fields for consistency
     fontSize: '13px',
     fontWeight: '600',
     cursor: 'pointer',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    flexShrink: 0
   },
   submitButton: {
     marginTop: '8px',
-    padding: '12px',
+    padding: '14px', // Taller button for better mobile tap targets
     color: '#ffffff',
     border: 'none',
     borderRadius: '6px',
-    fontSize: '15px',
+    fontSize: '16px',
     fontWeight: '600',
+    width: '100%',
     transition: 'background-color 0.2s'
   },
   message: {
