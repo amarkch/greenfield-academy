@@ -2,7 +2,7 @@
   "name": "Greenfield Academy",
   "short_name": "Greenfield",
   "description": "Official mobile application for Greenfield Academy students, parents, and staff.",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#004d40",
