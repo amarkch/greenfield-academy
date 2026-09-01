@@ -110,6 +110,7 @@ export const faculty = [
     "email": ""
   },
   {
+    id: "6a95d551c177b6802ee2e11b",
     "name": "Mr. Amar Jyoti Kachari",
     "subject": [
       "class-v-computer",

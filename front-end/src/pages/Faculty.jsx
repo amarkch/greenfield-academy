@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Loader2, AlertCircle } from "lucide-react";
-import { C, fontDisplay, fontBody } from "../theme.js";
+import { C, fontDisplay, fontBody, getRandomColor } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
 function initials(name) {
-  return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 2);
+  return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
 }
 
 export default function Faculty() {
@@ -62,7 +62,7 @@ export default function Faculty() {
           {faculty.map((f) => (
             <Link
               key={f.id}
-              to={`/faculty/${f.id}`}
+              to={`/faculty/${f._id}`}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -79,7 +79,7 @@ export default function Faculty() {
                   width: 46,
                   height: 46,
                   borderRadius: 12,
-                  background: `${f.color || C.slate}22`,
+                  background: `${f.color || getRandomColor()}22`,
                   color: f.color || C.slate,
                   display: "flex",
                   alignItems: "center",
@@ -90,11 +90,12 @@ export default function Faculty() {
                   flexShrink: 0,
                 }}
               >
+
                 {initials(f.name)}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 14, color: C.ink }}>{f.name}</div>
-                <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{f.email} · {f.phone}</div>
+                <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{f.email} {f.phone}</div>
               </div>
               <ChevronRight size={16} color={C.slate} />
             </Link>

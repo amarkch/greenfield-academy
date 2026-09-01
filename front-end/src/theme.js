@@ -11,7 +11,20 @@ export const C = {
   slate: "#6B6B80",
   line: "#E9E4D8",
 };
-
+export const getRandomColor = () => {
+  const randomNumber = Math.floor(Math.random() * 10);
+  const arr=["ink",
+  "marigold",
+  "mint",
+  "coral",
+  "violet",
+  "sky",
+  "paper",
+  "paperCard",
+  "slate",
+  "line"];
+  return C[arr[randomNumber]];
+}
 export const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');`;
 
 export const fontDisplay = "'Baloo 2', sans-serif";

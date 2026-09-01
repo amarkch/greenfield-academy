@@ -3,7 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { CheckCircle2, CircleDot, Circle, ArrowLeft, Mail, GraduationCap, BriefcaseBusiness, ChevronDown } from "lucide-react";
-import { C, fontDisplay, fontBody, fontMono} from "../theme.js";
+import { C, fontDisplay, fontBody, fontMono, getRandomColor} from "../theme.js";
 import { faculty } from "../data/mockData.js";
 import { subjects } from "../data/mockData.js";
 const statusMeta = {
@@ -12,7 +12,7 @@ const statusMeta = {
   upcoming: { icon: Circle, label: "Not started" },
 };
 function initials(name) {
-  return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 2);
+  return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
 }
 function SubjectAccordion({ subject, isOpen, onToggle }) {
   return (
@@ -168,7 +168,7 @@ export default function FacultyDetail() {
             width: 72,
             height: 72,
             borderRadius: 18,
-            background: `${person.color}22`,
+            background: `${getRandomColor()}22`,
             color: person.color,
             display: "flex",
             alignItems: "center",
@@ -221,22 +221,7 @@ export default function FacultyDetail() {
           ))}
         </div>
 
-        {person.schedule.map((s, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "10px 0",
-              borderTop: i === 0 ? "none" : `1px solid ${C.line}`,
-              fontFamily: fontBody,
-              fontSize: 13,
-            }}
-          >
-            <span style={{ color: C.ink, fontWeight: 600 }}>{s.day}</span>
-            <span style={{ color: C.slate }}>{s.time}</span>
-          </div>
-        ))}
+        
       </div>
     </div>
   );
