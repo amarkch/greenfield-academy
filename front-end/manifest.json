@@ -7,6 +7,21 @@
   "background_color": "#ffffff",
   "theme_color": "#004d40",
   "orientation": "portrait",
+  "screenshots": [
+	  {
+	    "src": "/images/screenshot-desktop.png",
+	    "sizes": "1280x800",
+	    "type": "image/png",
+	    "form_factor": "wide",
+	    "label": "Application dashboard view on desktop"
+	  },
+	  {
+	    "src": "/images/screenshot-mobile.png",
+	    "sizes": "540x720",
+	    "type": "image/png",
+	    "label": "Mobile application interface"
+	  }
+	],
   "icons": [
     {
       "src": "/icons/icon-192.png",
