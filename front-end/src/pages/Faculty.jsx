@@ -35,7 +35,7 @@ export default function Faculty() {
   }, []);
 
   return (
-    <div style={{ animation: "fadeIn 0.4s ease" }}>
+    <div style={{ animation: "fadeIn 0.4s ease", padding: "20px" }}>
       <div style={{ marginBottom: 24 }}>
         <p style={{ fontFamily: fontBody, color: C.slate, fontSize: 14, margin: 0 }}>Class VIII-B</p>
         <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 26, color: C.ink, margin: "4px 0 0" }}>Faculty</h1>
