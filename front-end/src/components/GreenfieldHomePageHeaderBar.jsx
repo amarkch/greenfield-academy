@@ -171,7 +171,7 @@ const GreenfieldHeaderBar = () => {
         /* --- Responsive Media Query --- */
         @media screen and (max-width: 992px) {
           .ga-header-container {
-            padding: 12px 20px;
+            padding: 0;
             justify-content: space-between;
           }
           .ga-desktop-nav {

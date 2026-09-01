@@ -110,11 +110,12 @@ const GreenfieldAcademy = () => {
 
         .ga-banner-subtitle {
           font-family: 'Noto Serif Todhri', serif;
-          font-size: clamp(0.9rem, 1.1vw, 1.1rem);
+          font-size: clamp(1.5rem, 1.5vw, 1.5rem);
           font-weight: 400;
           color: #4a5568;
           margin-bottom: 20px;
           line-height: 1.5;
+          padding: 30px 0px;
         }
 
         .ga-banner-buttons {
@@ -225,6 +226,10 @@ const GreenfieldAcademy = () => {
 
         /* Responsive Media Query for Tablets and Mobiles */
         @media screen and (max-width: 992px) {
+          .ga-banner-subtitle {
+            padding: 40px;
+            font-size: clamp(1.1rem, 1.1vw, 1.1rem);
+          }
           .ga-banner-wrapper {
             flex-direction: column;
             padding: 60px 20px 30px 20px;
@@ -247,6 +252,7 @@ const GreenfieldAcademy = () => {
           .ga-banner-buttons {
             justify-content: center;
             width: 100%;
+            align-items: center;
           }
 
           .ga-right-image-container {
@@ -274,7 +280,7 @@ const GreenfieldAcademy = () => {
           }
 
           .ga-btn-primary, .ga-btn-secondary {
-            width: 100%;
+            width: 70%;
             text-align: center;
           }
 
@@ -293,7 +299,6 @@ const GreenfieldAcademy = () => {
             </div>
             
             <div className="ga-left-content">
-              <div className="ga-coming-soon">Coming Soon</div>
               <h1 className="ga-banner-title">
                 GREENFIELD <br />
                 ACADEMY
@@ -305,12 +310,10 @@ const GreenfieldAcademy = () => {
               </p>
               
               <div className="ga-banner-buttons">
-                <button className="ga-btn-primary" onClick={() => handleActionClick('Apply')}>
-                  Apply Now
-                </button>
-                <button className="ga-btn-secondary" onClick={() => handleActionClick('Discover')}>
+                <button className="ga-btn-secondary" onClick={() => handleActionClick('Apply')}>
                   Discover More
                 </button>
+                
               </div>
             </div>
 
