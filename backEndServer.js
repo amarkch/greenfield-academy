@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = "mongodb+srv://amarkch1990_db_user:d09ZQp5K6U6lDxpW@cluster0.ppud2xq.mongodb.net/?appName=Cluster0";
 // Middleware to parse JSON bodies
 const allowedOrigins = [
@@ -51,6 +51,43 @@ const writeData = (data) => {
 };
 
 // GET API: Read JSON objects
+
+// GET API: Fetch a single faculty member by _id
+app.get('/api/get-teacher/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate if the provided ID is a valid MongoDB ObjectId
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid teacher ID format' 
+      });
+    }
+
+    const db = await connectDB();
+    const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
+
+    if (!teacher) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Teacher not found' 
+      });
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      data: teacher 
+    });
+  } catch (error) {
+    console.error('Database retrieval error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to fetch teacher data' 
+    });
+  }
+});
+
 app.get('/api/data', (req, res) => {
   try {
     const data = readData();

@@ -1,19 +1,18 @@
-import React from "react";
-import { NavLink, Outlet } from "react-router-dom";
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, Outlet, useParams, Link } from "react-router-dom";
 import { CheckCircle2, CircleDot, Circle, ArrowLeft, Mail, GraduationCap, BriefcaseBusiness, ChevronDown } from "lucide-react";
-import { C, fontDisplay, fontBody, fontMono, getRandomColor} from "../theme.js";
-import { faculty } from "../data/mockData.js";
-import { subjects } from "../data/mockData.js";
+import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js";
+
 const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },
   current: { icon: CircleDot, label: "In progress" },
   upcoming: { icon: Circle, label: "Not started" },
 };
+
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
 }
+
 function SubjectAccordion({ subject, isOpen, onToggle }) {
   return (
     <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
@@ -55,7 +54,6 @@ function SubjectAccordion({ subject, isOpen, onToggle }) {
             })}
           >
             <span className="kaksha-nav-label">Students</span>
-           
           </NavLink>
         </nav>
         <span style={{ fontFamily: fontMono, fontSize: 12, color: C.slate }}>{subject.progress}%</span>
@@ -141,10 +139,46 @@ function SubjectAccordion({ subject, isOpen, onToggle }) {
 
 export default function FacultyDetail() {
   const { id } = useParams();
-  const [openId, setOpenId] = useState(subjects[0].id);
-  const person = faculty.find((f) => f.id === id);
+  const [teacher, setTeacher] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [openId, setOpenId] = useState(null);
 
-  if (!person) {
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    fetch(`https://greenfield-academy-back-end/api/get-teacher/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) {
+          setTeacher(data);
+          if (data?.subjects && data.subjects.length > 0) {
+            setOpenId(data.subjects[0].id);
+          }
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch teacher data:", err);
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div style={{ animation: "fadeIn 0.4s ease", fontFamily: fontBody, color: C.ink, fontSize: 15 }}>
+        Loading faculty details...
+      </div>
+    );
+  }
+
+  if (!teacher) {
     return (
       <div style={{ animation: "fadeIn 0.4s ease" }}>
         <p style={{ fontFamily: fontBody, color: C.ink, fontSize: 15 }}>We couldn't find that faculty member.</p>
@@ -169,7 +203,7 @@ export default function FacultyDetail() {
             height: 72,
             borderRadius: 18,
             background: `${getRandomColor()}22`,
-            color: person.color,
+            color: teacher.color,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -179,11 +213,11 @@ export default function FacultyDetail() {
             flexShrink: 0,
           }}
         >
-          {initials(person.name)}
+          {initials(teacher.name)}
         </div>
         <div>
-          <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 24, color: C.ink, margin: 0 }}>{person.name}</h1>
-          <p style={{ fontFamily: fontBody, fontSize: 14, color: person.color, fontWeight: 600, margin: "4px 0 0" }}>{person.subject}</p>
+          <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 24, color: C.ink, margin: 0 }}>{teacher.name}</h1>
+          <p style={{ fontFamily: fontBody, fontSize: 14, color: teacher.color, fontWeight: 600, margin: "4px 0 0" }}>{teacher.subject}</p>
         </div>
       </div>
 
@@ -192,36 +226,31 @@ export default function FacultyDetail() {
           <GraduationCap size={18} color={C.slate} style={{ marginTop: 2 }} />
           <div>
             <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate }}>Qualification</div>
-            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{person.qualification}</div>
+            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.qualification}</div>
           </div>
         </div>
         <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 10, alignItems: "flex-start" }}>
           <BriefcaseBusiness size={18} color={C.slate} style={{ marginTop: 2 }} />
           <div>
             <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate }}>Phone</div>
-            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{person.phone}</div>
+            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.phone}</div>
           </div>
         </div>
         <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 10, alignItems: "flex-start" }}>
           <Mail size={18} color={C.slate} style={{ marginTop: 2 }} />
           <div>
             <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate }}>Email</div>
-            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{person.email}</div>
+            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.email}</div>
           </div>
         </div>
       </div>
 
-      
-
       <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, padding: 20 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          
-          {subjects.map((s) => (
+          {teacher.subjects?.map((s) => (
             <SubjectAccordion key={s.id} subject={s} isOpen={openId === s.id} onToggle={() => setOpenId(openId === s.id ? null : s.id)} />
           ))}
         </div>
-
-        
       </div>
     </div>
   );

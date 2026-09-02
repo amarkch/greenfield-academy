@@ -1,30 +1,63 @@
 import React, { useState } from 'react';
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+
+const CLASS_SUBJECT_MAP = {
+  "class-i": ["Mathematics", "English", "Environmental Studies", "Hindi"],
+  "class-ii": ["Mathematics", "English", "Environmental Studies", "Hindi"],
+  "class-iii": ["Mathematics", "English", "Science", "Social Studies", "Hindi"],
+  "class-iv": ["Mathematics", "English", "Science", "Social Studies", "Hindi"],
+  "class-v": ["Mathematics", "English", "Science", "Social Science", "Geography", "Hindi"],
+  "class-vi": ["Mathematics", "English", "Science", "Social Science", "History", "Geography", "Computer Science", "Hindi"],
+  "class-vii": ["Mathematics", "English", "Science", "Social Science", "History", "Geography", "Computer Science", "Hindi"],
+  "class-viii": ["Mathematics", "English", "Science", "Social Science", "History", "Geography", "Computer Science", "Hindi"],
+  "class-ix": ["Mathematics", "English", "Science", "Physics", "Chemistry", "Biology", "Social Science", "History", "Computer Science"],
+  "class-x": ["Mathematics", "English", "Science", "Physics", "Chemistry", "Biology", "Social Science", "History", "Computer Science"]
+};
+
+const CLASS_OPTIONS = Object.keys(CLASS_SUBJECT_MAP);
+
 function InsertTeacherData() {
   const [formData, setFormData] = useState({
     name: '',
     qualification: '',
     phone: '',
-    email: ''
+    email: '',
+    isClassTeacher: false,
+    classTeacherOf: ''
   });
 
-  const [subjects, setSubjects] = useState(['']);
+  const [subjects, setSubjects] = useState([{ className: '', subjectName: '' }]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    const val = type === 'checkbox' ? checked : value;
+    
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: val };
+      // Reset classTeacherOf if isClassTeacher is toggled off
+      if (name === 'isClassTeacher' && !checked) {
+        updated.classTeacherOf = '';
+      }
+      return updated;
+    });
   };
 
-  const handleSubjectChange = (index, value) => {
+  const handleSubjectChange = (index, field, value) => {
     const updatedSubjects = [...subjects];
-    updatedSubjects[index] = value;
+    updatedSubjects[index][field] = value;
+    
+    // Reset subjectName if className changes to prevent mismatched selections
+    if (field === 'className') {
+      updatedSubjects[index]['subjectName'] = '';
+    }
+
     setSubjects(updatedSubjects);
   };
 
   const handleAddSubject = () => {
-    setSubjects([...subjects, '']);
+    setSubjects([...subjects, { className: '', subjectName: '' }]);
   };
 
   const handleRemoveSubject = (index) => {
@@ -39,7 +72,9 @@ function InsertTeacherData() {
 
     const payload = {
       ...formData,
-      subjects: subjects.filter((sub) => sub.trim() !== '')
+      subjects: subjects
+        .filter((sub) => sub.className && sub.subjectName)
+        .map((sub) => `[${sub.className}][${sub.subjectName.toLowerCase().replace(/\s+/g, '-')}]`)
     };
 
     try {
@@ -58,8 +93,15 @@ function InsertTeacherData() {
       const result = await response.json();
       setMessage('Data submitted successfully!');
       
-      setFormData({ name: '', qualification: '', phone: '', email: '' });
-      setSubjects(['']);
+      setFormData({ 
+        name: '', 
+        qualification: '', 
+        phone: '', 
+        email: '', 
+        isClassTeacher: false, 
+        classTeacherOf: '' 
+      });
+      setSubjects([{ className: '', subjectName: '' }]);
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
@@ -82,35 +124,89 @@ function InsertTeacherData() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder=""
               style={styles.input}
               required
             />
           </div>
+            <div style={styles.inputGroup}>
+            <label style={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                name="isClassTeacher"
+                checked={formData.isClassTeacher}
+                onChange={handleChange}
+                style={styles.checkbox}
+              />
+              Is Class Teacher
+            </label>
+          </div>
 
+          {formData.isClassTeacher && (
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Class Teacher For</label>
+              <select
+                name="classTeacherOf"
+                value={formData.classTeacherOf}
+                onChange={handleChange}
+                style={styles.select}
+                required={formData.isClassTeacher}
+              >
+                <option value="">Select Class</option>
+                {CLASS_OPTIONS.map((cls) => (
+                  <option key={cls} value={cls}>{cls}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Subjects</label>
-            {subjects.map((subject, index) => (
-              <div key={index} style={styles.dynamicRow}>
-                <input
-                  type="text"
-                  value={subject}
-                  onChange={(e) => handleSubjectChange(index, e.target.value)}
-                  placeholder="Ex: class-v-social-geography"
-                  style={styles.input}
-                  required
-                />
-                {subjects.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSubject(index)}
-                    style={styles.removeButton}
+            <label style={styles.label}>Subjects & Classes</label>
+            {subjects.map((item, index) => {
+              const availableSubjects = item.className ? CLASS_SUBJECT_MAP[item.className] || [] : [];
+
+              return (
+                <div key={index} style={styles.dynamicRow}>
+                  <select
+                    value={item.className}
+                    onChange={(e) => handleSubjectChange(index, 'className', e.target.value)}
+                    style={styles.select}
+                    required
                   >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
+                    <option value="">Select Class</option>
+                    {CLASS_OPTIONS.map((cls) => (
+                      <option key={cls} value={cls}>{cls}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={item.subjectName}
+                    onChange={(e) => handleSubjectChange(index, 'subjectName', e.target.value)}
+                    style={{
+                      ...styles.select,
+                      backgroundColor: !item.className ? '#f1f5f9' : '#ffffff'
+                    }}
+                    disabled={!item.className}
+                    required
+                  >
+                    <option value="">
+                      {item.className ? 'Select Subject' : 'Select Class First'}
+                    </option>
+                    {availableSubjects.map((sub) => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </select>
+
+                  {subjects.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSubject(index)}
+                      style={styles.removeButton}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              );
+            })}
             <button
               type="button"
               onClick={handleAddSubject}
@@ -127,11 +223,12 @@ function InsertTeacherData() {
               name="qualification"
               value={formData.qualification}
               onChange={handleChange}
-              placeholder=""
               style={styles.input}
               required
             />
           </div>
+
+        
 
           <div style={styles.inputGroup}>
             <label style={styles.label}>Phone Number</label>
@@ -140,7 +237,6 @@ function InsertTeacherData() {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              placeholder=""
               style={styles.input}
               required
             />
@@ -153,7 +249,6 @@ function InsertTeacherData() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder=""
               style={styles.input}
               required
             />
@@ -194,22 +289,22 @@ const styles = {
     minHeight: '100vh',
     backgroundColor: '#f8fafc',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    padding: '16px', // Reduced padding for smaller screens
+    padding: '16px',
     boxSizing: 'border-box'
   },
   card: {
     background: '#ffffff',
-    padding: '24px', // Adjusted for mobile view compactness
+    padding: '24px',
     borderRadius: '12px',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     width: '100%',
-    maxWidth: '480px',
+    maxWidth: '560px',
     boxSizing: 'border-box',
     margin: '0 auto'
   },
   title: {
     margin: '0 0 4px 0',
-    fontSize: '22px', // Scaled down slightly for mobile screens
+    fontSize: '22px',
     fontWeight: '700',
     color: '#0f172a'
   },
@@ -236,14 +331,39 @@ const styles = {
     textTransform: 'uppercase',
     letterSpacing: '0.05em'
   },
+  checkboxLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#334155',
+    cursor: 'pointer'
+  },
+  checkbox: {
+    width: '18px',
+    height: '18px',
+    cursor: 'pointer'
+  },
   input: {
-    padding: '12px 14px', // Increased touch target height for mobile ergonomics
+    padding: '12px 14px',
     borderRadius: '6px',
     border: '1px solid #cbd5e1',
-    fontSize: '16px', // 16px prevents iOS Safari from auto-zooming on input focus
+    fontSize: '16px',
     color: '#1e293b',
     outline: 'none',
     width: '100%',
+    boxSizing: 'border-box'
+  },
+  select: {
+    padding: '12px 14px',
+    borderRadius: '6px',
+    border: '1px solid #cbd5e1',
+    fontSize: '16px',
+    color: '#1e293b',
+    outline: 'none',
+    width: '100%',
+    backgroundColor: '#ffffff',
     boxSizing: 'border-box'
   },
   dynamicRow: {
@@ -268,7 +388,7 @@ const styles = {
     color: '#b91c1c',
     border: 'none',
     borderRadius: '6px',
-    padding: '12px 14px', // Matched height with input fields for consistency
+    padding: '12px 14px',
     fontSize: '13px',
     fontWeight: '600',
     cursor: 'pointer',
@@ -277,7 +397,7 @@ const styles = {
   },
   submitButton: {
     marginTop: '8px',
-    padding: '14px', // Taller button for better mobile tap targets
+    padding: '14px',
     color: '#ffffff',
     border: 'none',
     borderRadius: '6px',
