@@ -54,12 +54,17 @@ const writeData = (data) => {
 
 // GET API: Fetch a single faculty member by _id
 
-const getChapters = (tags, db) => {
-    const matchConditions = tags.map(tag => {
+const getChapters = async (tags) => {
+  const db = await connectDB();
+  const matchConditions = tags.map(tag => {
     const [, classVal, subjectVal] = tag.match(/\[(.*?)\]\[(.*?)\]/) || [];
     return { class: classVal, subject: subjectVal };
   }).filter(cond => cond.class && cond.subject);
-  db.chapters.aggregate([
+
+  // Return early if no valid tags match to prevent empty $or errors
+  if (matchConditions.length === 0) return [];
+
+  const result = await db.chapters.aggregate([
     { 
       $match: { $or: matchConditions } 
     },
@@ -69,7 +74,7 @@ const getChapters = (tags, db) => {
           class: "$class", 
           subject: "$subject" 
         },
-        chapters: { $push: "$$ROOT" } // Or use "$chapterName" if you only want a specific field
+        chapters: { $push: "$$ROOT" }
       }
     },
     {
@@ -80,7 +85,9 @@ const getChapters = (tags, db) => {
         chapters: 1
       }
     }
-  ]);
+  ]).toArray();
+
+  return result;
 }
 app.get('/api/get-teacher/:id', async (req, res) => {
   try {
@@ -96,7 +103,7 @@ app.get('/api/get-teacher/:id', async (req, res) => {
 
     const db = await connectDB();
     const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
-    const subjects = await getChapters(teacher.subjects, db);
+    const subjects = await getChapters(teacher.subjects);
     if (!teacher) {
       return res.status(404).json({ 
         success: false, 
