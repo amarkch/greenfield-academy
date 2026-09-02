@@ -53,6 +53,36 @@ const writeData = (data) => {
 // GET API: Read JSON objects
 
 // GET API: Fetch a single faculty member by _id
+
+const getChapters = (tags) => {
+    const matchConditions = tags.map(tag => {
+    const [, classVal, subjectVal] = tag.match(/\[(.*?)\]\[(.*?)\]/) || [];
+    return { class: classVal, subject: subjectVal };
+  }).filter(cond => cond.class && cond.subject);
+
+  db.chapters.aggregate([
+    { 
+      $match: { $or: matchConditions } 
+    },
+    {
+      $group: {
+        _id: { 
+          class: "$class", 
+          subject: "$subject" 
+        },
+        chapters: { $push: "$$ROOT" } // Or use "$chapterName" if you only want a specific field
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        class: "$_id.class",
+        subject: "$_id.subject",
+        chapters: 1
+      }
+    }
+  ]);
+}
 app.get('/api/get-teacher/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -67,7 +97,7 @@ app.get('/api/get-teacher/:id', async (req, res) => {
 
     const db = await connectDB();
     const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
-
+    const subjects = await getChapters(teacher.subjects);
     if (!teacher) {
       return res.status(404).json({ 
         success: false, 
@@ -77,7 +107,7 @@ app.get('/api/get-teacher/:id', async (req, res) => {
 
     res.status(200).json({ 
       success: true, 
-      data: teacher 
+      data: {teacher, subjects} 
     });
   } catch (error) {
     console.error('Database retrieval error:', error);

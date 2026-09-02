@@ -147,7 +147,7 @@ export default function FacultyDetail() {
     let isMounted = true;
     setLoading(true);
 
-    fetch(`https://greenfield-academy-back-end/api/get-teacher/${id}`)
+    fetch(`https://greenfield-academy-back-end.onrender.com/api/get-teacher/${id}`)
       .then((res) => res.json())
       .then((data) => {
         if (isMounted) {
