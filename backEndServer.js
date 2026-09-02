@@ -59,7 +59,7 @@ const getChapters = (tags) => {
     const [, classVal, subjectVal] = tag.match(/\[(.*?)\]\[(.*?)\]/) || [];
     return { class: classVal, subject: subjectVal };
   }).filter(cond => cond.class && cond.subject);
-
+  const db = await connectDB();
   db.chapters.aggregate([
     { 
       $match: { $or: matchConditions } 
