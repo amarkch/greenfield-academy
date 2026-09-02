@@ -61,10 +61,11 @@ const getChapters = async (tags) => {
     return { class: classVal, subject: subjectVal };
   }).filter(cond => cond.class && cond.subject);
 
+  console.log(matchConditions);
   // Return early if no valid tags match to prevent empty $or errors
   if (matchConditions.length === 0) return [];
 
-  const result = await db.chapters.aggregate([
+  const result = await db.collection('chapters').aggregate([
     { 
       $match: { $or: matchConditions } 
     },
@@ -86,7 +87,7 @@ const getChapters = async (tags) => {
       }
     }
   ]).toArray();
-
+  console.log(result);
   return result;
 }
 app.get('/api/get-teacher/:id', async (req, res) => {
@@ -100,7 +101,7 @@ app.get('/api/get-teacher/:id', async (req, res) => {
         error: 'Invalid teacher ID format' 
       });
     }
-
+    console.log("Working");
     const db = await connectDB();
     const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
     const subjects = await getChapters(teacher.subjects);
