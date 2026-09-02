@@ -54,12 +54,11 @@ const writeData = (data) => {
 
 // GET API: Fetch a single faculty member by _id
 
-const getChapters = (tags) => {
+const getChapters = (tags, db) => {
     const matchConditions = tags.map(tag => {
     const [, classVal, subjectVal] = tag.match(/\[(.*?)\]\[(.*?)\]/) || [];
     return { class: classVal, subject: subjectVal };
   }).filter(cond => cond.class && cond.subject);
-  const db = await connectDB();
   db.chapters.aggregate([
     { 
       $match: { $or: matchConditions } 
@@ -97,7 +96,7 @@ app.get('/api/get-teacher/:id', async (req, res) => {
 
     const db = await connectDB();
     const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
-    const subjects = await getChapters(teacher.subjects);
+    const subjects = await getChapters(teacher.subjects, db);
     if (!teacher) {
       return res.status(404).json({ 
         success: false, 
