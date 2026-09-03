@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useParams, Link } from "react-router-dom";
-import { CheckCircle2, CircleDot, Circle, ArrowLeft, Mail, GraduationCap, BriefcaseBusiness, ChevronDown, Loader2 } from "lucide-react";
+import { CheckCircle2, CircleDot, Circle, ArrowLeft, Mail, GraduationCap, BriefcaseBusiness, Users, ChevronDown, Loader2 } from "lucide-react";
 import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js";
-const host ="https://greenfield-academy-back-end.onrender.com";
-//const host ="http://localhost:3000";
+import "./FacultyDetail.css";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+
+const host = "https://greenfield-academy-back-end.onrender.com";
+//const host = "http://localhost:3000";
+
 const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },
   current: { icon: CircleDot, label: "In progress" },
@@ -15,6 +19,20 @@ const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChec
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
+}
+function formatLabel(str) {
+  if (!str) return "";
+  return str
+    .split("-")
+    .map((word) => {
+      // Keep roman numerals fully capitalized (e.g., vii -> VII)
+      if (/^[ivxlcdm]+$/i.test(word)) {
+        return word.toUpperCase();
+      }
+      // Capitalize standard words
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(" ");
 }
 
 function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingChapterId }) {
@@ -36,8 +54,8 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
       >
         <div style={{ width: 10, height: 10, borderRadius: 999, background: C.sky, flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: fontDisplay, fontSize: 16, color: C.ink }}>[Class: {subject.class}] {subject.subject}</div>
-          <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{subject.chapter}</div>
+          <div style={{ fontSize: 16, fontWeight: 900 }}>{formatLabel(subject.class)}<br/><i>{formatLabel(subject.subject)}</i></div>
+          <div style={{ fontSize: 12, fontWeight: 900, marginTop: 2 }}>{subject.chapter}</div>
         </div>
         <nav style={{ display: "flex", flexDirection: "column", border: "solid 1px #aaa", borderRadius: "5px", gap: 4 }}>
           <NavLink
@@ -45,7 +63,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
             style={({ isActive }) => ({
               display: "flex",
               alignItems: "center",
-              gap: 12,
+              gap: 8,
               padding: "10px 12px",
               borderRadius: 10,
               textDecoration: "none",
@@ -57,7 +75,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
               position: "relative",
             })}
           >
-            <span className="kaksha-nav-label">Students</span>
+            <Users size={16} />
           </NavLink>
         </nav>
         <span style={{ fontFamily: fontMono, fontSize: 12, color: C.slate }}>{subject.progress}%</span>
@@ -76,77 +94,77 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
           {subject.chapters.map((ch, i) => {
             const meta = statusMeta[ch.status];
             const Icon = meta.icon;
-            const activeColor = ch.status === "done" ? C.mint : ch.status === "current" ? C.coral : ch.status=== "pending" ? C.slate : C.marigold;
+            const activeColor = ch.status === "done" ? C.mint : ch.status === "current" ? C.coral : ch.status === "pending" ? C.slate : C.marigold;
             const isUpdating = updatingChapterId === ch._id;
 
             return (
               <div
                 key={i}
+                className="chapter-row"
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "9px 0",
                   borderTop: i === 0 ? "none" : `1px solid ${C.line}`,
                 }}
               >
-                <Icon size={16} color={activeColor} />
-                <span
-                  style={{
-                    fontFamily: fontBody,
-                    fontSize: 13,
-                    color: activeColor,
-                    fontWeight: ch.status === "current" ? 800 : 500,
-                    flex: 1,
-                  }}
-                >
-                  Ch[{i+1}]: {ch.title}
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
+                  <Icon size={16} color={activeColor} />
+                  <span
+                    style={{
+                      fontFamily: fontBody,
+                      fontSize: 13,
+                      color: activeColor,
+                      fontWeight: ch.status === "current" ? 800 : 500,
+                    }}
+                  >
+                    Ch[{i+1}]: {ch.title}
+                  </span>
+                </div>
 
-                {isUpdating ? (
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 160, gap: 6 }}>
-                    <Loader2 size={16} className="animate-spin" color={C.slate} style={{ animation: "spin 1s linear infinite" }} />
-                    <span style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, fontWeight: 600 }}>Updating...</span>
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      disabled={ch.status == "pending"}
-                      onClick={() => onStatusChange(ch._id, ch.status, "prev")}
-                      style={{
-                        padding: "7px 14px",
-                        borderRadius: 999,
-                        border: `1px solid ${C.line}`,
-                        background: ch.status != "pending" ? C.paperCard : null,
-                        color: ch.status != "pending" ? C.ink : null,
-                        fontFamily: fontBody,
-                        fontWeight: 600,
-                        fontSize: 13,
-                        cursor: "pointer",
-                      }}
-                    >
-                      &lt;
-                    </button>
-                    <span style={{ fontFamily: fontBody, fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
-                    <button
-                      disabled={ch.status == "done"}
-                      onClick={() => onStatusChange(ch._id, ch.status, "next")}
-                      style={{
-                        padding: "7px 14px",
-                        borderRadius: 999,
-                        border: `1px solid ${C.line}`,
-                        background: ch.status != "done" ? C.paperCard : null,
-                        color: ch.status != "done" ? C.ink : null,
-                        fontFamily: fontBody,
-                        fontWeight: 600,
-                        fontSize: 13,
-                        cursor: "pointer",
-                      }}
-                    >
-                      &gt;
-                    </button>
-                  </>
-                )}
+                <div className="chapter-controls">
+                  {isUpdating ? (
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 160, gap: 6 }}>
+                      <Loader2 size={16} className="animate-spin" color={C.slate} />
+                      <span style={{ fontSize: 12, color: C.slate, fontWeight: 600 }}>Updating...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        disabled={ch.status === "pending"}
+                        onClick={() => onStatusChange(ch._id, ch.status, "prev")}
+                        style={{
+                          padding: "7px 14px",
+                          borderRadius: 9,
+                          border: `1px solid ${C.line}`,
+                          background: ch.status !== "pending" ? C.paperCard : null,
+                          color: ch.status !== "pending" ? C.ink : null,
+                          fontFamily: fontBody,
+                          fontWeight: 600,
+                          fontSize: 13,
+                          cursor: "pointer",
+                        }}
+                      >
+                        &lt;
+                      </button>
+                      <span style={{ fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
+                      <button
+                        disabled={ch.status === "done"}
+                        onClick={() => onStatusChange(ch._id, ch.status, "next")}
+                        style={{
+                          padding: "7px 14px",
+                          borderRadius: 9,
+                          border: `1px solid ${C.line}`,
+                          background: ch.status !== "done" ? C.paperCard : null,
+                          color: ch.status !== "done" ? C.ink : null,
+                          fontFamily: fontBody,
+                          fontWeight: 600,
+                          fontSize: 13,
+                          cursor: "pointer",
+                        }}
+                      >
+                        &gt;
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -176,9 +194,9 @@ export default function FacultyDetail() {
 
     let newIndex;
     if (direction === "next") {
-      if (currentIndex == statusMetaSequence.length - 1) return;
+      if (currentIndex === statusMetaSequence.length - 1) return;
       newIndex = currentIndex + 1;
-    } else if (currentIndex != 0) {
+    } else if (currentIndex !== 0) {
       newIndex = currentIndex - 1;
     } else {
       newIndex = currentIndex;
@@ -222,8 +240,22 @@ export default function FacultyDetail() {
 
   if (loading) {
     return (
-      <div style={{ animation: "fadeIn 0.4s ease", fontFamily: fontBody, color: C.ink, fontSize: 15 }}>
-        Loading faculty details...
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "60vh",
+          gap: 12,
+          animation: "fadeIn 0.4s ease",
+          color: C.ink,
+          fontSize: 15,
+          fontWeight: 600,
+        }}
+      >
+        <Loader2 size={32} className="animate-spin" color={C.sky} />
+        <span>Loading faculty details...</span>
       </div>
     );
   }
@@ -231,22 +263,17 @@ export default function FacultyDetail() {
   if (!teacher) {
     return (
       <div style={{ animation: "fadeIn 0.4s ease" }}>
-        <p style={{ fontFamily: fontBody, color: C.ink, fontSize: 15 }}>We couldn't find that faculty member.</p>
-        <Link to="/faculty" style={{ fontFamily: fontBody, fontWeight: 600, color: C.ink }}>← Back to Faculty</Link>
+        <p style={{ color: C.ink, fontSize: 15, padding: 5 }}>We couldn't find that faculty member.</p>
+        <Link to="/faculty" style={{ padding: 5, fontWeight: 600, color: C.ink }}>← Back to Faculty</Link>
       </div>
     );
   }
 
   return (
     <div style={{ animation: "fadeIn 0.4s ease" }}>
-      <Link
-        to="/faculty"
-        style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: fontBody, fontWeight: 600, fontSize: 13, color: C.slate, textDecoration: "none", marginBottom: 20 }}
-      >
-        <ArrowLeft size={15} /> Back to Faculty
-      </Link>
+      <GreenfieldHeaderBar />
 
-      <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 26 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18, margin: "75px 5px 5px 5px         eeee" }}>
         <div
           style={{
             width: 72,
@@ -257,7 +284,7 @@ export default function FacultyDetail() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontFamily: fontDisplay,
+            
             fontWeight: 700,
             fontSize: 24,
             flexShrink: 0,
@@ -266,37 +293,15 @@ export default function FacultyDetail() {
           {initials(teacher.name)}
         </div>
         <div>
-          <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 24, color: C.ink, margin: 0 }}>{teacher.name}</h1>
-          <p style={{ fontFamily: fontBody, fontSize: 14, color: teacher.color, fontWeight: 600, margin: "4px 0 0" }}>{teacher.subject}</p>
+          <h1 style={{  fontWeight: 700, fontSize: 24, color: C.ink, margin: 0 }}>{teacher.name}</h1>
+          <p style={{ fontSize: 14, color: teacher.color, fontWeight: 600, margin: "4px 0 0" }}>{teacher.subject}</p>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 24 }}>
-        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 10, alignItems: "flex-start" }}>
-          <GraduationCap size={18} color={C.slate} style={{ marginTop: 2 }} />
-          <div>
-            <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate }}>Qualification</div>
-            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.qualification}</div>
-          </div>
-        </div>
-        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 10, alignItems: "flex-start" }}>
-          <BriefcaseBusiness size={18} color={C.slate} style={{ marginTop: 2 }} />
-          <div>
-            <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate }}>Phone</div>
-            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.phone}</div>
-          </div>
-        </div>
-        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 10, alignItems: "flex-start" }}>
-          <Mail size={18} color={C.slate} style={{ marginTop: 2 }} />
-          <div>
-            <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate }}>Email</div>
-            <div style={{ fontFamily: fontBody, fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.email}</div>
-          </div>
-        </div>
-      </div>
+      
 
-      <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, padding: 20 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{padding: 5 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {periods?.map((s) => (
             <SubjectAccordion
               key={`${s.class}-${s.subject}`}
@@ -307,6 +312,29 @@ export default function FacultyDetail() {
               updatingChapterId={updatingChapterId}
             />
           ))}
+        </div>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 2, margin: "24px 5px" }}>
+        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 2, alignItems: "flex-start" }}>
+          <GraduationCap size={18} color={C.slate} style={{ marginTop: 2 }} />
+          <div>
+            <div style={{ fontSize: 12, color: C.slate }}>Qualification</div>
+            <div style={{ fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.qualification}</div>
+          </div>
+        </div>
+        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 2, alignItems: "flex-start" }}>
+          <BriefcaseBusiness size={18} color={C.slate} style={{ marginTop: 2 }} />
+          <div>
+            <div style={{ fontSize: 12, color: C.slate }}>Phone</div>
+            <div style={{ fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.phone}</div>
+          </div>
+        </div>
+        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 2, alignItems: "flex-start" }}>
+          <Mail size={18} color={C.slate} style={{ marginTop: 2 }} />
+          <div>
+            <div style={{ fontSize: 12, color: C.slate }}>Email</div>
+            <div style={{ fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.email}</div>
+          </div>
         </div>
       </div>
     </div>
