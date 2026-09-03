@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useParams, Link } from "react-router-dom";
-import { CheckCircle2, CircleDot, Circle, ArrowLeft, Mail, GraduationCap, BriefcaseBusiness, ChevronDown } from "lucide-react";
+import { CheckCircle2, CircleDot, Circle, ArrowLeft, Mail, GraduationCap, BriefcaseBusiness, ChevronDown, Loader2 } from "lucide-react";
 import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js";
-
+//const host ="https://greenfield-academy-back-end.onrender.com";
+const host ="http://localhost:3000";
 const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },
   current: { icon: CircleDot, label: "In progress" },
@@ -15,23 +16,8 @@ const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChec
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
 }
-const romanToInt = (roman) => {
-  const map = { i: 1, v: 5, x: 10, l: 50, c: 100, d: 500, m: 1000 };
-  let num = 0;
-  for (let i = 0; i < roman.length; i++) {
-    let curr = map[roman[i]];
-    let next = map[roman[i + 1]];
-    if (next > curr) {
-      num += next - curr;
-      i++;
-    } else {
-      num += curr;
-    }
-  }
-  return num;
-};
 
-function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
+function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingChapterId }) {
   return (
     <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
       <button
@@ -48,7 +34,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
           textAlign: "left",
         }}
       >
-        <div style={{ width: 10, height: 10, borderRadius: 999, background: subject.color, flexShrink: 0 }} />
+        <div style={{ width: 10, height: 10, borderRadius: 999, background: C.sky, flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: fontDisplay, fontSize: 16, color: C.ink }}>[Class: {subject.class}] {subject.subject}</div>
           <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{subject.chapter}</div>
@@ -85,12 +71,14 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
       {isOpen && (
         <div style={{ padding: "0 20px 18px", animation: "fadeIn 0.25s ease", backgroundColor: "#eeeeee" }}>
           <div style={{ height: 8, borderRadius: 999, background: C.paper, border: `1px solid ${C.line}`, marginBottom: 16 }}>
-            <div style={{ width: `${subject.progress}%`, height: "100%", borderRadius: 999, background: subject.color }} />
+            <div style={{ width: `${subject.progress}%`, height: "100%", borderRadius: 999, background: C.sky }} />
           </div>
           {subject.chapters.map((ch, i) => {
             const meta = statusMeta[ch.status];
             const Icon = meta.icon;
             const activeColor = ch.status === "done" ? C.mint : ch.status === "current" ? C.coral : ch.status=== "pending" ? C.slate : C.marigold;
+            const isUpdating = updatingChapterId === ch._id;
+
             return (
               <div
                 key={i}
@@ -114,39 +102,51 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
                 >
                   Ch[{i+1}]: {ch.title}
                 </span>
-                <button
-                  onClick={() => onStatusChange(ch._id, ch.status, "prev")}
-                  style={{
-                    padding: "7px 14px",
-                    borderRadius: 999,
-                    border: `1px solid ${C.line}`,
-                    background: C.paperCard,
-                    color: C.ink,
-                    fontFamily: fontBody,
-                    fontWeight: 600,
-                    fontSize: 13,
-                    cursor: "pointer",
-                  }}
-                >
-                  &lt;
-                </button>
-                <span style={{ fontFamily: fontBody, fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
-                <button
-                  onClick={() => onStatusChange(ch._id, ch.status, "next")}
-                  style={{
-                    padding: "7px 14px",
-                    borderRadius: 999,
-                    border: `1px solid ${C.line}`,
-                    background: C.paperCard,
-                    color: C.ink,
-                    fontFamily: fontBody,
-                    fontWeight: 600,
-                    fontSize: 13,
-                    cursor: "pointer",
-                  }}
-                >
-                  &gt;
-                </button>
+
+                {isUpdating ? (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 160, gap: 6 }}>
+                    <Loader2 size={16} className="animate-spin" color={C.slate} style={{ animation: "spin 1s linear infinite" }} />
+                    <span style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, fontWeight: 600 }}>Updating...</span>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      disabled={ch.status == "pending"}
+                      onClick={() => onStatusChange(ch._id, ch.status, "prev")}
+                      style={{
+                        padding: "7px 14px",
+                        borderRadius: 999,
+                        border: `1px solid ${C.line}`,
+                        background: ch.status != "pending" ? C.paperCard : null,
+                        color: ch.status != "pending" ? C.ink : null,
+                        fontFamily: fontBody,
+                        fontWeight: 600,
+                        fontSize: 13,
+                        cursor: "pointer",
+                      }}
+                    >
+                      &lt;
+                    </button>
+                    <span style={{ fontFamily: fontBody, fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
+                    <button
+                      disabled={ch.status == "done"}
+                      onClick={() => onStatusChange(ch._id, ch.status, "next")}
+                      style={{
+                        padding: "7px 14px",
+                        borderRadius: 999,
+                        border: `1px solid ${C.line}`,
+                        background: ch.status != "done" ? C.paperCard : null,
+                        color: ch.status != "done" ? C.ink : null,
+                        fontFamily: fontBody,
+                        fontWeight: 600,
+                        fontSize: 13,
+                        cursor: "pointer",
+                      }}
+                    >
+                      &gt;
+                    </button>
+                  </>
+                )}
               </div>
             );
           })}
@@ -156,16 +156,15 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
   );
 }
 
-
-
 export default function FacultyDetail() {
   const { id } = useParams();
   const [teacher, setTeacher] = useState(null);
   const [periods, setPeriods] = useState(null);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState(null);
+  const [updatingChapterId, setUpdatingChapterId] = useState(null);
 
-   useEffect(() => {
+  useEffect(() => {
     setLoading(true);
     relodTheChapterDetails();
   }, [id]);
@@ -173,55 +172,54 @@ export default function FacultyDetail() {
   const handleStatusChange = async (chapterId, status, direction) => {
     const currentStatus = status;
     const currentIndex = statusMetaSequence.indexOf(currentStatus);
-    console.log(chapterId);
     if (currentIndex === -1) return;
 
     let newIndex;
-    if (direction === "next" && currentIndex != statusMetaSequence.length-1) {
-      newIndex = (currentIndex + 1);
-    } else if(currentIndex != 0){
-      newIndex = (currentIndex - 1);
+    if (direction === "next") {
+      if (currentIndex == statusMetaSequence.length - 1) return;
+      newIndex = currentIndex + 1;
+    } else if (currentIndex != 0) {
+      newIndex = currentIndex - 1;
     } else {
       newIndex = currentIndex;
     }
 
     const newStatus = statusMetaSequence[newIndex];
-    
+
     try {
-      // Dummy API call simulation
-      await fetch(`https://greenfield-academy-back-end.onrender.com/api/update-chapter-status`, {
+      setUpdatingChapterId(chapterId);
+      await fetch(`${host}/api/update-chapter-status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chapterId: chapterId, chapterStatus: newStatus }),
-      }).then(res => res.json())
-      .then(() => {
-        relodTheChapterDetails();
-      });
-      
-      
+      })
+        .then((res) => res.json())
+        .then(() => {
+          relodTheChapterDetails();
+        });
     } catch (err) {
       console.error("Failed to update chapter status in backend:", err);
     }
   };
+
   const relodTheChapterDetails = () => {
-  fetch(`https://greenfield-academy-back-end.onrender.com/api/get-teacher/${id}`)
+    fetch(`${host}/api/get-teacher/${id}`)
       .then((res) => res.json())
       .then(({ data }) => {
-       
-          setTeacher(data.teacher);
-          setPeriods(data.periods);
-          
-          if (data?.periods && data.periods.length > 0) {
-            setOpenId(data.periods[0].class+"-"+data.periods[0].subject);
-          }
-          setLoading(false);
-        
+        setTeacher(data.teacher);
+        setPeriods(data.periods);
+
+        if (data?.periods && data.periods.length > 0 && openId === null) {
+          setOpenId(data.periods[0].class + "-" + data.periods[0].subject);
+        }
+        setLoading(false);
+        setUpdatingChapterId(null);
       })
       .catch((err) => {
         console.error("Failed to fetch teacher data:", err);
       });
+  };
 
-}
   if (loading) {
     return (
       <div style={{ animation: "fadeIn 0.4s ease", fontFamily: fontBody, color: C.ink, fontSize: 15 }}>
@@ -304,8 +302,9 @@ export default function FacultyDetail() {
               key={`${s.class}-${s.subject}`}
               subject={s}
               isOpen={openId === `${s.class}-${s.subject}`}
-              onToggle={() => setOpenId(openId === `${s.class}-${s.subject}` ? null : `${s.class}-${s.subject}`)}
+              onToggle={() => setOpenId(`${s.class}-${s.subject}`)}
               onStatusChange={handleStatusChange}
+              updatingChapterId={updatingChapterId}
             />
           ))}
         </div>

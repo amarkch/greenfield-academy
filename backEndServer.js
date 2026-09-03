@@ -85,7 +85,32 @@ const getChapters = async (tags) => {
       periodId: {
         $concat: ["[", "$_id.class", "][", "$_id.subject", "]"]
       },
-      chapters: 1
+      chapters: 1,
+      progress: {
+        $cond: {
+          if: { $eq: [{ $size: "$chapters" }, 0] },
+          then: 0,
+          else: {
+            $multiply: [
+              {
+                $divide: [
+                  {
+                    $size: {
+                      $filter: {
+                        input: "$chapters",
+                        as: "chap",
+                        cond: { $eq: ["$$chap.status", "done"] }
+                      }
+                    }
+                  },
+                  { $size: "$chapters" }
+                ]
+              },
+              100
+            ]
+          }
+        }
+      }
     }
   },
   {
