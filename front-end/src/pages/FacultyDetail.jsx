@@ -170,7 +170,7 @@ export default function FacultyDetail() {
     
     try {
       // Dummy API call simulation
-      await fetch(`http://localhost:3000/api/update-chapter-status`, {
+      await fetch(`https://greenfield-academy-back-end.onrender.com/api/update-chapter-status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chapterId: chapterId, chapterStatus: newStatus }),
