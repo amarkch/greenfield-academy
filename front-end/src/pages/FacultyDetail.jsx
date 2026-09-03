@@ -6,14 +6,17 @@ import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js"
 const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },
   current: { icon: CircleDot, label: "In progress" },
-  upcoming: { icon: Circle, label: "Not started" },
+  pending: { icon: Circle, label: "Not started" },
+  homeworkGiven: { icon: Circle, label: "Not started" },
+  homeworkChecking: { icon: Circle, label: "Not started" },
 };
+const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChecking", "done"];
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
 }
 
-function SubjectAccordion({ subject, isOpen, onToggle }) {
+function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
   return (
     <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
       <button
@@ -32,7 +35,7 @@ function SubjectAccordion({ subject, isOpen, onToggle }) {
       >
         <div style={{ width: 10, height: 10, borderRadius: 999, background: subject.color, flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: fontDisplay, fontSize: 16, color: C.ink }}>[Class: {subject.class}] {subject.name}</div>
+          <div style={{ fontFamily: fontDisplay, fontSize: 16, color: C.ink }}>[Class: {subject.class}] {subject.subject}</div>
           <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{subject.chapter}</div>
         </div>
         <nav style={{ display: "flex", flexDirection: "column", border: "solid 1px #aaa", borderRadius: "5px", gap: 4 }}>
@@ -89,14 +92,14 @@ function SubjectAccordion({ subject, isOpen, onToggle }) {
                   style={{
                     fontFamily: fontBody,
                     fontSize: 13,
-                    color: ch.status === "upcoming" ? C.slate : C.ink,
+                    color: ch.status === "pending" ? C.slate : C.ink,
                     flex: 1,
                   }}
                 >
-                  {ch.name}
+                  {ch.title}
                 </span>
                 <button
-                  onClick={() => {}}
+                  onClick={() => onStatusChange(ch.id, ch.status, "prev")}
                   style={{
                     padding: "7px 14px",
                     borderRadius: 999,
@@ -111,9 +114,9 @@ function SubjectAccordion({ subject, isOpen, onToggle }) {
                 >
                   &lt;
                 </button>
-                <span style={{ fontFamily: fontBody, fontSize: 11, color: activeColor, fontWeight: 600 }}>{meta.label}</span>
+                <span style={{ fontFamily: fontBody, fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
                 <button
-                  onClick={() => {}}
+                  onClick={() => onStatusChange(ch.id, ch.status, "next")}
                   style={{
                     padding: "7px 14px",
                     borderRadius: 999,
@@ -140,6 +143,7 @@ function SubjectAccordion({ subject, isOpen, onToggle }) {
 export default function FacultyDetail() {
   const { id } = useParams();
   const [teacher, setTeacher] = useState(null);
+  const [periods, setPeriods] = useState(null);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState(null);
 
@@ -149,11 +153,13 @@ export default function FacultyDetail() {
 
     fetch(`https://greenfield-academy-back-end.onrender.com/api/get-teacher/${id}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then(({ data }) => {
         if (isMounted) {
-          setTeacher(data);
-          if (data?.subjects && data.subjects.length > 0) {
-            setOpenId(data.subjects[0].id);
+          setTeacher(data.teacher);
+          setPeriods(data.periods);
+          
+          if (data?.periods && data.periods.length > 0) {
+            setOpenId(data.periods[0].id);
           }
           setLoading(false);
         }
@@ -169,6 +175,53 @@ export default function FacultyDetail() {
       isMounted = false;
     };
   }, [id]);
+
+  const handleStatusChange = async (id, status, direction) => {
+    
+    const subject = periods.find((s) => (s.class === nameOfTheClass && s.subject == nameOfTheSubject));
+    
+    if (!subject) return;
+    console.log(subject);
+    const currentStatus = status;
+    const currentIndex = statusMetaSequence.indexOf(currentStatus);
+    console.log(currentStatus);
+    if (currentIndex === -1) return;
+
+    let newIndex;
+    if (direction === "next" || currentIndex != statusMetaSequence.length()-1) {
+      newIndex = (currentIndex + 1);
+    } else if(currentIndex != 0){
+      newIndex = (currentIndex - 1);
+    }
+    const newStatus = statusMetaSequence[newIndex];
+    console.log(subjectId);
+    try {
+      // Dummy API call simulation
+      //await new Promise((resolve) => setTimeout(resolve, 250));
+      // In production, replace with:
+      // await fetch(`https://greenfield-academy-back-end.onrender.com/api/update-chapter-status`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ subjectId, chapterIndex, status: newStatus }),
+      // });
+      
+      setPeriods((prevPeriods) =>
+        prevPeriods.map((subj) => {
+          if (!(subj.class == nameOfTheClass && subj.subject == nameOfTheSubject)) return subj;
+          const updatedChapters = [...subj.chapters];
+          console.log(subjectId);
+          updatedChapters[chapterIndex] = {
+            ...updatedChapters[chapterIndex],
+            status: newStatus,
+          };
+          console.log("------------");
+          return { ...subj, chapters: updatedChapters };
+        })
+      );
+    } catch (err) {
+      console.error("Failed to update chapter status in backend:", err);
+    }
+  };
 
   if (loading) {
     return (
@@ -247,8 +300,14 @@ export default function FacultyDetail() {
 
       <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, padding: 20 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {teacher.subjects?.map((s) => (
-            <SubjectAccordion key={s.id} subject={s} isOpen={openId === s.id} onToggle={() => setOpenId(openId === s.id ? null : s.id)} />
+          {periods?.map((s) => (
+            <SubjectAccordion
+              key={s.id}
+              subject={s}
+              isOpen={openId === s.id}
+              onToggle={() => setOpenId(openId === s.id ? null : s.id)}
+              onStatusChange={handleStatusChange}
+            />
           ))}
         </div>
       </div>

@@ -104,7 +104,7 @@ app.get('/api/get-teacher/:id', async (req, res) => {
     console.log("Working");
     const db = await connectDB();
     const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
-    const subjects = await getChapters(teacher.subjects);
+    const periods = await getChapters(teacher.periods);
     if (!teacher) {
       return res.status(404).json({ 
         success: false, 
@@ -114,7 +114,7 @@ app.get('/api/get-teacher/:id', async (req, res) => {
 
     res.status(200).json({ 
       success: true, 
-      data: {teacher, subjects} 
+      data: {teacher, periods} 
     });
   } catch (error) {
     console.error('Database retrieval error:', error);
