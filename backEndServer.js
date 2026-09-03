@@ -135,6 +135,8 @@ app.get('/api/data', (req, res) => {
 });
 
 // POST API: Write/Append a new JSON object
+
+
 app.post('/api/data', (req, res) => {
   try {
     const newEntry = req.body;
@@ -209,6 +211,29 @@ app.post('/api/insert-teacher-data', async (req, res) => {
         "phone": phone,
         "email": email
       });
+    res.status(201).json({ 
+      success: true, 
+      insertedId: result.insertedId 
+    });
+  } catch (error) {
+    console.error('Database insertion error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to insert teacher data' 
+    });
+  }
+});
+
+
+app.post('/api/update-chapter-status', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const chapterId = req.body.id;
+    const chapterStatus = req.body.status; // Fixed: was previously assigning req.body.username twice
+    await db.collection("chapter").updateOne(
+      { _id: new ObjectId(chapterId) },
+      { $set: { status: chapterStatus } }
+    );
     res.status(201).json({ 
       success: true, 
       insertedId: result.insertedId 

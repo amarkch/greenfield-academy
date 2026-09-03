@@ -178,10 +178,7 @@ export default function FacultyDetail() {
 
   const handleStatusChange = async (id, status, direction) => {
     
-    const subject = periods.find((s) => (s.class === nameOfTheClass && s.subject == nameOfTheSubject));
     
-    if (!subject) return;
-    console.log(subject);
     const currentStatus = status;
     const currentIndex = statusMetaSequence.indexOf(currentStatus);
     console.log(currentStatus);
@@ -194,30 +191,17 @@ export default function FacultyDetail() {
       newIndex = (currentIndex - 1);
     }
     const newStatus = statusMetaSequence[newIndex];
-    console.log(subjectId);
+    
     try {
       // Dummy API call simulation
-      //await new Promise((resolve) => setTimeout(resolve, 250));
-      // In production, replace with:
-      // await fetch(`https://greenfield-academy-back-end.onrender.com/api/update-chapter-status`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ subjectId, chapterIndex, status: newStatus }),
-      // });
       
-      setPeriods((prevPeriods) =>
-        prevPeriods.map((subj) => {
-          if (!(subj.class == nameOfTheClass && subj.subject == nameOfTheSubject)) return subj;
-          const updatedChapters = [...subj.chapters];
-          console.log(subjectId);
-          updatedChapters[chapterIndex] = {
-            ...updatedChapters[chapterIndex],
-            status: newStatus,
-          };
-          console.log("------------");
-          return { ...subj, chapters: updatedChapters };
-        })
-      );
+      await fetch(`https://greenfield-academy-back-end.onrender.com/api/update-chapter-status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      
+      
     } catch (err) {
       console.error("Failed to update chapter status in backend:", err);
     }
