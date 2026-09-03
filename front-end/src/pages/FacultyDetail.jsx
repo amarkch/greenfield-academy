@@ -7,14 +7,29 @@ const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },
   current: { icon: CircleDot, label: "In progress" },
   pending: { icon: Circle, label: "Not started" },
-  homeworkGiven: { icon: Circle, label: "Not started" },
-  homeworkChecking: { icon: Circle, label: "Not started" },
+  homeworkGiven: { icon: Circle, label: "Homework Given" },
+  homeworkChecking: { icon: Circle, label: "Homework Checking" },
 };
 const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChecking", "done"];
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
 }
+const romanToInt = (roman) => {
+  const map = { i: 1, v: 5, x: 10, l: 50, c: 100, d: 500, m: 1000 };
+  let num = 0;
+  for (let i = 0; i < roman.length; i++) {
+    let curr = map[roman[i]];
+    let next = map[roman[i + 1]];
+    if (next > curr) {
+      num += next - curr;
+      i++;
+    } else {
+      num += curr;
+    }
+  }
+  return num;
+};
 
 function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
   return (
@@ -75,7 +90,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
           {subject.chapters.map((ch, i) => {
             const meta = statusMeta[ch.status];
             const Icon = meta.icon;
-            const activeColor = ch.status === "done" ? C.mint : ch.status === "current" ? subject.color : C.slate;
+            const activeColor = ch.status === "done" ? C.mint : ch.status === "current" ? C.coral : ch.status=== "pending" ? C.slate : C.marigold;
             return (
               <div
                 key={i}
@@ -92,11 +107,12 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
                   style={{
                     fontFamily: fontBody,
                     fontSize: 13,
-                    color: ch.status === "pending" ? C.slate : C.ink,
+                    color: activeColor,
+                    fontWeight: ch.status === "current" ? 800 : 500,
                     flex: 1,
                   }}
                 >
-                  {ch.title}
+                  Ch[{i+1}]: {ch.title}
                 </span>
                 <button
                   onClick={() => onStatusChange(ch._id, ch.status, "prev")}
@@ -112,7 +128,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
                     cursor: "pointer",
                   }}
                 >
-                  &lt;{ch.id}{ch.status}
+                  &lt;
                 </button>
                 <span style={{ fontFamily: fontBody, fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
                 <button
@@ -161,11 +177,14 @@ export default function FacultyDetail() {
     if (currentIndex === -1) return;
 
     let newIndex;
-    if (direction === "next" || currentIndex != statusMetaSequence.length()-1) {
+    if (direction === "next" && currentIndex != statusMetaSequence.length-1) {
       newIndex = (currentIndex + 1);
     } else if(currentIndex != 0){
       newIndex = (currentIndex - 1);
+    } else {
+      newIndex = currentIndex;
     }
+
     const newStatus = statusMetaSequence[newIndex];
     
     try {
@@ -193,7 +212,7 @@ export default function FacultyDetail() {
           setPeriods(data.periods);
           
           if (data?.periods && data.periods.length > 0) {
-            setOpenId(data.periods[0].id);
+            setOpenId(data.periods[0].class+"-"+data.periods[0].subject);
           }
           setLoading(false);
         

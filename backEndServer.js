@@ -61,33 +61,37 @@ const getChapters = async (tags) => {
     return { class: classVal, subject: subjectVal };
   }).filter(cond => cond.class && cond.subject);
 
-  console.log(matchConditions);
   // Return early if no valid tags match to prevent empty $or errors
   if (matchConditions.length === 0) return [];
 
   const result = await db.collection('chapters').aggregate([
-    { 
-      $match: { $or: matchConditions } 
-    },
-    {
-      $group: {
-        _id: { 
-          class: "$class", 
-          subject: "$subject" 
-        },
-        chapters: { $push: "$$ROOT" }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        class: "$_id.class",
-        subject: "$_id.subject",
-        chapters: 1
-      }
+  { 
+    $match: { $or: matchConditions } 
+  },
+  {
+    $group: {
+      _id: { 
+        class: "$class", 
+        subject: "$subject" 
+      },
+      chapters: { $push: "$$ROOT" }
     }
-  ]).toArray();
-  console.log(result);
+  },
+  {
+    $project: {
+      _id: 0,
+      class: "$_id.class",
+      subject: "$_id.subject",
+      periodId: {
+        $concat: ["[", "$_id.class", "][", "$_id.subject", "]"]
+      },
+      chapters: 1
+    }
+  },
+  {
+    $sort: { periodId: 1 }
+  }
+]).toArray();
   return result;
 }
 app.get('/api/get-teacher/:id', async (req, res) => {
@@ -101,7 +105,6 @@ app.get('/api/get-teacher/:id', async (req, res) => {
         error: 'Invalid teacher ID format' 
       });
     }
-    console.log("Working");
     const db = await connectDB();
     const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
     const periods = await getChapters(teacher.periods);
