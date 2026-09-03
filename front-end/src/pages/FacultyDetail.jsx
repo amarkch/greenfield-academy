@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useParams, Link } from "react-router-dom";
 import { CheckCircle2, CircleDot, Circle, ArrowLeft, Mail, GraduationCap, BriefcaseBusiness, ChevronDown, Loader2 } from "lucide-react";
 import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js";
-//const host ="https://greenfield-academy-back-end.onrender.com";
-const host ="http://localhost:3000";
+const host ="https://greenfield-academy-back-end.onrender.com";
+//const host ="http://localhost:3000";
 const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },
   current: { icon: CircleDot, label: "In progress" },
