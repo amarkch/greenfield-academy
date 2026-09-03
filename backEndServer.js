@@ -235,8 +235,7 @@ app.post('/api/update-chapter-status', async (req, res) => {
       { $set: { status: chapterStatus } }
     );
     res.status(201).json({ 
-      success: true, 
-      insertedId: result.insertedId 
+      success: true
     });
   } catch (error) {
     console.error('Database insertion error:', error);
