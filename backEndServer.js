@@ -228,10 +228,10 @@ app.post('/api/insert-teacher-data', async (req, res) => {
 app.post('/api/update-chapter-status', async (req, res) => {
   try {
     const db = await connectDB();
-    const chapterId = req.body.id;
-    const chapterStatus = req.body.status; // Fixed: was previously assigning req.body.username twice
-    await db.collection("chapters").updateOne(
-      { _id: new ObjectId(chapterId) },
+    const chapterId = req.body.chapterId;
+    const chapterStatus = req.body.chapterStatus; // Fixed: was previously assigning req.body.username twice
+    const reas = await db.collection("chapters").updateOne(
+      { _id: chapterId },
       { $set: { status: chapterStatus } }
     );
     res.status(201).json({ 
@@ -248,9 +248,6 @@ app.post('/api/update-chapter-status', async (req, res) => {
 
 app.get('/api/create-file/:a', async (req, res) => {
   const { filename, content } = {filename: "fa.text", content: req.params.a};
-  console.log(content);
-  
-
   try {
     // Sanitize filename to prevent directory traversal vulnerabilities
     const safeFilename = path.basename(filename);

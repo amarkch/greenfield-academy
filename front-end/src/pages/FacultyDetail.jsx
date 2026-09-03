@@ -140,6 +140,8 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
   );
 }
 
+
+
 export default function FacultyDetail() {
   const { id } = useParams();
   const [teacher, setTeacher] = useState(null);
@@ -147,38 +149,12 @@ export default function FacultyDetail() {
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState(null);
 
-  useEffect(() => {
-    let isMounted = true;
+   useEffect(() => {
     setLoading(true);
-
-    fetch(`https://greenfield-academy-back-end.onrender.com/api/get-teacher/${id}`)
-      .then((res) => res.json())
-      .then(({ data }) => {
-        if (isMounted) {
-          setTeacher(data.teacher);
-          setPeriods(data.periods);
-          
-          if (data?.periods && data.periods.length > 0) {
-            setOpenId(data.periods[0].id);
-          }
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to fetch teacher data:", err);
-        if (isMounted) {
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
+    relodTheChapterDetails();
   }, [id]);
 
   const handleStatusChange = async (chapterId, status, direction) => {
-    
-    
     const currentStatus = status;
     const currentIndex = statusMetaSequence.indexOf(currentStatus);
     console.log(chapterId);
@@ -194,11 +170,13 @@ export default function FacultyDetail() {
     
     try {
       // Dummy API call simulation
-      
-      await fetch(`https://greenfield-academy-back-end.onrender.com/api/update-chapter-status`, {
+      await fetch(`http://localhost:3000/api/update-chapter-status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chapterId: chapterId, chapterStatus: newStatus }),
+      }).then(res => res.json())
+      .then(() => {
+        relodTheChapterDetails();
       });
       
       
@@ -206,7 +184,25 @@ export default function FacultyDetail() {
       console.error("Failed to update chapter status in backend:", err);
     }
   };
+  const relodTheChapterDetails = () => {
+  fetch(`https://greenfield-academy-back-end.onrender.com/api/get-teacher/${id}`)
+      .then((res) => res.json())
+      .then(({ data }) => {
+       
+          setTeacher(data.teacher);
+          setPeriods(data.periods);
+          
+          if (data?.periods && data.periods.length > 0) {
+            setOpenId(data.periods[0].id);
+          }
+          setLoading(false);
+        
+      })
+      .catch((err) => {
+        console.error("Failed to fetch teacher data:", err);
+      });
 
+}
   if (loading) {
     return (
       <div style={{ animation: "fadeIn 0.4s ease", fontFamily: fontBody, color: C.ink, fontSize: 15 }}>
@@ -286,10 +282,10 @@ export default function FacultyDetail() {
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {periods?.map((s) => (
             <SubjectAccordion
-              key={s.id}
+              key={`${s.class}-${s.subject}`}
               subject={s}
-              isOpen={openId === s.id}
-              onToggle={() => setOpenId(openId === s.id ? null : s.id)}
+              isOpen={openId === `${s.class}-${s.subject}`}
+              onToggle={() => setOpenId(openId === `${s.class}-${s.subject}` ? null : `${s.class}-${s.subject}`)}
               onStatusChange={handleStatusChange}
             />
           ))}
