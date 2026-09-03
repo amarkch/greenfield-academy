@@ -99,7 +99,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
                   {ch.title}
                 </span>
                 <button
-                  onClick={() => onStatusChange(ch.id, ch.status, "prev")}
+                  onClick={() => onStatusChange(ch._id, ch.status, "prev")}
                   style={{
                     padding: "7px 14px",
                     borderRadius: 999,
@@ -112,11 +112,11 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange }) {
                     cursor: "pointer",
                   }}
                 >
-                  &lt;
+                  &lt;{ch.id}{ch.status}
                 </button>
                 <span style={{ fontFamily: fontBody, fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
                 <button
-                  onClick={() => onStatusChange(ch.id, ch.status, "next")}
+                  onClick={() => onStatusChange(ch._id, ch.status, "next")}
                   style={{
                     padding: "7px 14px",
                     borderRadius: 999,
@@ -176,12 +176,12 @@ export default function FacultyDetail() {
     };
   }, [id]);
 
-  const handleStatusChange = async (id, status, direction) => {
+  const handleStatusChange = async (chapterId, status, direction) => {
     
     
     const currentStatus = status;
     const currentIndex = statusMetaSequence.indexOf(currentStatus);
-    console.log(currentStatus);
+    console.log(chapterId);
     if (currentIndex === -1) return;
 
     let newIndex;
@@ -198,7 +198,7 @@ export default function FacultyDetail() {
       await fetch(`https://greenfield-academy-back-end.onrender.com/api/update-chapter-status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, status: newStatus }),
+        body: JSON.stringify({ chapterId: chapterId, chapterStatus: newStatus }),
       });
       
       

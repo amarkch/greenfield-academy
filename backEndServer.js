@@ -230,7 +230,7 @@ app.post('/api/update-chapter-status', async (req, res) => {
     const db = await connectDB();
     const chapterId = req.body.id;
     const chapterStatus = req.body.status; // Fixed: was previously assigning req.body.username twice
-    await db.collection("chapter").updateOne(
+    await db.collection("chapters").updateOne(
       { _id: new ObjectId(chapterId) },
       { $set: { status: chapterStatus } }
     );
