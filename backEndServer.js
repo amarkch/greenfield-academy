@@ -50,10 +50,6 @@ const writeData = (data) => {
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
 };
 
-// GET API: Read JSON objects
-
-// GET API: Fetch a single faculty member by _id
-
 const getChapters = async (tags) => {
   const db = await connectDB();
   const matchConditions = tags.map(tag => {
@@ -119,6 +115,7 @@ const getChapters = async (tags) => {
 ]).toArray();
   return result;
 }
+
 app.get('/api/get-teacher/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -162,9 +159,6 @@ app.get('/api/data', (req, res) => {
   }
 });
 
-// POST API: Write/Append a new JSON object
-
-
 app.post('/api/data', (req, res) => {
   try {
     const newEntry = req.body;
@@ -182,11 +176,6 @@ app.post('/api/data', (req, res) => {
     res.status(500).json({ success: false, message: 'Error saving data' });
   }
 });
-
-
-
-
-
 
 // Initialize client once outside the route handler
 const client = new MongoClient(uri, {
@@ -221,24 +210,22 @@ app.get('/api/get-teachers-list', async (req, res) => {
   }
 });
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 app.post('/api/insert-teacher-data', async (req, res) => {
   try {
     const db = await connectDB();
     const name = req.body.name;
-      const subjects = req.body.subjects; // Fixed: was previously assigning req.body.username twice
-      const qualification = req.body.qualification;
-      const phone = req.body.phone;
-      const email = req.body.email;
+    const subjects = req.body.subjects;
+    const qualification = req.body.qualification;
+    const phone = req.body.phone;
+    const email = req.body.email;
 
-      // Crucial: Add 'await' so the query finishes before the client closes
-      const result = await client.db("gfa").collection("faculty").insertOne({
-        "name": name,
-        "subjects": subjects,
-        "qualification": qualification,
-        "phone": phone,
-        "email": email
-      });
+    const result = await db.collection("faculty").insertOne({
+      "name": name,
+      "subjects": subjects,
+      "qualification": qualification,
+      "phone": phone,
+      "email": email
+    });
     res.status(201).json({ 
       success: true, 
       insertedId: result.insertedId 
@@ -252,13 +239,40 @@ app.post('/api/insert-teacher-data', async (req, res) => {
   }
 });
 
+// NEW API: Insert Student Data
+app.post('/api/insert-student-data', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { name, className, rollNumber, guardianName, phone, email } = req.body;
+
+    const result = await db.collection("students").insertOne({
+      name,
+      className,
+      rollNumber,
+      guardianName,
+      phone,
+      email
+    });
+
+    res.status(201).json({ 
+      success: true, 
+      insertedId: result.insertedId 
+    });
+  } catch (error) {
+    console.error('Database insertion error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to insert student data' 
+    });
+  }
+});
 
 app.post('/api/update-chapter-status', async (req, res) => {
   try {
     const db = await connectDB();
     const chapterId = req.body.chapterId;
-    const chapterStatus = req.body.chapterStatus; // Fixed: was previously assigning req.body.username twice
-    const reas = await db.collection("chapters").updateOne(
+    const chapterStatus = req.body.chapterStatus;
+    await db.collection("chapters").updateOne(
       { _id: chapterId },
       { $set: { status: chapterStatus } }
     );
@@ -269,7 +283,7 @@ app.post('/api/update-chapter-status', async (req, res) => {
     console.error('Database insertion error:', error);
     res.status(500).json({ 
       success: false, 
-      error: 'Failed to insert teacher data' 
+      error: 'Failed to update chapter status' 
     });
   }
 });
@@ -277,7 +291,6 @@ app.post('/api/update-chapter-status', async (req, res) => {
 app.get('/api/create-file/:a', async (req, res) => {
   const { filename, content } = {filename: "fa.text", content: req.params.a};
   try {
-    // Sanitize filename to prevent directory traversal vulnerabilities
     const safeFilename = path.basename(filename);
     const filePath = path.join('./', safeFilename);
 
@@ -297,7 +310,7 @@ app.get('/', (req, res) => {
   try {
     res.status(200).json({ success: true, message: 'Greenfield is up and running'});
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error saving data' });
+    res.status(500).json({ success: false, message: 'Error checking status' });
   }
 });
 
