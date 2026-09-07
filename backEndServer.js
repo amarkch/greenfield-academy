@@ -50,77 +50,70 @@ const writeData = (data) => {
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf8');
 };
 
-const getChapters = async (tags) => {
+const getChapters = async (teacherId) => {
   const db = await connectDB();
-  const matchConditions = tags.map(tag => {
-    const [, classVal, subjectVal] = tag.match(/\[(.*?)\]\[(.*?)\]/) || [];
-    return { class: classVal, subject: subjectVal };
-  }).filter(cond => cond.class && cond.subject);
-
-  // Return early if no valid tags match to prevent empty $or errors
-  if (matchConditions.length === 0) return [];
-
+  
   const result = await db.collection('chapters').aggregate([
-  { 
-    $match: { $or: matchConditions } 
-  },
-  {
-    $group: {
-      _id: { 
-        class: "$class", 
-        subject: "$subject" 
-      },
-      chapters: { $push: "$$ROOT" }
-    }
-  },
-  {
-    $project: {
-      _id: 0,
-      class: "$_id.class",
-      subject: "$_id.subject",
-      periodId: {
-        $concat: ["[", "$_id.class", "][", "$_id.subject", "]"]
-      },
-      chapters: 1,
-      progress: {
-        $cond: {
-          if: { $eq: [{ $size: "$chapters" }, 0] },
-          then: 0,
-          else: {
-            $multiply: [
-              {
-                $divide: [
-                  {
-                    $size: {
-                      $filter: {
-                        input: "$chapters",
-                        as: "chap",
-                        cond: { $eq: ["$$chap.status", "done"] }
+    { 
+      $match: { teacherId: teacherId } 
+    },
+    {
+      $group: {
+        _id: { 
+          class: "$class", 
+          subject: "$subject" 
+        },
+        chapters: { $push: "$$ROOT" }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        class: "$_id.class",
+        subject: "$_id.subject",
+        periodId: {
+          $concat: ["[", "$_id.class", "][", "$_id.subject", "]"]
+        },
+        chapters: 1,
+        progress: {
+          $cond: {
+            if: { $eq: [{ $size: "$chapters" }, 0] },
+            then: 0,
+            else: {
+              $multiply: [
+                {
+                  $divide: [
+                    {
+                      $size: {
+                        $filter: {
+                          input: "$chapters",
+                          as: "chap",
+                          cond: { $eq: ["$$chap.status", "done"] }
+                        }
                       }
-                    }
-                  },
-                  { $size: "$chapters" }
-                ]
-              },
-              100
-            ]
+                    },
+                    { $size: "$chapters" }
+                  ]
+                },
+                100
+              ]
+            }
           }
         }
       }
+    },
+    {
+      $sort: { periodId: 1 }
     }
-  },
-  {
-    $sort: { periodId: 1 }
-  }
-]).toArray();
+  ]).toArray();
+  
   return result;
-}
+};
 
 app.get('/api/get-teacher/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate if the provided ID is a valid MongoDB ObjectId
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({ 
         success: false, 
@@ -135,11 +128,13 @@ app.get('/api/get-teacher/:id', async (req, res) => {
         error: 'Teacher not found' 
       });
     }
-    const periods = await getChapters(teacher.periods);
+    
+    // Pass the teacher's string ID directly to query chapters by teacherId
+    const periods = await getChapters(id);
 
     res.status(200).json({ 
       success: true, 
-      data: {teacher, periods} 
+      data: { teacher, periods } 
     });
   } catch (error) {
     console.error('Database retrieval error:', error);
