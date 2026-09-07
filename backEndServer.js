@@ -129,13 +129,13 @@ app.get('/api/get-teacher/:id', async (req, res) => {
     }
     const db = await connectDB();
     const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
-    const periods = await getChapters(teacher.periods);
     if (!teacher) {
       return res.status(404).json({ 
         success: false, 
         error: 'Teacher not found' 
       });
     }
+    const periods = await getChapters(teacher.periods);
 
     res.status(200).json({ 
       success: true, 
@@ -239,7 +239,7 @@ app.post('/api/insert-teacher-data', async (req, res) => {
   }
 });
 
-// NEW API: Insert Student Data
+// Insert Student Data
 app.post('/api/insert-student-data', async (req, res) => {
   try {
     const db = await connectDB();
@@ -267,20 +267,57 @@ app.post('/api/insert-student-data', async (req, res) => {
   }
 });
 
+// NEW API: Insert Subject and Chapters Data
+app.post('/api/insert-subject-data', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { subjectName, className, chapters } = req.body;
+
+    if (!subjectName || !className || !chapters || !Array.isArray(chapters) || chapters.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid payload or missing required fields' 
+      });
+    }
+
+    // Map each chapter string into a document matching the chapters collection schema
+    const chapterDocuments = chapters.map(chapterTitle => ({
+      class: className,
+      subject: subjectName,
+      name: chapterTitle,
+      status: 'pending'
+    }));
+
+    const result = await db.collection("chapters").insertMany(chapterDocuments);
+
+    res.status(201).json({ 
+      success: true, 
+      insertedCount: result.insertedCount,
+      insertedIds: result.insertedIds 
+    });
+  } catch (error) {
+    console.error('Database insertion error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to insert subject data' 
+    });
+  }
+});
+
 app.post('/api/update-chapter-status', async (req, res) => {
   try {
     const db = await connectDB();
     const chapterId = req.body.chapterId;
     const chapterStatus = req.body.chapterStatus;
     await db.collection("chapters").updateOne(
-      { _id: chapterId },
+      { _id: new ObjectId(chapterId) },
       { $set: { status: chapterStatus } }
     );
     res.status(201).json({ 
-      success: true
+      success: true 
     });
   } catch (error) {
-    console.error('Database insertion error:', error);
+    console.error('Database update error:', error);
     res.status(500).json({ 
       success: false, 
       error: 'Failed to update chapter status' 
