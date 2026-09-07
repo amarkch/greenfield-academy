@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
-const CLASS_SUBJECT_MAP = {
-  "class-i": ["Mathematics", "English", "Environmental Studies", "Hindi"],
-  "class-ii": ["Mathematics", "English", "Environmental Studies", "Hindi"],
-  "class-iii": ["Mathematics", "English", "Science", "Social Studies", "Hindi"],
-  "class-iv": ["Mathematics", "English", "Science", "Social Studies", "Hindi"],
-  "class-v": ["Mathematics", "English", "Science", "Social Science", "Geography", "Hindi"],
-  "class-vi": ["Mathematics", "English", "Science", "Social Science", "History", "Geography", "Computer Science", "Hindi"],
-  "class-vii": ["Mathematics", "English", "Science", "Social Science", "History", "Geography", "Computer Science", "Hindi"],
-  "class-viii": ["Mathematics", "English", "Science", "Social Science", "History", "Geography", "Computer Science", "Hindi"],
-  "class-ix": ["Mathematics", "English", "Science", "Physics", "Chemistry", "Biology", "Social Science", "History", "Computer Science"],
-  "class-x": ["Mathematics", "English", "Science", "Physics", "Chemistry", "Biology", "Social Science", "History", "Computer Science"]
-};
-
-const CLASS_OPTIONS = Object.keys(CLASS_SUBJECT_MAP);
+const CLASS_OPTIONS = [
+  "class-i",
+  "class-ii",
+  "class-iii",
+  "class-iv",
+  "class-v",
+  "class-vi",
+  "class-vii",
+  "class-viii",
+  "class-ix",
+  "class-x"
+];
 
 function InsertTeacherData() {
   const [formData, setFormData] = useState({
@@ -26,7 +24,6 @@ function InsertTeacherData() {
     classTeacherOf: ''
   });
 
-  const [subjects, setSubjects] = useState([{ className: '', subjectName: '' }]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -44,37 +41,13 @@ function InsertTeacherData() {
     });
   };
 
-  const handleSubjectChange = (index, field, value) => {
-    const updatedSubjects = [...subjects];
-    updatedSubjects[index][field] = value;
-    
-    // Reset subjectName if className changes to prevent mismatched selections
-    if (field === 'className') {
-      updatedSubjects[index]['subjectName'] = '';
-    }
-
-    setSubjects(updatedSubjects);
-  };
-
-  const handleAddSubject = () => {
-    setSubjects([...subjects, { className: '', subjectName: '' }]);
-  };
-
-  const handleRemoveSubject = (index) => {
-    const updatedSubjects = subjects.filter((_, i) => i !== index);
-    setSubjects(updatedSubjects);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
 
     const payload = {
-      ...formData,
-      subjects: subjects
-        .filter((sub) => sub.className && sub.subjectName)
-        .map((sub) => `[${sub.className}][${sub.subjectName.toLowerCase().replace(/\s+/g, '-')}]`)
+      ...formData
     };
 
     try {
@@ -101,7 +74,6 @@ function InsertTeacherData() {
         isClassTeacher: false, 
         classTeacherOf: '' 
       });
-      setSubjects([{ className: '', subjectName: '' }]);
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
@@ -128,7 +100,8 @@ function InsertTeacherData() {
               required
             />
           </div>
-            <div style={styles.inputGroup}>
+
+          <div style={styles.inputGroup}>
             <label style={styles.checkboxLabel}>
               <input
                 type="checkbox"
@@ -158,63 +131,6 @@ function InsertTeacherData() {
               </select>
             </div>
           )}
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Subjects & Classes</label>
-            {subjects.map((item, index) => {
-              const availableSubjects = item.className ? CLASS_SUBJECT_MAP[item.className] || [] : [];
-
-              return (
-                <div key={index} style={styles.dynamicRow}>
-                  <select
-                    value={item.className}
-                    onChange={(e) => handleSubjectChange(index, 'className', e.target.value)}
-                    style={styles.select}
-                    required
-                  >
-                    <option value="">Select Class</option>
-                    {CLASS_OPTIONS.map((cls) => (
-                      <option key={cls} value={cls}>{cls}</option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={item.subjectName}
-                    onChange={(e) => handleSubjectChange(index, 'subjectName', e.target.value)}
-                    style={{
-                      ...styles.select,
-                      backgroundColor: !item.className ? '#f1f5f9' : '#ffffff'
-                    }}
-                    disabled={!item.className}
-                    required
-                  >
-                    <option value="">
-                      {item.className ? 'Select Subject' : 'Select Class First'}
-                    </option>
-                    {availableSubjects.map((sub) => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                  </select>
-
-                  {subjects.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveSubject(index)}
-                      style={styles.removeButton}
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-            <button
-              type="button"
-              onClick={handleAddSubject}
-              style={styles.addButton}
-            >
-              + Add Another Subject
-            </button>
-          </div>
 
           <div style={styles.inputGroup}>
             <label style={styles.label}>Qualification</label>
@@ -227,8 +143,6 @@ function InsertTeacherData() {
               required
             />
           </div>
-
-        
 
           <div style={styles.inputGroup}>
             <label style={styles.label}>Phone Number</label>
@@ -365,35 +279,6 @@ const styles = {
     width: '100%',
     backgroundColor: '#ffffff',
     boxSizing: 'border-box'
-  },
-  dynamicRow: {
-    display: 'flex',
-    gap: '8px',
-    marginBottom: '6px',
-    alignItems: 'center',
-    width: '100%'
-  },
-  addButton: {
-    background: 'none',
-    border: 'none',
-    color: '#2563eb',
-    fontSize: '13px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    padding: '6px 0',
-    alignSelf: 'flex-start'
-  },
-  removeButton: {
-    backgroundColor: '#fee2e2',
-    color: '#b91c1c',
-    border: 'none',
-    borderRadius: '6px',
-    padding: '12px 14px',
-    fontSize: '13px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-    flexShrink: 0
   },
   submitButton: {
     marginTop: '8px',

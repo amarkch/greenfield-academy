@@ -267,39 +267,52 @@ app.post('/api/insert-student-data', async (req, res) => {
   }
 });
 
-// NEW API: Insert Subject and Chapters Data
+// Insert Subject Data into "subjects" and Chapter Data into "chapters"
 app.post('/api/insert-subject-data', async (req, res) => {
   try {
     const db = await connectDB();
-    const { subjectName, className, chapters } = req.body;
+    const { subjectName, className, teacher, chapters } = req.body;
 
-    if (!subjectName || !className || !chapters || !Array.isArray(chapters) || chapters.length === 0) {
+    if (!subjectName || !className) {
       return res.status(400).json({ 
         success: false, 
-        error: 'Invalid payload or missing required fields' 
+        error: 'Subject name and class are required' 
       });
     }
 
-    // Map each chapter string into a document matching the chapters collection schema
-    const chapterDocuments = chapters.map(chapterTitle => ({
+    // 1. Insert only subject data into the "subjects" collection
+    const subjectResult = await db.collection("subjects").insertOne({
+      subjectName,
       class: className,
-      subject: subjectName,
-      name: chapterTitle,
-      status: 'pending'
-    }));
+      teacher: teacher || ''
+    });
 
-    const result = await db.collection("chapters").insertMany(chapterDocuments);
+    // 2. Insert chapter details into the "chapters" collection matching your schema
+    let chapterResult = { insertedCount: 0 };
+    if (chapters && Array.isArray(chapters) && chapters.length > 0) {
+      const chapterDocuments = chapters.map((ch, index) => ({
+        class: className,
+        subject: subjectName,
+        chapterNumber: ch.chapterNumber || index + 1,
+        title: ch.title || (typeof ch === 'string' ? ch : ''),
+        description: ch.description || '',
+        status: ch.status || 'pending',
+        teacher: teacher || ''
+      }));
+
+      chapterResult = await db.collection("chapters").insertMany(chapterDocuments);
+    }
 
     res.status(201).json({ 
       success: true, 
-      insertedCount: result.insertedCount,
-      insertedIds: result.insertedIds 
+      subjectId: subjectResult.insertedId,
+      insertedChaptersCount: chapterResult.insertedCount 
     });
   } catch (error) {
     console.error('Database insertion error:', error);
     res.status(500).json({ 
       success: false, 
-      error: 'Failed to insert subject data' 
+      error: 'Failed to insert subject and chapter data' 
     });
   }
 });

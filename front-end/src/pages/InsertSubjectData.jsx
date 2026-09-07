@@ -14,10 +14,18 @@ const CLASS_OPTIONS = [
   "class-x"
 ];
 
+const TEACHER_OPTIONS = [
+  "Mr. John Doe",
+  "Ms. Jane Smith",
+  "Dr. Robert Johnson",
+  "Mrs. Emily Davis"
+];
+
 function InsertSubjectData() {
   const [formData, setFormData] = useState({
     subjectName: '',
     className: '',
+    teacher: '',
     chapters: ['']
   });
 
@@ -75,6 +83,7 @@ function InsertSubjectData() {
       setFormData({ 
         subjectName: '', 
         className: '', 
+        teacher: '',
         chapters: [''] 
       });
     } catch (error) {
@@ -117,6 +126,22 @@ function InsertSubjectData() {
               <option value="">Select Class</option>
               {CLASS_OPTIONS.map((cls) => (
                 <option key={cls} value={cls}>{cls}</option>
+              ))}
+            </select>
+          </div>
+
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Teacher</label>
+            <select
+              name="teacher"
+              value={formData.teacher}
+              onChange={handleChange}
+              style={styles.select}
+              required
+            >
+              <option value="">Select Teacher</option>
+              {TEACHER_OPTIONS.map((tch) => (
+                <option key={tch} value={tch}>{tch}</option>
               ))}
             </select>
           </div>
