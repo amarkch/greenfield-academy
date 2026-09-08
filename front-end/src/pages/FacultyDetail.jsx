@@ -5,8 +5,8 @@ import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js"
 import "./FacultyDetail.css";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
-const host = "https://greenfield-academy-back-end.onrender.com";
-//const host = "http://localhost:3000";
+//const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "http://localhost:3000";
 
 const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },
@@ -129,7 +129,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
                     <>
                       <button
                         disabled={ch.status === "pending"}
-                        onClick={() => onStatusChange(ch._id, ch.status, "prev")}
+                        onClick={() => onStatusChange(ch._id, ch.status, "prev", ch.class, ch.title, ch.subject)}
                         style={{
                           padding: "7px 14px",
                           borderRadius: 9,
@@ -147,7 +147,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
                       <span style={{ fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
                       <button
                         disabled={ch.status === "done"}
-                        onClick={() => onStatusChange(ch._id, ch.status, "next")}
+                        onClick={() => onStatusChange(ch._id, ch.status, "next", ch.class, ch.title, ch.subject)}
                         style={{
                           padding: "7px 14px",
                           borderRadius: 9,
@@ -187,7 +187,7 @@ export default function FacultyDetail() {
     relodTheChapterDetails();
   }, [id]);
 
-  const handleStatusChange = async (chapterId, status, direction) => {
+  const handleStatusChange = async (chapterId, status, direction, classId, title, sub) => {
     const currentStatus = status;
     const currentIndex = statusMetaSequence.indexOf(currentStatus);
     if (currentIndex === -1) return;
@@ -209,7 +209,13 @@ export default function FacultyDetail() {
       await fetch(`${host}/api/update-chapter-status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chapterId: chapterId, chapterStatus: newStatus }),
+        body: JSON.stringify({
+          chapterId: chapterId,
+          chapterStatus: newStatus,
+          classId: classId,
+          title: title,
+          subject: sub
+        }),
       })
         .then((res) => res.json())
         .then(() => {

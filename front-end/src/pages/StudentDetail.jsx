@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { ClipboardList, CalendarDays, AlertTriangle, Megaphone } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
-import { notifications as initialNotifications } from "../data/mockData.js";
 
 const typeMeta = {
   assignment: { icon: ClipboardList, color: C.marigold, label: "Assignment" },
@@ -17,10 +17,42 @@ const filters = [
   { id: "feedback", label: "Feedback" },
   { id: "taskCompletion", label: "Task Completion" },
 ];
+//const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "http://localhost:3000";
 
 export default function StudentDetail() {
-  const [items, setItems] = useState(initialNotifications);
+  const { studentId } = useParams();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    fetch(`${host}/api/student-notifications/${studentId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch notifications");
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted) {
+          setItems(data);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setError(err.message);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [studentId]);
 
   const visible = filter === "all" ? items : items.filter((n) => n.type === filter);
   const markRead = (id) => setItems(items.map((n) => (n.id === id ? { ...n, read: true } : n)));
@@ -71,7 +103,19 @@ export default function StudentDetail() {
 
       {/* Notifications List */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {visible.map((n) => {
+        {loading && (
+          <div style={{ textAlign: "center", padding: 40, fontFamily: fontBody, color: C.slate, fontSize: 14 }}>
+            Loading notifications...
+          </div>
+        )}
+
+        {error && (
+          <div style={{ textAlign: "center", padding: 40, fontFamily: fontBody, color: C.coral, fontSize: 14 }}>
+            Error: {error}
+          </div>
+        )}
+
+        {!loading && !error && visible.map((n) => {
           const meta = typeMeta[n.type];
           const Icon = meta && meta.icon;
           
@@ -132,11 +176,10 @@ export default function StudentDetail() {
                   </div>
                 </div>
 
-                {/* Action Button (Fixed HTML validity bug from nested buttons) */}
+                {/* Action Button */}
                 <button
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent marking card as read when clicking the action button directly if needed
-                    // Add your submit handling logic here
+                    e.stopPropagation();
                   }}
                   style={{
                     padding: "5px 10px",
@@ -161,7 +204,7 @@ export default function StudentDetail() {
           }
         })}
 
-        {visible.length === 0 && (
+        {!loading && !error && visible.length === 0 && (
           <div style={{ textAlign: "center", padding: 40, fontFamily: fontBody, color: C.slate, fontSize: 14 }}>
             Nothing here for this filter.
           </div>

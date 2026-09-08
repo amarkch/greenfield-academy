@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const app = express();
+const mongoose = require('mongoose');
+
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -53,15 +55,13 @@ const writeData = (data) => {
 const getChapters = async (teacherId) => {
   const db = await connectDB();
   
-  const result = await db.collection('chapters').aggregate([
+  const pipeline = [
+    { $match: { teacher: teacherId } },
     { 
-      $match: { teacherId: teacherId } 
-    },
-    {
       $group: {
-        _id: { 
-          class: "$class", 
-          subject: "$subject" 
+        _id: {
+          subject: "$subject",
+          class: "$class"
         },
         chapters: { $push: "$$ROOT" }
       }
@@ -69,44 +69,15 @@ const getChapters = async (teacherId) => {
     {
       $project: {
         _id: 0,
-        class: "$_id.class",
         subject: "$_id.subject",
-        periodId: {
-          $concat: ["[", "$_id.class", "][", "$_id.subject", "]"]
-        },
-        chapters: 1,
-        progress: {
-          $cond: {
-            if: { $eq: [{ $size: "$chapters" }, 0] },
-            then: 0,
-            else: {
-              $multiply: [
-                {
-                  $divide: [
-                    {
-                      $size: {
-                        $filter: {
-                          input: "$chapters",
-                          as: "chap",
-                          cond: { $eq: ["$$chap.status", "done"] }
-                        }
-                      }
-                    },
-                    { $size: "$chapters" }
-                  ]
-                },
-                100
-              ]
-            }
-          }
-        }
+        class: "$_id.class",
+        chapters: 1
       }
-    },
-    {
-      $sort: { periodId: 1 }
     }
-  ]).toArray();
-  
+  ];
+
+  const result = await db.collection('chapters').aggregate(pipeline).toArray();
+
   return result;
 };
 
@@ -312,15 +283,71 @@ app.post('/api/insert-subject-data', async (req, res) => {
   }
 });
 
+
+
+app.get('/api/student-notifications/:studentId', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { studentId } = req.params;
+
+    // Validate if studentId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(studentId)) {
+      return res.status(400).json({ error: 'Invalid student ID format' });
+    }
+
+    // Use .toArray() to fetch multiple documents from the MongoDB cursor
+    const notifications = await db.collection("notifications").find({ 
+      studentId: { 
+        $in: [
+          new ObjectId(studentId), 
+          studentId
+        ] 
+      } 
+    }).toArray();
+
+    if (!notifications || notifications.length === 0) {
+      return res.status(404).json({ error: 'No notifications found for this student' });
+    }
+
+    return res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching student notifications:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.post('/api/update-chapter-status', async (req, res) => {
   try {
     const db = await connectDB();
-    const chapterId = req.body.chapterId;
-    const chapterStatus = req.body.chapterStatus;
+    const { chapterId, chapterStatus, classId, title, subject } = req.body;
+
+    // Update the chapter status
     await db.collection("chapters").updateOne(
       { _id: new ObjectId(chapterId) },
       { $set: { status: chapterStatus } }
     );
+
+    // If status is homeworkGiven, insert notifications for all students in the class
+    if (chapterStatus === 'homeworkGiven' && classId) {
+      // Assuming a "students" collection exists with a "classId" field linking them to the class
+      const students = await db.collection("students").find({ className: classId }).toArray();
+
+      if (students.length > 0) {
+        console.log("students found");
+        const notifications = students.map(student => ({
+          studentId: student._id,
+          classId: classId,
+          chapterId: new ObjectId(chapterId),
+          message: title,
+          title: 'Assignment ['+subject+']',
+          type: "assignment",
+          date: new Date()
+        }));
+
+        await db.collection("notifications").insertMany(notifications);
+      }
+    }
+
     res.status(201).json({ 
       success: true 
     });
@@ -330,6 +357,59 @@ app.post('/api/update-chapter-status', async (req, res) => {
       success: false, 
       error: 'Failed to update chapter status' 
     });
+  }
+});
+
+// Fetch students belonging to a particular class
+app.get('/api/get-students/:className', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { className } = req.params;
+
+    const students = await db.collection('students').find({ className: className }).toArray();
+
+    res.status(200).json({
+      success: true,
+      count: students.length,
+      data: students
+    });
+  } catch (error) {
+    console.error('Database retrieval error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch students data'
+    });
+  }
+});
+
+// API: Get subjects and students for a class via query parameter
+app.get('/api/get-subjects-and-students', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { className } = req.query;
+
+    if (!className) {
+      return res.status(400).json({ success: false, error: 'className query parameter is required.' });
+    }
+
+    // Fetch subjects and students concurrently using Promise.all with native driver
+    const [subjects, students] = await Promise.all([
+      db.collection('subjects').find({ class: className }).toArray(),
+      db.collection('students').find({ className: className }).toArray()
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      className,
+      totalSubjects: subjects.length,
+      totalStudents: students.length,
+      subjects,
+      students
+    });
+
+  } catch (error) {
+    console.error('Error fetching subjects and students:', error);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 

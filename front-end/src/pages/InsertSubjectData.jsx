@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
 const CLASS_OPTIONS = [
@@ -14,13 +14,6 @@ const CLASS_OPTIONS = [
   "class-x"
 ];
 
-const TEACHER_OPTIONS = [
-  "Mr. John Doe",
-  "Ms. Jane Smith",
-  "Dr. Robert Johnson",
-  "Mrs. Emily Davis"
-];
-
 function InsertSubjectData() {
   const [formData, setFormData] = useState({
     subjectName: '',
@@ -29,8 +22,29 @@ function InsertSubjectData() {
     chapters: ['']
   });
 
+  const [teacherOptions, setTeacherOptions] = useState([]);
+  const [loadingTeachers, setLoadingTeachers] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const response = await fetch('https://greenfield-academy-back-end.onrender.com/api/get-teachers-list');
+        if (!response.ok) {
+          throw new Error('Failed to fetch teachers list');
+        }
+        const data = await response.json();
+        setTeacherOptions(data);
+      } catch (error) {
+        setMessage(`Error: ${error.message}`);
+      } finally {
+        setLoadingTeachers(false);
+      }
+    };
+
+    fetchTeachers();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,7 +71,6 @@ function InsertSubjectData() {
     setLoading(true);
     setMessage('');
 
-    // Filter out empty chapter fields before sending
     const cleanedChapters = formData.chapters.filter((ch) => ch.trim() !== '');
     const payload = {
       ...formData,
@@ -77,7 +90,7 @@ function InsertSubjectData() {
         throw new Error('Failed to insert subject data');
       }
 
-      const result = await response.json();
+      await response.json();
       setMessage('Subject and chapters submitted successfully!');
       
       setFormData({ 
@@ -138,10 +151,11 @@ function InsertSubjectData() {
               onChange={handleChange}
               style={styles.select}
               required
+              disabled={loadingTeachers}
             >
-              <option value="">Select Teacher</option>
-              {TEACHER_OPTIONS.map((tch) => (
-                <option key={tch} value={tch}>{tch}</option>
+              <option value="">{loadingTeachers ? 'Loading teachers...' : 'Select Teacher'}</option>
+              {teacherOptions.map((tch) => (
+                <option key={tch._id} value={tch._id}>{tch.name}</option>
               ))}
             </select>
           </div>
