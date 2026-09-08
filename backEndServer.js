@@ -34,7 +34,7 @@ app.use(cors({
     return callback(null, true);
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 }));
 
 
@@ -63,7 +63,13 @@ const getChapters = async (teacherId) => {
           subject: "$subject",
           class: "$class"
         },
-        chapters: { $push: "$$ROOT" }
+        chapters: { $push: "$$ROOT" },
+        totalChapters: { $sum: 1 },
+        doneChaptersCount: {
+          $sum: {
+            $cond: [{ $eq: ["$status", "done"] }, 1, 0]
+          }
+        }
       }
     },
     {
@@ -71,13 +77,17 @@ const getChapters = async (teacherId) => {
         _id: 0,
         subject: "$_id.subject",
         class: "$_id.class",
-        chapters: 1
+        chapters: 1,
+        totalChapters: 1,
+        doneChaptersCount: 1
       }
+    },
+    {
+      $sort: { class: 1, subject: 1 }
     }
   ];
 
   const result = await db.collection('chapters').aggregate(pipeline).toArray();
-
   return result;
 };
 
@@ -99,7 +109,6 @@ app.get('/api/get-teacher/:id', async (req, res) => {
         error: 'Teacher not found' 
       });
     }
-    
     // Pass the teacher's string ID directly to query chapters by teacherId
     const periods = await getChapters(id);
 
@@ -250,6 +259,7 @@ app.post('/api/insert-subject-data', async (req, res) => {
     const subjectResult = await db.collection("subjects").insertOne({
       subjectName,
       class: className,
+      progress: 0,
       teacher: teacher || ''
     });
 
@@ -283,36 +293,89 @@ app.post('/api/insert-subject-data', async (req, res) => {
   }
 });
 
-
-
 app.get('/api/student-notifications/:studentId', async (req, res) => {
   try {
     const db = await connectDB();
     const { studentId } = req.params;
 
     // Validate if studentId is a valid ObjectId
-    if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    if (!ObjectId.isValid(studentId)) {
       return res.status(400).json({ error: 'Invalid student ID format' });
     }
 
-    // Use .toArray() to fetch multiple documents from the MongoDB cursor
+    const studentObjectId = new ObjectId(studentId);
+
+    // Fetch student details from the 'students' collection
+    const student = await db.collection("students").findOne({ _id: studentObjectId });
+
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    // Fetch notifications matching the studentId (checking both ObjectId and string formats)
     const notifications = await db.collection("notifications").find({ 
       studentId: { 
         $in: [
-          new ObjectId(studentId), 
+          studentObjectId, 
           studentId
         ] 
       } 
     }).toArray();
 
-    if (!notifications || notifications.length === 0) {
-      return res.status(404).json({ error: 'No notifications found for this student' });
+    // Return combined student profile and notifications data
+    return res.status(200).json({
+      student,
+      notifications: notifications || []
+    });
+  } catch (error) {
+    console.error('Error fetching student details and notifications:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Change Notification Status API
+app.patch('/api/change-notification-status', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { id, status } = req.body;
+
+    if (!id || !status) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Both notification id and status are required in the request body.' 
+      });
     }
 
-    return res.status(200).json(notifications);
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid notification ID format.' 
+      });
+    }
+
+    const result = await db.collection("notifications").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { status: status } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Notification document not found.' 
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Notification status updated successfully'
+    });
+
   } catch (error) {
-    console.error('Error fetching student notifications:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Error updating notification status:', error);
+    return res.status(500).json({ 
+      success: false, 
+      error: 'Internal server error' 
+    });
   }
 });
 
@@ -341,6 +404,7 @@ app.post('/api/update-chapter-status', async (req, res) => {
           message: title,
           title: 'Assignment ['+subject+']',
           type: "assignment",
+          status: "created",
           date: new Date()
         }));
 
@@ -366,7 +430,8 @@ app.get('/api/get-students/:className', async (req, res) => {
     const db = await connectDB();
     const { className } = req.params;
 
-    const students = await db.collection('students').find({ className: className }).toArray();
+    const query = className == "all" ? {} : { className };
+    const students = await db.collection('students').find(query).toArray();
 
     res.status(200).json({
       success: true,
@@ -378,6 +443,73 @@ app.get('/api/get-students/:className', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch students data'
+    });
+  }
+});
+
+// Insert Student Marks
+const getStudentMarksLabel = (acquiredMarks, totalMarks) => {
+  if (totalMarks <= 0 || acquiredMarks < 0 || acquiredMarks > totalMarks) {
+    return "Invalid Marks";
+  }
+
+  const percentage = (acquiredMarks / totalMarks) * 100;
+
+  if (percentage < 40) {
+    return "Fail";
+  } else if (percentage >= 40 && percentage < 60) {
+    return "Pass";
+  } else if (percentage >= 60 && percentage < 75) {
+    return "Average";
+  } else {
+    return "Good";
+  }
+};
+
+app.post('/api/insert-student-marks', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { acquiredMarks, className, examName, remarks, student, subject, totalMarks } = req.body;
+
+    if (!student || !subject || acquiredMarks === undefined || totalMarks === undefined || !examName || !className) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Missing required fields for student marks insertion' 
+      });
+    }
+
+    if (!ObjectId.isValid(student) || !ObjectId.isValid(subject)) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Invalid student or subject ID format' 
+      });
+    }
+
+    const notification = {
+      studentId: new ObjectId(student),
+      classId: className,
+      subjectId: new ObjectId(subject),
+      message: `Exam: ${examName} | Score: ${acquiredMarks}/${totalMarks}${remarks ? ' | Remarks: ' + remarks : ''}`,
+      title: `[${examName}] Score: ${acquiredMarks}/${totalMarks}`,
+      marksCategory: getStudentMarksLabel(Number(acquiredMarks), Number(totalMarks)),
+      acquiredMarks: Number(acquiredMarks),
+      totalMarks: Number(totalMarks),
+      type: "marks",
+      status: "created",
+      date: new Date()
+    };
+
+    const result = await db.collection("notifications").insertOne(notification);
+
+    res.status(201).json({ 
+      success: true, 
+      insertedId: result.insertedId 
+    });
+  } catch (error) {
+    console.error('Database insertion error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to insert student marks notification' 
     });
   }
 });

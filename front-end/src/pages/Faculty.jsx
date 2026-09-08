@@ -22,7 +22,6 @@ export default function Faculty() {
         if (!response.ok) {
           throw new Error("Failed to fetch faculty list");
         }
-        
         const data = await response.json();
         setFaculty(data);
       } catch (err) {
@@ -36,11 +35,10 @@ export default function Faculty() {
   }, []);
 
   return (
-    <div style={{ animation: "fadeIn 0.4s ease", padding: "20px", paddingTop: "50px" }}>
+    <div style={{ position: "relative" }}>
       <GreenfieldHeaderBar />
-      <div style={{ marginBottom: 24 }}>
-        <p style={{ fontFamily: fontBody, color: C.slate, fontSize: 14, margin: 0 }}>Class VIII-B</p>
-        <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 26, color: C.ink, margin: "4px 0 0" }}>Faculty</h1>
+      <div style={{ marginBottom: 24, marginTop: 55 }}>
+        <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 26, color: C.ink, margin: "4px 0 0" }}>Teachers</h1>
       </div>
 
       {loading && (

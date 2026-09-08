@@ -82,7 +82,7 @@ function InsertTeacherData() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{position: "relative"}}>
       <GreenfieldHeaderBar />
       <div style={styles.card}>
         <h2 style={styles.title}>Teachers Registration</h2>
@@ -214,7 +214,8 @@ const styles = {
     width: '100%',
     maxWidth: '560px',
     boxSizing: 'border-box',
-    margin: '0 auto'
+    margin: '0 auto',
+    marginTop: "50px"
   },
   title: {
     margin: '0 0 4px 0',

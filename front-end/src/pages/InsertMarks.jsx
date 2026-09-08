@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
-const host = "https://greenfield-academy-back-end.onrender.com";
-//const host = "http://localhost:3000";
+
+//const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "http://localhost:3000";
+
 const CLASS_OPTIONS = [
   "class-i",
   "class-ii",
@@ -13,6 +15,13 @@ const CLASS_OPTIONS = [
   "class-viii",
   "class-ix",
   "class-x"
+];
+
+const EXAM_OPTIONS = [
+  "1st Unit Test",
+  "Half Yearly Exam",
+  "2nd Unit Test",
+  "Annual Exam"
 ];
 
 function InsertStudentMarks() {
@@ -33,37 +42,34 @@ function InsertStudentMarks() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-  if (!formData.className) {
-    setSubjectOptions([]);
-    setStudentOptions([]);
-    return;
-  }
-
-  const fetchDataByClass = async () => {
-    setLoadingData(true);
-    setMessage('');
-    try {
-      // Use the correct endpoint path matching your backend API
-      const res = await fetch(`${host}/api/get-subjects-and-students?className=${formData.className}`);
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch subjects or students list for this class');
-      }
-
-      const data = await res.json();
-
-      // Extract subjects and students from the single combined response object
-      setSubjectOptions(data.subjects || []);
-      setStudentOptions(data.students || []);
-    } catch (error) {
-      setMessage(`Error: ${error.message}`);
-    } finally {
-      setLoadingData(false);
+    if (!formData.className) {
+      setSubjectOptions([]);
+      setStudentOptions([]);
+      return;
     }
-  };
 
-  fetchDataByClass();
-}, [formData.className]);
+    const fetchDataByClass = async () => {
+      setLoadingData(true);
+      setMessage('');
+      try {
+        const res = await fetch(`${host}/api/get-subjects-and-students?className=${formData.className}`);
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch subjects or students list for this class');
+        }
+
+        const data = await res.json();
+        setSubjectOptions(data.subjects || []);
+        setStudentOptions(data.students || []);
+      } catch (error) {
+        setMessage(`Error: ${error.message}`);
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    fetchDataByClass();
+  }, [formData.className]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +86,7 @@ function InsertStudentMarks() {
     setMessage('');
 
     try {
-      const response = await fetch('https://greenfield-academy-back-end.onrender.com/api/insert-student-marks', {
+      const response = await fetch(`${host}/api/insert-student-marks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,7 +118,7 @@ function InsertStudentMarks() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{position: "relative"}}>
       <GreenfieldHeaderBar />
       <div style={styles.card}>
         <h2 style={styles.title}>Add Student Marks</h2>
@@ -179,15 +185,18 @@ function InsertStudentMarks() {
 
           <div style={styles.inputGroup}>
             <label style={styles.label}>Exam Name</label>
-            <input
-              type="text"
+            <select
               name="examName"
               value={formData.examName}
               onChange={handleChange}
-              placeholder="e.g. Mid-Term Exam"
-              style={styles.input}
+              style={styles.select}
               required
-            />
+            >
+              <option value="">Select Exam</option>
+              {EXAM_OPTIONS.map((exam) => (
+                <option key={exam} value={exam}>{exam}</option>
+              ))}
+            </select>
           </div>
 
           <div style={styles.rowGroup}>
@@ -279,7 +288,8 @@ const styles = {
     width: '100%',
     maxWidth: '560px',
     boxSizing: 'border-box',
-    margin: '20px auto'
+    margin: '20px auto',
+    marginTop: '50px'
   },
   title: {
     margin: '0 0 4px 0',

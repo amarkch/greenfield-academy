@@ -2,31 +2,32 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ClipboardList, CalendarDays, AlertTriangle, Megaphone } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
 const typeMeta = {
   assignment: { icon: ClipboardList, color: C.marigold, label: "Assignment" },
   marks: { icon: CalendarDays, color: C.sky, label: "Event" },
-  feedback: { icon: AlertTriangle, color: C.coral, label: "Alert" },
-  taskCompletion: { icon: AlertTriangle, color: C.coral, label: "Alert" }
 };
 
 const filters = [
   { id: "all", label: "All" },
   { id: "assignment", label: "Assignments" },
-  { id: "marks", label: "Marks" },
-  { id: "feedback", label: "Feedback" },
-  { id: "taskCompletion", label: "Task Completion" },
+  { id: "marks", label: "Marks" }
 ];
-const host = "https://greenfield-academy-back-end.onrender.com";
-//const host = "http://localhost:3000";
+//const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "http://localhost:3000";
 
 export default function StudentDetail() {
   const { studentId } = useParams();
   const [items, setItems] = useState([]);
+  const [studentsData, setStudentsData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
-
+  
+  const displayMarksCategory = (cat) => {
+    return <span style={{fontSize: "16px", color: cat == "Good" ? "green" :  cat == "Fail" ? "red" : "black" }}> - {cat}</span>
+  }
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -38,7 +39,8 @@ export default function StudentDetail() {
       })
       .then((data) => {
         if (isMounted) {
-          setItems(data);
+          setItems(data.notifications);
+          setStudentsData(data.student);
           setLoading(false);
         }
       })
@@ -56,15 +58,43 @@ export default function StudentDetail() {
 
   const visible = filter === "all" ? items : items.filter((n) => n.type === filter);
   const markRead = (id) => setItems(items.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  
+  const handleStatusChange = async (notificationId, newStatus) => {
+    try {
+      const response = await fetch(`${host}/api/change-notification-status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          id: notificationId, 
+          status: newStatus 
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update notification status');
+      }
+
+      const data = await response.json();
+      console.log('Status updated successfully:', data);
+      
+      // Update local state so the UI updates immediately
+      setItems(items.map((n) => (n._id === notificationId ? { ...n, status: newStatus } : n)));
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
 
   return (
-    <div style={{ animation: "fadeIn 0.4s ease", width: "100%", boxSizing: "border-box", padding: "10px 20px" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 20 }}>
-        <p style={{ fontFamily: fontBody, color: C.slate, fontSize: 13, margin: 0 }}>Aarav Sharma · Class VIII-B</p>
+    <div style={{ position: "relative" }}>
+      <GreenfieldHeaderBar />
+      <div style={{ marginBottom: 20,  marginTop: 55,  }}>
+        
         <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: "clamp(22px, 5vw, 26px)", color: C.ink, margin: "4px 0 0" }}>
-          Student's Detail
+          {studentsData.name}
         </h1>
+        <h3>{studentsData.className} [Roll {studentsData.rollNumber}]</h3>
       </div>
 
       {/* Filters: Horizontal scrollable/wrappable on mobile */}
@@ -161,7 +191,7 @@ export default function StudentDetail() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                       <span style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 13, color: C.ink, wordBreak: "break-word" }}>
-                        {n.title}
+                        {n.title} {n.type == "marks" ? displayMarksCategory(n.marksCategory) : ""}
                       </span>
                       {!n.read && (
                         <span style={{ width: 6, height: 6, borderRadius: 999, background: meta.color, flexShrink: 0 }} />
@@ -176,27 +206,46 @@ export default function StudentDetail() {
                   </div>
                 </div>
 
-                {/* Action Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  style={{
-                    padding: "5px 10px",
-                    fontSize: 11,
-                    fontFamily: fontBody,
-                    fontWeight: 600,
-                    background: "transparent",
-                    border: `1px solid ${C.line}`,
-                    borderRadius: 8,
-                    cursor: "pointer",
-                    color: C.ink,
-                    flexShrink: 0,
-                    alignSelf: "center"
-                  }}
-                >
-                  Submitted
-                </button>
+                {/* Action Button or Green Checkmark */}
+                {n.status === "done" ? (
+                  <span
+                    style={{
+                      padding: "5px 10px",
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: "#22c55e",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                      alignSelf: "center"
+                    }}
+                  >
+                    {n.type == "marks" ? "Viewed by Parents" : "Done"}  ✓
+                  </span>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStatusChange(n._id, 'done');
+                    }}
+                    style={{
+                      padding: "5px 10px",
+                      fontSize: 11,
+                      fontFamily: fontBody,
+                      fontWeight: 600,
+                      background: "transparent",
+                      border: `1px solid ${C.line}`,
+                      borderRadius: 8,
+                      cursor: "pointer",
+                      color: C.ink,
+                      flexShrink: 0,
+                      alignSelf: "center"
+                    }}
+                  >
+                    {n.type == "marks" ? "Viewed by Parents" : "Received"}
+                  </button>
+                )}
               </div>
             );
           } else {

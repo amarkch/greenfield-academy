@@ -19,7 +19,7 @@ const GreenfieldHeaderBar = () => {
         }
 
         /* --- Unified Header Bar (Desktop & Mobile) --- */
-        .ga-header-container {
+        .ga-header-container-desk {
           position: relative;
           width: 100%;
           background-color: #ffffff;
@@ -170,7 +170,7 @@ const GreenfieldHeaderBar = () => {
 
         /* --- Responsive Media Query --- */
         @media screen and (max-width: 992px) {
-          .ga-header-container {
+          .ga-header-container-desk {
             padding: 0;
             justify-content: space-between;
           }
@@ -183,7 +183,7 @@ const GreenfieldHeaderBar = () => {
         }
       `}</style>
 
-      <header className="ga-header-container">
+      <header className="ga-header-container-desk">
         {/* Desktop Navigation Bar */}
         <nav className="ga-desktop-nav">
           <Link to="/" className="ga-desktop-nav-link">

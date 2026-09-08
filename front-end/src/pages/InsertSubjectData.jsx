@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
-
+//const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "http://localhost:3000";
 const CLASS_OPTIONS = [
   "class-i",
   "class-ii",
@@ -30,7 +31,7 @@ function InsertSubjectData() {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await fetch('https://greenfield-academy-back-end.onrender.com/api/get-teachers-list');
+        const response = await fetch(`${host}/api/get-teachers-list`);
         if (!response.ok) {
           throw new Error('Failed to fetch teachers list');
         }
@@ -78,7 +79,7 @@ function InsertSubjectData() {
     };
 
     try {
-      const response = await fetch('https://greenfield-academy-back-end.onrender.com/api/insert-subject-data', {
+      const response = await fetch(`${host}/api/insert-subject-data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +108,7 @@ function InsertSubjectData() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{position: "relative"}}>
       <GreenfieldHeaderBar />
       <div style={styles.card}>
         <h2 style={styles.title}>Add Subject & Chapters</h2>
@@ -239,7 +240,8 @@ const styles = {
     width: '100%',
     maxWidth: '560px',
     boxSizing: 'border-box',
-    margin: '20px auto'
+    margin: '20px auto',
+    marginTop: "50px"
   },
   title: {
     margin: '0 0 4px 0',

@@ -34,10 +34,14 @@ function formatLabel(str) {
     })
     .join(" ");
 }
-
-function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingChapterId }) {
+const getProgressValue = (done, total) => {
+  if (!total || total <= 0) return 0;
+  return Math.round((done / total) * 100);
+};
+function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingChapterId }) {
+  const periodProgreess = getProgressValue(period.doneChaptersCount, period.totalChapters);
   return (
-    <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
+    <div style={{ marginBottom: "20px", background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
       <button
         onClick={onToggle}
         style={{
@@ -46,7 +50,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
           alignItems: "center",
           gap: 14,
           padding: "16px 20px",
-          background: "transparent",
+          background: "#CFECF3",
           border: "none",
           cursor: "pointer",
           textAlign: "left",
@@ -54,12 +58,12 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
       >
         <div style={{ width: 10, height: 10, borderRadius: 999, background: C.sky, flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 16, fontWeight: 900 }}>{formatLabel(subject.class)}<br/><i>{formatLabel(subject.subject)}</i></div>
-          <div style={{ fontSize: 12, fontWeight: 900, marginTop: 2 }}>{subject.chapter}</div>
+          <div style={{ fontSize: 16, fontWeight: 900 }}>{formatLabel(period.class)}<br/><i>{formatLabel(period.subject)}</i></div>
+          <div style={{ fontSize: 12, fontWeight: 900, marginTop: 2 }}>{period.chapter}</div>
         </div>
-        <nav style={{ display: "flex", flexDirection: "column", border: "solid 1px #aaa", borderRadius: "5px", gap: 4 }}>
+        <nav style={{ background: "#fff", display: "flex", flexDirection: "column", border: "solid 1px #aaa", borderRadius: "5px", gap: 4 }}>
           <NavLink
-            to={`/students`}
+            to={`/students/${period.class}`}
             style={({ isActive }) => ({
               display: "flex",
               alignItems: "center",
@@ -71,14 +75,13 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
               fontWeight: 600,
               fontSize: 14,
               color: isActive ? "#fff" : C.ink,
-              background: isActive ? C.ink : "transparent",
               position: "relative",
             })}
           >
             <Users size={16} />
           </NavLink>
         </nav>
-        <span style={{ fontFamily: fontMono, fontSize: 12, color: C.slate }}>{subject.progress}%</span>
+        <span style={{ fontFamily: fontMono, fontSize: 12, color: C.slate }}>{periodProgreess}%</span>
         <ChevronDown
           size={18}
           color={C.slate}
@@ -87,16 +90,15 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
       </button>
 
       {isOpen && (
-        <div style={{ padding: "0 20px 18px", animation: "fadeIn 0.25s ease", backgroundColor: "#eeeeee" }}>
-          <div style={{ height: 8, borderRadius: 999, background: C.paper, border: `1px solid ${C.line}`, marginBottom: 16 }}>
-            <div style={{ width: `${subject.progress}%`, height: "100%", borderRadius: 999, background: C.sky }} />
+        <div style={{ padding: "0 20px 18px", animation: "fadeIn 0.25s ease", background: "#F9DFDF" }}>
+          <div style={{ height: 8, borderRadius: 999, background: C.paperCard, border: `1px solid ${C.line}`, marginBottom: 16 }}>
+            <div style={{ width: `${periodProgreess}%`, height: "100%", borderRadius: 999, background: C.sky }} />
           </div>
-          {subject.chapters.map((ch, i) => {
+          {period.chapters.map((ch, i) => {
             const meta = statusMeta[ch.status];
             const Icon = meta.icon;
-            const activeColor = ch.status === "done" ? C.mint : ch.status === "current" ? C.coral : ch.status === "pending" ? C.slate : C.marigold;
+            const activeColor = ch.status === "done" ? C.mint : ch.status === "current" ? C.coral : ch.status === "pending" ? "#000" : "red";
             const isUpdating = updatingChapterId === ch._id;
-
             return (
               <div
                 key={i}
@@ -112,7 +114,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
                       fontFamily: fontBody,
                       fontSize: 13,
                       color: activeColor,
-                      fontWeight: ch.status === "current" ? 800 : 500,
+                      fontWeight: ch.status == "pending" ? 500 : 800,
                     }}
                   >
                     Ch[{i+1}]: {ch.title}
@@ -144,7 +146,7 @@ function SubjectAccordion({ subject, isOpen, onToggle, onStatusChange, updatingC
                       >
                         &lt;
                       </button>
-                      <span style={{ fontSize: 11, color: activeColor, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
+                      <span style={{ fontFamily: fontBody, fontSize: 14, color: activeColor, fontWeight: ch.status == "pending" ? 500 : 800, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
                       <button
                         disabled={ch.status === "done"}
                         onClick={() => onStatusChange(ch._id, ch.status, "next", ch.class, ch.title, ch.subject)}
@@ -201,9 +203,7 @@ export default function FacultyDetail() {
     } else {
       newIndex = currentIndex;
     }
-
     const newStatus = statusMetaSequence[newIndex];
-
     try {
       setUpdatingChapterId(chapterId);
       await fetch(`${host}/api/update-chapter-status`, {
@@ -232,7 +232,6 @@ export default function FacultyDetail() {
       .then(({ data }) => {
         setTeacher(data.teacher);
         setPeriods(data.periods);
-
         if (data?.periods && data.periods.length > 0 && openId === null) {
           setOpenId(data.periods[0].class + "-" + data.periods[0].subject);
         }
@@ -276,21 +275,19 @@ export default function FacultyDetail() {
   }
 
   return (
-    <div style={{ animation: "fadeIn 0.4s ease" }}>
+    <div style={{ position: "relative" }}>
       <GreenfieldHeaderBar />
-
-      <div style={{ display: "flex", alignItems: "center", gap: 18, margin: "75px 5px 5px 5px         eeee" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: "55px", padding: "20px 10px" }}>
         <div
           style={{
             width: 72,
             height: 72,
             borderRadius: 18,
-            background: `${getRandomColor()}22`,
+            background: `${getRandomColor()}`,
             color: teacher.color,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            
             fontWeight: 700,
             fontSize: 24,
             flexShrink: 0,
@@ -303,15 +300,17 @@ export default function FacultyDetail() {
           <p style={{ fontSize: 14, color: teacher.color, fontWeight: 600, margin: "4px 0 0" }}>{teacher.subject}</p>
         </div>
       </div>
-
-      
-
+      <div style={{ padding: "10px" }}>
+        <div>{teacher.qualification}</div>
+        <div>{teacher.phone}</div>
+        <div>{teacher.email}</div>
+      </div>
       <div style={{padding: 5 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {periods?.map((s) => (
             <SubjectAccordion
               key={`${s.class}-${s.subject}`}
-              subject={s}
+              period={s}
               isOpen={openId === `${s.class}-${s.subject}`}
               onToggle={() => setOpenId(`${s.class}-${s.subject}`)}
               onStatusChange={handleStatusChange}
@@ -320,29 +319,7 @@ export default function FacultyDetail() {
           ))}
         </div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 2, margin: "24px 5px" }}>
-        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 2, alignItems: "flex-start" }}>
-          <GraduationCap size={18} color={C.slate} style={{ marginTop: 2 }} />
-          <div>
-            <div style={{ fontSize: 12, color: C.slate }}>Qualification</div>
-            <div style={{ fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.qualification}</div>
-          </div>
-        </div>
-        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 2, alignItems: "flex-start" }}>
-          <BriefcaseBusiness size={18} color={C.slate} style={{ marginTop: 2 }} />
-          <div>
-            <div style={{ fontSize: 12, color: C.slate }}>Phone</div>
-            <div style={{ fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.phone}</div>
-          </div>
-        </div>
-        <div style={{ background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", gap: 2, alignItems: "flex-start" }}>
-          <Mail size={18} color={C.slate} style={{ marginTop: 2 }} />
-          <div>
-            <div style={{ fontSize: 12, color: C.slate }}>Email</div>
-            <div style={{ fontSize: 14, color: C.ink, fontWeight: 600, marginTop: 2 }}>{teacher.email}</div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 }
