@@ -4,8 +4,8 @@ import { ChevronRight } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
-//const host = "https://greenfield-academy-back-end.onrender.com";
-const host = "http://localhost:3000";
+const host = "https://greenfield-academy-back-end.onrender.com";
+//const host = "http://localhost:3000";
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 2);

@@ -5,8 +5,8 @@ import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js"
 import "./FacultyDetail.css";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
-//const host = "https://greenfield-academy-back-end.onrender.com";
-const host = "http://localhost:3000";
+const host = "https://greenfield-academy-back-end.onrender.com";
+//const host = "http://localhost:3000";
 
 const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },

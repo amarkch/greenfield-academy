@@ -14,8 +14,8 @@ const filters = [
   { id: "assignment", label: "Assignments" },
   { id: "marks", label: "Marks" }
 ];
-//const host = "https://greenfield-academy-back-end.onrender.com";
-const host = "http://localhost:3000";
+const host = "https://greenfield-academy-back-end.onrender.com";
+//const host = "http://localhost:3000";
 
 export default function StudentDetail() {
   const { studentId } = useParams();
