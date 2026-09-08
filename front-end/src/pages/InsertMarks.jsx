@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
-//const host = "https://greenfield-academy-back-end.onrender.com";
-const host = "http://localhost:3000";
+const host = "https://greenfield-academy-back-end.onrender.com";
+//const host = "http://localhost:3000";
 const CLASS_OPTIONS = [
   "class-i",
   "class-ii",
