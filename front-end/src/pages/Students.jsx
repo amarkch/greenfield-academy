@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Star } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
@@ -128,6 +128,21 @@ export default function Students() {
                   }}
                 >
                   {std.className}<br/>Roll: {std.rollNumber}
+                </div>
+                {/* Star rating displayed below the roll number */}
+                <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: 4 }}>
+                  {[1, 2, 3, 4, 5].map((star) => {
+                    const rating = std.rating || 0;
+                    const filled = star <= rating;
+                    return (
+                      <Star
+                        key={star}
+                        size={12}
+                        fill={filled ? "#F59E0B" : "transparent"}
+                        color={filled ? "#F59E0B" : C.line}
+                      />
+                    );
+                  })}
                 </div>
               </div>
               <ChevronRight size={16} color={C.slate} style={{ flexShrink: 0 }} />

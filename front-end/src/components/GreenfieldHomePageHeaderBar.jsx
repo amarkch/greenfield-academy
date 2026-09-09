@@ -189,7 +189,7 @@ const GreenfieldHeaderBar = () => {
           <Link to="/" className="ga-desktop-nav-link">
             Home
           </Link>
-          <Link to="/students/" className="ga-desktop-nav-link">
+          <Link to="/students/all" className="ga-desktop-nav-link">
             Student
           </Link>
           <Link to="/faculty/" className="ga-desktop-nav-link">
