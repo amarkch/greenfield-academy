@@ -16,7 +16,15 @@ const allowedOrigins = [
   'https://greenfield-academy.onrender.com',
   'http://localhost:4000/'
 ];
-// 1. Parse incoming JSON payloads
+
+const examGradeValue = {
+  fail: 1,
+  pass: 2,
+  average: 3,
+  good: 4,
+  excellent: 5
+
+}
 app.use(express.json());
 
 // 2. Parse URL-encoded payloads (if sending data from standard HTML forms)
@@ -90,6 +98,208 @@ const getChapters = async (teacherId) => {
   const result = await db.collection('chapters').aggregate(pipeline).toArray();
   return result;
 };
+
+async function runHeavyBackgroundJob(className) {
+  const db = await connectDB();
+
+  try {
+    const notifications = db.collection('notifications');
+
+    const pipeline = [
+      // 1. Only completed notifications
+      {
+        $match: {
+          status: 'done'
+        }
+      },
+
+      // 2. Join with students collection
+      {
+        $lookup: {
+          from: 'students',
+          localField: 'studentId',
+          foreignField: '_id',
+          as: 'student'
+        }
+      },
+
+      // 3. Convert student array to object
+      {
+        $unwind: '$student'
+      },
+
+      // 4. Filter by class BEFORE grouping
+      {
+        $match: {
+          'student.className': className
+        }
+      },
+
+      // 5. Group notifications by student
+      {
+        $group: {
+          _id: '$studentId',
+
+          doneCount: {
+            $sum: 1
+          },
+
+          failCount: {
+            $sum: {
+              $cond: [
+                { $eq: ['$marksCategory', 'Fail'] },
+                1,
+                0
+              ]
+            }
+          },
+
+          passCount: {
+            $sum: {
+              $cond: [
+                { $eq: ['$marksCategory', 'Pass'] },
+                1,
+                0
+              ]
+            }
+          },
+
+          averageCount: {
+            $sum: {
+              $cond: [
+                { $eq: ['$marksCategory', 'Average'] },
+                1,
+                0
+              ]
+            }
+          },
+
+          goodCount: {
+            $sum: {
+              $cond: [
+                { $eq: ['$marksCategory', 'Good'] },
+                1,
+                0
+              ]
+            }
+          },
+
+          excellentCount: {
+            $sum: {
+              $cond: [
+                { $eq: ['$marksCategory', 'Excellent'] },
+                1,
+                0
+              ]
+            }
+          }
+
+        }
+      },
+
+      // 6. Highest notification count first
+      {
+        $sort: {
+          doneCount: -1
+        }
+      }
+    ];
+
+    const results = await notifications
+      .aggregate(pipeline)
+      .toArray();
+
+    if (results.length === 0) {
+      return {
+        message: `No completed records found for ${className}.`
+      };
+    }
+
+    const maxRecord = results[0];
+    const minRecord = results[results.length - 1];
+    console.log(results);
+    await updateAllStudentCounts(results, maxRecord, minRecord, db);
+  } finally {
+    console.log("STUDENT RATING UPDATE DONE");
+  }
+}
+
+async function updateAllStudentCounts(data, maxRecord, minRecord, db) {
+  //const db = await connectDB();
+  const studentsCollection = db.collection("students");
+  const maxDone = maxRecord.doneCount;
+  const minDone = minRecord.doneCount;
+
+  const bulkOperations = data.map(student => {
+
+    let rating = 1;
+    const  mostGradeCount = getMostGradeCount(student);
+    if (maxDone !== minDone) {
+      rating =
+        1 + ((student.doneCount - minDone) / (maxDone - minDone)) * 4;
+      // Keep rating between 1 and 5
+      rating = Math.max(1, Math.min(5, rating));
+
+      // Optional: round to 2 decimal places
+
+      rating = (Number(rating.toFixed(2))+examGradeValue[mostGradeCount])/2;
+
+    } else {
+      rating = (1+examGradeValue[mostGradeCount])/2;
+    }
+
+    return {
+      updateOne: {
+        filter: {
+          _id: student._id
+        },
+        update: {
+          $set: {
+            doneCount: student.doneCount,
+            fail: student.failCount,
+            pass: student.passCount,
+            average: student.averageCount,
+            good: student.goodCount,
+            excellent: student.excellentCount,
+            rating: rating
+          }
+        }
+      }
+    };
+  });
+
+  if (bulkOperations.length > 0) {
+    await studentsCollection.bulkWrite(bulkOperations);
+  }
+
+  return {
+    updated: bulkOperations.length
+  };
+}
+function getMostGradeCount(data) {
+  const counts = {
+    fail: data.fail,
+    pass: data.pass,
+    average: data.average,
+    good: data.good,
+    excellent: data.excellent
+  };
+
+  return Object.entries(counts).reduce(
+    (highest, current) =>
+      current[1] > highest[1] ? current : highest
+  )[0];
+}
+
+app.get('/api/students-rating-recalculation/:className', async (req, res) => {
+  const { className } = req.params;
+  console.log("RATING RECALCULATION STARTED");
+  res.status(200).json({ });
+  setImmediate(() => {
+    runHeavyBackgroundJob(className);
+  });
+})
+
 
 app.get('/api/get-teacher/:id', async (req, res) => {
   try {
@@ -457,12 +667,15 @@ const getStudentMarksLabel = (acquiredMarks, totalMarks) => {
 
   if (percentage < 40) {
     return "Fail";
-  } else if (percentage >= 40 && percentage < 60) {
+  } else if (percentage >= 40 && percentage < 50) {
     return "Pass";
-  } else if (percentage >= 60 && percentage < 75) {
+  } else if (percentage >= 50 && percentage < 65) {
     return "Average";
-  } else {
+  } else if (percentage >= 65 && percentage < 85) {
     return "Good";
+  }
+  else {
+    return "Excellent";
   }
 };
 

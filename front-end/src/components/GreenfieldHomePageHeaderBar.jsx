@@ -196,7 +196,7 @@ const GreenfieldHeaderBar = () => {
             Faculty
           </Link>
           <Link to="/teacher-data/" className="ga-desktop-nav-link">
-            Enter Faculty Data
+            Enter Data
           </Link>
           <button className="ga-desktop-nav-link" onClick={() => handleNavClick('Parents')}>
             Parents
@@ -219,14 +219,14 @@ const GreenfieldHeaderBar = () => {
           <Link to="/" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             Home <span>→</span>
           </Link>
-          <Link to="/students/" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+          <Link to="/students/all" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             Student <span>→</span>
           </Link>
           <Link to="/faculty/" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             Faculty <span>→</span>
           </Link>
           <Link to="/teacher-data/" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-            Enter Faculty Data <span>→</span>
+            Enter Data <span>→</span>
           </Link>
           <button className="ga-mobile-nav-link" onClick={() => handleNavClick('Parents')}>
             Parents <span>→</span>

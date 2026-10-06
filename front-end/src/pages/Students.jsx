@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { ChevronRight, Star } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
@@ -11,8 +11,23 @@ function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 2);
 }
 
+// List of classes for the dropdown
+const availableClasses = [
+  { label: "Class I", value: "class-i" },
+  { label: "Class II", value: "class-ii" },
+  { label: "Class III", value: "class-iii" },
+  { label: "Class IV", value: "class-iv" },
+  { label: "Class V", value: "class-v" },
+  { label: "Class VI", value: "class-vi" },
+  { label: "Class VII", value: "class-vii" },
+  { label: "Class VIII", value: "class-viii" },
+  { label: "Class IX", value: "class-ix" },
+  { label: "Class X", value: "class-x" },
+];
+
 export default function Students() {
   const { className } = useParams();
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,27 +51,59 @@ export default function Students() {
       });
   }, [className]);
 
-  if (loading) {
-    return (
-      <div style={{ padding: "50px 12px", textAlign: "center", fontFamily: fontBody, color: C.slate }}>
-        Loading students...
-      </div>
-    );
-  }
+  // Handle class selection change and update the URL route
+  const handleClassChange = (e) => {
+    const selectedClass = e.target.value;
+    if (selectedClass) {
+      navigate(`/students/${selectedClass}`); // Adjust this path if your route prefix is different (e.g., /class-students/:className)
+    }
+  };
 
-  if (error) {
-    return (
-      <div style={{ padding: "50px 12px", textAlign: "center", fontFamily: fontBody, color: "red" }}>
-        Error: {error}
-      </div>
-    );
-  }
   const jsxStudents = () => {
     return (
       <>
-        <div style={{ marginBottom: "clamp(16px, 4vw, 24px)" }}>
-          <h1>Students</h1>
-          <h3>Class: {className}</h3>
+        {/* Header and Dropdown Section */}
+        <div 
+          style={{ 
+            marginBottom: "clamp(16px, 4vw, 24px)", 
+            display: "flex", 
+            justifyContent: "space-between", 
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 12 
+          }}
+        >
+          <div>
+            <h1>Students</h1>
+            <h3>Class: {className}</h3>
+          </div>
+
+          {/* Class Dropdown Selection */}
+          <div>
+            <select
+              value={className || ""}
+              onChange={handleClassChange}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 8,
+                border: `1px solid ${C.line}`,
+                background: C.paperCard,
+                color: C.ink,
+                fontFamily: fontBody,
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: "pointer",
+                outline: "none"
+              }}
+            >
+              <option value="" disabled>Select Class</option>
+              {availableClasses.map((cls) => (
+                <option key={cls.value} value={cls.value}>
+                  {cls.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Grid layout optimized for fluid responsiveness down to small mobile screens */}
@@ -137,9 +184,9 @@ export default function Students() {
                     return (
                       <Star
                         key={star}
-                        size={12}
+                        size={14}
                         fill={filled ? "#F59E0B" : "transparent"}
-                        color={filled ? "#F59E0B" : C.line}
+                        color={filled ? "#F59E0B" : "#bbb"}
                       />
                     );
                   })}
@@ -152,11 +199,12 @@ export default function Students() {
       </>
     )
   }
+
   return (
     <div style={{ position: "relative" }}>
       <GreenfieldHeaderBar />
       {/* Header section with responsive margins */}
-      <div style={{ marginTop: "50px"}}>
+      <div style={{ marginTop: "70px"}}>
       {
         loading ? 
           <div style={{ padding: "50px 12px", textAlign: "center", fontFamily: fontBody, color: C.slate }}>
@@ -167,7 +215,6 @@ export default function Students() {
               Error: {error}
             </div>
             : jsxStudents()
-          
       }
       </div>
     </div>

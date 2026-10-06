@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import "./GreenfieldHeaderBar.css";
+//const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "http://localhost:3000";
+
 const GreenfieldHeaderBar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -10,7 +13,23 @@ const GreenfieldHeaderBar = () => {
     setMobileMenuOpen(false);
     setDropdownOpen(false);
     setMobileDataOpen(false);
-    alert(`Navigating to ${portalName} Portal`);
+    if(portalName == "Ratings Recalculate") {
+      
+      fetch(`${host}/api/students-rating-recalculation`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch students");
+        return res.json();
+      })
+      .then((responseData) => {
+        console.log(responseData);
+        alert(`Students rating recalculation request sent`);
+      })
+      .catch((err) => {
+        alert(err.message);
+        
+      });
+    }
+    else alert(`Navigating to ${portalName} Portal`);
   };
 
   const closeAllMenus = () => {
@@ -50,6 +69,7 @@ const GreenfieldHeaderBar = () => {
                 <Link to="/students-data/" className="ga-dropdown-item" onClick={closeAllMenus}>Student's Data</Link>
                 <Link to="/subject-data/" className="ga-dropdown-item" onClick={closeAllMenus}>Subject Data</Link>
                 <Link to="/marks-data/" className="ga-dropdown-item" onClick={closeAllMenus}>Marks</Link>
+                <button className="ga-desktop-nav-link" onClick={() => handleNavClick('Ratings Recalculate')}>Re Calculate the Ratings</button>
               </div>
             )}
           </div>
