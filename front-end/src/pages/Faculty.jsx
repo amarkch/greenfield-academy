@@ -89,7 +89,8 @@ export default function Faculty() {
                 }}
               >
 
-                {initials(f.name)}
+                
+                <img style={{ display: "inline-block", overflow: "auto", borderRadius: "6px"}} src={`/images/${f._id}.png`} />
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 14, color: C.ink }}>{f.name}</div>

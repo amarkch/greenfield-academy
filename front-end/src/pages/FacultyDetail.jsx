@@ -280,8 +280,8 @@ export default function FacultyDetail() {
       <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: "55px", padding: "20px 10px" }}>
         <div
           style={{
-            width: 72,
-            height: 72,
+            width: 90,
+            height: 90,
             borderRadius: 18,
             background: `${getRandomColor()}`,
             color: teacher.color,
@@ -293,18 +293,20 @@ export default function FacultyDetail() {
             flexShrink: 0,
           }}
         >
-          {initials(teacher.name)}
+          <img style={{ display: "inline-block", overflow: "auto", borderRadius: "6px"}} src={`/images/${teacher._id}.png`} />
         </div>
-        <div>
+        <div style={{     fontFamily: "'Bentham', serif" }}>
           <h1 style={{  fontWeight: 700, fontSize: 24, color: C.ink, margin: 0 }}>{teacher.name}</h1>
+          <div style={{ fontWeight: 900, fontSize: "15px" }}>
+            <div>{teacher.qualification}</div>
+            <div>{teacher.email}</div>
+            <div>{teacher.phone}</div>
+            
+          </div>
           <p style={{ fontSize: 14, color: teacher.color, fontWeight: 600, margin: "4px 0 0" }}>{teacher.subject}</p>
         </div>
       </div>
-      <div style={{ padding: "10px" }}>
-        <div>{teacher.qualification}</div>
-        <div>{teacher.phone}</div>
-        <div>{teacher.email}</div>
-      </div>
+      
       <div style={{padding: 5 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {periods?.map((s) => (
