@@ -21,6 +21,7 @@ function InsertStudentData() {
     rollNumber: '',
     guardianName: '',
     phone: '',
+    gender: '',
     email: ''
   });
 
@@ -59,7 +60,8 @@ function InsertStudentData() {
         rollNumber: '', 
         guardianName: '', 
         phone: '', 
-        email: '' 
+        email: '',
+        gender:'' 
       });
     } catch (error) {
       setMessage(`Error: ${error.message}`);
@@ -115,7 +117,21 @@ function InsertStudentData() {
               required
             />
           </div>
-
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Gender</label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              style={styles.select}
+              required
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
           <div style={styles.inputGroup}>
             <label style={styles.label}>Parent / Guardian Name</label>
             <input

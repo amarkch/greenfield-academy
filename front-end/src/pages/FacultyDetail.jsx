@@ -10,12 +10,13 @@ const host = "https://greenfield-academy-back-end.onrender.com";
 
 const statusMeta = {
   done: { icon: CheckCircle2, label: "Completed" },
-  current: { icon: CircleDot, label: "In progress" },
-  pending: { icon: Circle, label: "Not started" },
-  homeworkGiven: { icon: Circle, label: "Homework Given" },
-  homeworkChecking: { icon: Circle, label: "Homework Checking" },
+  current: { icon: CircleDot, label: "Discuss Question and Answer" },
+  pending: { icon: Circle, label: "Start the Chapter" },
+  homeworkGiven: { icon: Circle, label: "Give Home Work" },
+  homeworkChecking: { icon: Circle, label: "Check Homework" },
+  homeworkChecked: { icon: Circle, label: "Mark as Complete" },
 };
-const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChecking", "done"];
+const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChecking", "homeworkChecked", "done"];
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
@@ -41,7 +42,7 @@ const getProgressValue = (done, total) => {
 function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingChapterId }) {
   const periodProgreess = getProgressValue(period.doneChaptersCount, period.totalChapters);
   return (
-    <div style={{ marginBottom: "20px", background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
+    <div style={{ marginBottom: "5px", background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
       <button
         onClick={onToggle}
         style={{
@@ -90,7 +91,7 @@ function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingCh
       </button>
 
       {isOpen && (
-        <div style={{ padding: "0 20px 18px", animation: "fadeIn 0.25s ease", background: "#F9DFDF" }}>
+        <div style={{ padding: "0 20px 18px", animation: "fadeIn 0.25s ease" }}>
           <div style={{ height: 8, borderRadius: 999, background: C.paperCard, border: `1px solid ${C.line}`, marginBottom: 16 }}>
             <div style={{ width: `${periodProgreess}%`, height: "100%", borderRadius: 999, background: C.sky }} />
           </div>
@@ -104,22 +105,29 @@ function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingCh
                 key={i}
                 className="chapter-row"
                 style={{
-                  borderTop: i === 0 ? "none" : `1px solid ${C.line}`,
+                  borderTop: i === 0 ? "none" : `1px solid #000`,
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
-                  <Icon size={16} color={activeColor} />
-                  <span
-                    style={{
-                      fontFamily: fontBody,
-                      fontSize: 13,
-                      color: activeColor,
-                      fontWeight: ch.status == "pending" ? 500 : 800,
-                    }}
-                  >
-                    Ch[{i+1}]: {ch.title}
-                  </span>
-                </div>
+                  <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 10, flex: 1 }}>
+                    <span
+                      style={{
+                        fontFamily: fontBody,
+                        fontSize: 18,
+                        color: activeColor,
+                        fontWeight: ch.status == "pending" ? 500 : 800,
+                      }}
+                    >
+                      Ch[{i+1}]: {ch.title}
+                    </span>
+                    {
+                      ch.status === "done"?
+                      <span style={{
+                        fontSize: 25,
+                        color: "#0a0"
+                      }}>✓</span>
+                      : null
+                    }
+                  </div>
 
                 <div className="chapter-controls">
                   {isUpdating ? (
@@ -129,45 +137,46 @@ function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingCh
                     </div>
                   ) : (
                     <>
-                      <button
-                        disabled={ch.status === "pending"}
-                        onClick={() => onStatusChange(ch._id, ch.status, "prev", ch.class, ch.title, ch.subject)}
-                        style={{
-                          padding: "7px 14px",
-                          borderRadius: 9,
-                          border: `1px solid ${C.line}`,
-                          background: ch.status !== "pending" ? C.paperCard : null,
-                          color: ch.status !== "pending" ? C.ink : null,
-                          fontFamily: fontBody,
-                          fontWeight: 600,
-                          fontSize: 13,
-                          cursor: "pointer",
-                        }}
-                      >
-                        &lt;
-                      </button>
-                      <span style={{ fontFamily: fontBody, fontSize: 14, color: activeColor, fontWeight: ch.status == "pending" ? 500 : 800, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
+                      {/*<button
+                                              disabled={ch.status === "pending"}
+                                              onClick={() => onStatusChange(ch._id, ch.status, "prev", ch.class, ch.title, ch.subject)}
+                                              style={{
+                                                padding: "7px 14px",
+                                                borderRadius: 9,
+                                                border: `1px solid ${C.line}`,
+                                                background: ch.status !== "pending" ? C.paperCard : null,
+                                                color: ch.status !== "pending" ? C.ink : null,
+                                                fontFamily: fontBody,
+                                                fontWeight: 600,
+                                                fontSize: 13,
+                                                cursor: "pointer",
+                                              }}
+                                            >
+                                              &lt;
+                                            </button>*/}
                       <button
                         disabled={ch.status === "done"}
                         onClick={() => onStatusChange(ch._id, ch.status, "next", ch.class, ch.title, ch.subject)}
                         style={{
-                          padding: "7px 14px",
-                          borderRadius: 9,
-                          border: `1px solid ${C.line}`,
-                          background: ch.status !== "done" ? C.paperCard : null,
+                          padding: ch.status === "done" ? "0"  : "7px 14px",
+                          borderRadius: 3,
+                          border: ch.status === "done" ? "none" :`1px solid ${C.line}`,
+                          background: ch.status !== "done" ? "#eee" : "none",
                           color: ch.status !== "done" ? C.ink : null,
                           fontFamily: fontBody,
                           fontWeight: 600,
-                          fontSize: 13,
+                          fontSize: 12,
                           cursor: "pointer",
                         }}
                       >
-                        &gt;
+                        <span style={{ fontFamily: fontBody, fontSize: 14, color: activeColor, fontWeight: ch.status == "pending" ? 500 : 800, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
                       </button>
+                      
                     </>
                   )}
                 </div>
               </div>
+
             );
           })}
         </div>
@@ -295,12 +304,13 @@ export default function FacultyDetail() {
         >
           <img style={{ display: "inline-block", overflow: "auto", borderRadius: "6px"}} src={`/images/${teacher._id}.png`} />
         </div>
-        <div style={{     fontFamily: "'Bentham', serif" }}>
-          <h1 style={{  fontWeight: 700, fontSize: 24, color: C.ink, margin: 0 }}>{teacher.name}</h1>
+        <div style={{ fontFamily: "'Bentham', serif" }}>
+          <h1 style={{ fontWeight: 700, fontSize: 24, color: C.ink, margin: 0 }}>{teacher.name}</h1>
           <div style={{ fontWeight: 900, fontSize: "15px" }}>
             <div>{teacher.qualification}</div>
-            <div>{teacher.email}</div>
-            <div>{teacher.phone}</div>
+            {teacher.classTeacherOf && <div style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 14, color: C.ink }}>Class Teacher: ({teacher.classTeacherOf.split("-")[1]})</div>}
+            <div>Email: {teacher.email}</div>
+            <div>Phone: {teacher.phone}</div>
             
           </div>
           <p style={{ fontSize: 14, color: teacher.color, fontWeight: 600, margin: "4px 0 0" }}>{teacher.subject}</p>

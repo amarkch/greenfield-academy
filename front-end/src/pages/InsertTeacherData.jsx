@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
-
+//const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "http://localhost:3000";
 const CLASS_OPTIONS = [
   "class-i",
   "class-ii",
@@ -51,7 +52,7 @@ function InsertTeacherData() {
     };
 
     try {
-      const response = await fetch('https://greenfield-academy-back-end.onrender.com/api/insert-teacher-data', {
+      const response = await fetch(`${host}/api/insert-teacher-data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -94,7 +94,8 @@ export default function Faculty() {
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 14, color: C.ink }}>{f.name}</div>
-                <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{f.email} {f.phone}</div>
+                {f.classTeacherOf && <div style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 14, color: C.ink }}>Class Teacher: ({f.classTeacherOf.split("-")[1]})</div>}
+                <div style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, marginTop: 2 }}>{f.email}<br/> Phone: {f.phone}</div>
               </div>
               <ChevronRight size={16} color={C.slate} />
             </Link>

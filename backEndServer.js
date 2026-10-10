@@ -403,13 +403,16 @@ app.post('/api/insert-teacher-data', async (req, res) => {
     const qualification = req.body.qualification;
     const phone = req.body.phone;
     const email = req.body.email;
-
+    const classTeacherOf = req.body.classTeacherOf;
+    
+    console.log("HERE");
     const result = await db.collection("faculty").insertOne({
       "name": name,
       "subjects": subjects,
       "qualification": qualification,
       "phone": phone,
-      "email": email
+      "email": email,
+      "classTeacherOf": classTeacherOf
     });
     res.status(201).json({ 
       success: true, 

@@ -90,7 +90,7 @@ export default function StudentDetail() {
     <div style={{ position: "relative" }}>
       <GreenfieldHeaderBar />
       <div style={{ marginBottom: 20,  marginTop: 55,  }}>
-        
+        <img style={{ display: "inline-block", overflow: "auto", borderRadius: "6px"}} src={`/images/${studentsData._id}.png`} />
         <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: "clamp(22px, 5vw, 26px)", color: C.ink, margin: "4px 0 0" }}>
           {studentsData.name}
         </h1>
