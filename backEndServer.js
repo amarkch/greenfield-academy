@@ -404,8 +404,6 @@ app.post('/api/insert-teacher-data', async (req, res) => {
     const phone = req.body.phone;
     const email = req.body.email;
     const classTeacherOf = req.body.classTeacherOf;
-    
-    console.log("HERE");
     const result = await db.collection("faculty").insertOne({
       "name": name,
       "subjects": subjects,
@@ -431,7 +429,7 @@ app.post('/api/insert-teacher-data', async (req, res) => {
 app.post('/api/insert-student-data', async (req, res) => {
   try {
     const db = await connectDB();
-    const { name, className, rollNumber, guardianName, phone, email } = req.body;
+    const { name, className, rollNumber, guardianName, phone, email, gender } = req.body;
 
     const result = await db.collection("students").insertOne({
       name,
@@ -439,7 +437,8 @@ app.post('/api/insert-student-data', async (req, res) => {
       rollNumber,
       guardianName,
       phone,
-      email
+      email,
+      gender
     });
 
     res.status(201).json({ 

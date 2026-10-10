@@ -13,6 +13,9 @@ function initials(name) {
 
 // List of classes for the dropdown
 const availableClasses = [
+  { label: "Class Nursery", value: "class-NURSERY" },
+  { label: "Class LKG", value: "class-LKG" },
+  { label: "Class UKG", value: "class-UKG" },
   { label: "Class I", value: "class-i" },
   { label: "Class II", value: "class-ii" },
   { label: "Class III", value: "class-iii" },
@@ -74,7 +77,7 @@ export default function Students() {
           }}
         >
           <div>
-            <h1>Students</h1>
+            <h1>Students list - Total: {students.length}</h1>
             <h3>Class: {className}</h3>
           </div>
 
@@ -111,7 +114,7 @@ export default function Students() {
           style={{ 
             display: "grid", 
             gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 220px), 1fr))", 
-            gap: "clamp(12px, 3vw, 16px)" 
+            gap: "7px" 
           }}
         >
           {students.map((std) => (
@@ -152,16 +155,15 @@ export default function Students() {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div 
                   style={{ 
-                    fontFamily: fontBody, 
+                    fontFamily: "'Bentham', serif", 
                     fontWeight: 700, 
-                    fontSize: 14, 
+                    fontSize: 16, 
+
                     color: C.ink,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {std.name}
+                  <i>{std.name}</i>
                 </div>
                 <div 
                   style={{ 
@@ -169,12 +171,11 @@ export default function Students() {
                     fontSize: 12, 
                     color: C.slate, 
                     marginTop: 2,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {std.className}<br/>Roll: {std.rollNumber}
+                  <b>Roll: {std.rollNumber}</b><br/>
+                  {std.className}
                 </div>
                 {/* Star rating displayed below the roll number */}
                 <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: 4 }}>

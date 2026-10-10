@@ -89,12 +89,17 @@ export default function StudentDetail() {
   return (
     <div style={{ position: "relative" }}>
       <GreenfieldHeaderBar />
-      <div style={{ marginBottom: 20,  marginTop: 55,  }}>
-        <img style={{ display: "inline-block", overflow: "auto", borderRadius: "6px"}} src={`/images/${studentsData._id}.png`} />
-        <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: "clamp(22px, 5vw, 26px)", color: C.ink, margin: "4px 0 0" }}>
-          {studentsData.name}
-        </h1>
-        <h3>{studentsData.className} [Roll {studentsData.rollNumber}]</h3>
+      <div style={{ marginBottom: 20,  marginTop: 70, fontFamily: "'Bentham', serif", display: "inline-block"}}>
+        <div style={{width: "100px", height: "100px", float: "left"}}>
+          {studentsData.gender ? <img src={studentsData.gender == "male" ? `/images/ma.png` : `/images/fe.png`} style={{width: "100%", height: "100%"}} /> : <span>Image</span>}
+        </div>
+        <div style={{float: "right", padding: "12px"}}>
+          <h1 style={{fontWeight: 700, fontSize: "clamp(22px, 5vw, 26px)", color: C.ink, margin: "4px 0 0" }}>
+            {studentsData.name}
+          </h1>
+          <h3>Class: {studentsData.className} </h3>
+          <h3>Roll: {studentsData.rollNumber} </h3>
+        </div>
       </div>
 
       {/* Filters: Horizontal scrollable/wrappable on mobile */}

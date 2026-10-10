@@ -37,8 +37,8 @@ export default function Faculty() {
   return (
     <div style={{ position: "relative" }}>
       <GreenfieldHeaderBar />
-      <div style={{ marginBottom: 24, marginTop: 55 }}>
-        <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 26, color: C.ink, margin: "4px 0 0" }}>Teachers</h1>
+      <div style={{ marginBottom: 10, marginTop: 50, paddingTop: 20 }}>
+        <h1 style={{ fontFamily: "'Bentham', serif", fontWeight: 700, fontSize: 26, color: C.ink, margin: "4px 0 0" }}>Teachers list</h1>
       </div>
 
       {loading && (
@@ -56,7 +56,7 @@ export default function Faculty() {
       )}
 
       {!loading && !error && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 7 }}>
           {faculty.map((f) => (
             <Link
               key={f.id}

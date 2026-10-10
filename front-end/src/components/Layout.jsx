@@ -21,6 +21,7 @@ export default function Layout() {
         * {
           box-sizing: border-box;
         }
+        
 
         .layout-main {
           flex: 1;
@@ -29,16 +30,24 @@ export default function Layout() {
           margin: 0 auto;
           width: 100%;
         }
-
+        .layout-content {
+          padding 5;
+        }
         @media screen and (max-width: 768px) {
           .layout-main {
             padding: 0;
+          }
+          .layout-content {
+            padding: 10px;
+            padding-bottom: 150px;
           }
         }
       `}</style>
       
       <main className="layout-main">
-        <Outlet />
+        <div className="layout-content">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

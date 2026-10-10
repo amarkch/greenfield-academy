@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
 const CLASS_OPTIONS = [
+  "class-NURSERY",
+  "class-LKG",
+  "class-UKG",
   "class-i",
   "class-ii",
   "class-iii",
@@ -39,7 +42,7 @@ function InsertStudentData() {
     setMessage('');
 
     try {
-      const response = await fetch('https://greenfield-academy-back-end.onrender.com/api/insert-student-data', {
+      const response = await fetch('http://localhost:3000/api/insert-student-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

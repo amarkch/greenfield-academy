@@ -111,13 +111,13 @@ function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingCh
                   <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 10, flex: 1 }}>
                     <span
                       style={{
-                        fontFamily: fontBody,
+                        fontFamily: "Bentham, serif",
                         fontSize: 18,
                         color: activeColor,
                         fontWeight: ch.status == "pending" ? 500 : 800,
                       }}
                     >
-                      Ch[{i+1}]: {ch.title}
+                      Ch-{i+1}: <i><b>{ch.title}</b></i>
                     </span>
                     {
                       ch.status === "done"?
