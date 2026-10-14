@@ -505,6 +505,32 @@ app.post('/api/insert-subject-data', async (req, res) => {
   }
 });
 
+app.get('/api/subjects/:className', async (req, res) => {
+  try {
+    const db = await connectDB();
+
+    const { className } = req.params;
+
+    const subjects = await db.collection('subjects')
+      .find({ class: className })
+      .toArray();
+
+    res.status(200).json({
+      success: true,
+      class: className,
+      count: subjects.length,
+      subjects: subjects
+    });
+
+  } catch (error) {
+    console.error('Error fetching subjects:', error);
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch subjects'
+    });
+  }
+});
 app.get('/api/student-notifications/:studentId', async (req, res) => {
   try {
     const db = await connectDB();

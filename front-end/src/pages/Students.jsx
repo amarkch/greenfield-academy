@@ -32,6 +32,7 @@ export default function Students() {
   const { className } = useParams();
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,6 +40,19 @@ export default function Students() {
     if (!className) return;
     
     setLoading(true);
+    fetch(`${host}/api/subjects/${className}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch students");
+        return res.json();
+      })
+      .then((responseData) => {
+        setSubjects(responseData.subjects);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+    });
     fetch(`${host}/api/get-students/${className}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch students");
@@ -107,9 +121,36 @@ export default function Students() {
               ))}
             </select>
           </div>
+          <div style={{width: "100%"}}>
+          {
+            subjects.map((std) => (
+              <Link
+              key={std.id || std._id}
+              to={`/student-details/${std._id}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 14,
+                padding: "clamp(12px, 3vw, 18px)",
+                background: C.paperCard,
+                border: `1px solid ${C.line}`,
+                borderRadius: 16,
+                textDecoration: "none",
+                width: "200px",
+                float: "left",
+                margin: "10px",
+                boxSizing: "border-box",
+              }}
+            >
+              {std.subjectName}
+              </Link>
+            ))
+          }
+          </div>
         </div>
 
         {/* Grid layout optimized for fluid responsiveness down to small mobile screens */}
+
         <div 
           style={{ 
             display: "grid", 
@@ -117,7 +158,8 @@ export default function Students() {
             gap: "7px" 
           }}
         >
-          {students.map((std) => (
+          {
+            students.map((std) => (
             <Link
               key={std.id || std._id}
               to={`/student-details/${std._id}`}
