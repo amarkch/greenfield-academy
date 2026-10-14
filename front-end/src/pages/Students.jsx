@@ -4,8 +4,8 @@ import { ChevronRight, Star } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
-const host = "https://greenfield-academy-back-end.onrender.com";
-//const host = "http://localhost:3000";
+//const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "http://localhost:3000";
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 2);
@@ -28,14 +28,25 @@ const availableClasses = [
   { label: "Class X", value: "class-x" },
 ];
 
+const getProgressValue = (done, total) => {
+  if (!total || total <= 0) return 0;
+  return Math.round((done / total) * 100);
+};
 export default function Students() {
   const { className } = useParams();
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [subjectProgressCount, setSubjectProgressCount] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const processSubjectProgress = (data) => {
+    let d={};
+    data.map(x=> {
+      d[x.subject] = getProgressValue(x.doneCount, x.totalChapters)
+    });
+    setSubjectProgressCount(d);
+  }
   useEffect(() => {
     if (!className) return;
     
@@ -47,6 +58,7 @@ export default function Students() {
       })
       .then((responseData) => {
         setSubjects(responseData.subjects);
+        processSubjectProgress(responseData.subjectProgress);
         setLoading(false);
       })
       .catch((err) => {
@@ -72,7 +84,7 @@ export default function Students() {
   const handleClassChange = (e) => {
     const selectedClass = e.target.value;
     if (selectedClass) {
-      navigate(`/students/${selectedClass}`); // Adjust this path if your route prefix is different (e.g., /class-students/:className)
+      navigate(`/class/${selectedClass}`); // Adjust this path if your route prefix is different (e.g., /class-students/:className)
     }
   };
 
@@ -90,13 +102,11 @@ export default function Students() {
             gap: 12 
           }}
         >
-          <div>
-            <h1>Students list - Total: {students.length}</h1>
-            <h3>Class: {className}</h3>
-          </div>
+          
 
           {/* Class Dropdown Selection */}
-          <div>
+          <div style={{width: "100%"}}>
+            <b>Select Class: </b>
             <select
               value={className || ""}
               onChange={handleClassChange}
@@ -121,39 +131,62 @@ export default function Students() {
               ))}
             </select>
           </div>
-          <div style={{width: "100%"}}>
+          
           {
-            subjects.map((std) => (
-              <Link
-              key={std.id || std._id}
-              to={`/student-details/${std._id}`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 14,
-                padding: "clamp(12px, 3vw, 18px)",
-                background: C.paperCard,
-                border: `1px solid ${C.line}`,
-                borderRadius: 16,
-                textDecoration: "none",
-                width: "200px",
-                float: "left",
-                margin: "10px",
-                boxSizing: "border-box",
-              }}
-            >
-              {std.subjectName}
-              </Link>
-            ))
+                className !== "all" ?
+                <div>
+                  <div style={{width: "100%", fontSize: 32, fontWeight: 900}}>
+                    {className}
+                  </div>
+                  <h3>Subjects:</h3>
+                  <div style={{width: "100%", display: "flex", flexWrap: "wrap", justifyContent: "space-between"}}>
+                  {
+                    subjects.map((std) => (
+                      <Link
+                      key={std.id || std._id}
+                      to={`/faculty/${std.teacherId}`}
+                      style={{
+                        alignItems: "center",
+                        gap: 14,
+                        color: "#000",
+                        padding: "clamp(12px, 3vw, 18px)",
+                        background: C.paperCard,
+                        border: `1px solid ${C.line}`,
+                        borderRadius: 16,
+                        textDecoration: "none",
+                        width: "200px",
+                        float: "left",
+                        marginBottom: "10px",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      
+                        <div>
+                          <b>{std.subjectName}</b>
+                        </div>
+                        <div>
+                          {std.teacherName}<br/><i>
+                          <span style={{color: subjectProgressCount[std.subjectName] < 40 ? "#900" : "#090"}}>Completed: {subjectProgressCount[std.subjectName]}%</span>
+                          </i>
+                        </div>
+                        
+
+                      </Link>
+                    ))
+                  }
+                  </div>
+                </div>
+                : null
           }
-          </div>
+          
         </div>
 
-        {/* Grid layout optimized for fluid responsiveness down to small mobile screens */}
-
+        
+        <h3>Students list - Total: {students.length}</h3>
         <div 
           style={{ 
             display: "grid", 
+            marginTop: "10px",
             gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 220px), 1fr))", 
             gap: "7px" 
           }}

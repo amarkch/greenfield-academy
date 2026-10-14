@@ -27,7 +27,7 @@ export default function App() {
           <Route path="/academics" element={<Academics />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/faculty" element={<Faculty />} />
-          <Route path="/students/:className" element={<Students />} />
+          <Route path="/class/:className" element={<Students />} />
           <Route path="/faculty/:id" element={<FacultyDetail />} />
           <Route path="/student-details/:studentId" element={<StudentDetail />} />
           <Route path="/teacher-data" element={<InsertTeacherData />} />

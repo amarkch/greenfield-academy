@@ -189,8 +189,8 @@ const GreenfieldHeaderBar = () => {
           <Link to="/" className="ga-desktop-nav-link">
             Home
           </Link>
-          <Link to="/students/all" className="ga-desktop-nav-link">
-            Student
+          <Link to="/class/all" className="ga-desktop-nav-link">
+            Class
           </Link>
           <Link to="/faculty/" className="ga-desktop-nav-link">
             Faculty
@@ -219,8 +219,8 @@ const GreenfieldHeaderBar = () => {
           <Link to="/" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             Home <span>→</span>
           </Link>
-          <Link to="/students/all" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
-            Student <span>→</span>
+          <Link to="/class/all" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+            Class <span>→</span>
           </Link>
           <Link to="/faculty/" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             Faculty <span>→</span>

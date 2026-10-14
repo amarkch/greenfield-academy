@@ -511,15 +511,91 @@ app.get('/api/subjects/:className', async (req, res) => {
 
     const { className } = req.params;
 
-    const subjects = await db.collection('subjects')
-      .find({ class: className })
-      .toArray();
+    const subjects = await db.collection('subjects').aggregate([
+    {
+      $match: { class: className }
+    },
+    {
+      $addFields: {
+        teacherObjectId: {
+          $toObjectId: "$teacher"
+        }
+      }
+    },
+    {
+      $lookup: {
+        from: "faculty",
+        localField: "teacherObjectId",
+        foreignField: "_id",
+        as: "teacherDetails"
+      }
+    },
+    {
+      $unwind: {
+        path: "$teacherDetails",
+        preserveNullAndEmptyArrays: true
+      }
+    },
+    {
+      $set: {
+        teacherName: "$teacherDetails.name",
+        teacherId: "$teacherDetails._id"
+      }
+    },
+    {
+      $project: {
+        teacherObjectId: 0,
+        teacherDetails: 0
+      }
+    }
+  ]).toArray();
+
+    //const teacher = await db.collection('faculty').findOne({ _id: new ObjectId(id) });
+    const subjectProgress = await db.collection("chapters").aggregate([
+    {
+      $match: {
+        class: className
+      }
+    },
+    {
+      $group: {
+        _id: "$subject",
+        totalChapters: { $sum: 1 },
+        doneCount: {
+          $sum: {
+            $cond: [{ $eq: ["$status", "done"] }, 1, 0]
+          }
+        },
+        pendingCount: {
+          $sum: {
+            $cond: [{ $eq: ["$status", "pending"] }, 1, 0]
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        subject: "$_id",
+        totalChapters: 1,
+        doneCount: 1,
+        pendingCount: 1
+      }
+    },
+    {
+      $sort: {
+        subject: 1
+      }
+    }
+  ]).toArray();
 
     res.status(200).json({
       success: true,
       class: className,
+      //teacher: teacher,
       count: subjects.length,
-      subjects: subjects
+      subjects: subjects,
+      subjectProgress: subjectProgress
     });
 
   } catch (error) {
