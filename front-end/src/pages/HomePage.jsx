@@ -4,6 +4,23 @@ import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 import GreenfieldHomePageHeaderBar from "../components/GreenfieldHomePageHeaderBar.jsx";
 import { Link } from "react-router-dom";
 
+const SchoolMap = () => {
+  return (
+    <div style={{ width: '100%', height: '450px' }}>
+      <iframe
+        title="Greenfield Academy Location"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3581.8!2d94.2020082!3d26.6070951!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3742c56032a9efed%3A0x2b380e2482ad4e15!2sGreenfield%20Academy!5e0!3m2!1sen!2sin!4v1650000000000!5m2!1sen!2sin"
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        allowFullScreen=""
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  );
+};
+
 const GreenfieldAcademy = () => {
   // Register service worker on component mount
   useEffect(() => {
@@ -453,7 +470,10 @@ const GreenfieldAcademy = () => {
             </div>
             
           </div>
+          
         </div>
+        <h2>How to reach Greenfield Academy </h2>
+          {SchoolMap()}
       </div>
     </>
   );
