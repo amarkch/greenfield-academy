@@ -3,6 +3,7 @@ import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 import GreenfieldHomePageHeaderBar from "../components/GreenfieldHomePageHeaderBar.jsx";
 import { Link } from "react-router-dom";
+import "./Home.css";
 
 const SchoolMap = () => {
   return (
@@ -45,330 +46,7 @@ const GreenfieldAcademy = () => {
     <>
       {/* Scoped CSS styles injected into the component */}
       <style>{`
-        html {
-          scroll-behavior: smooth;
-        }
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
-
-        body {
-          font-family: 'Inter', sans-serif;
-          background-color: #f4f7f6;
-          color: #333;
-          min-height: 100vh;
-        }
-
-        .ga-page-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 16px;
-          width: 100%;
-        }
-
-        .ga-container {
-          width: 100%;
-          max-width: 1200px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .ga-banner-wrapper {
-          width: 100%;
-
-          position: relative;
-          border-radius: 12px;
-          overflow: hidden;
-          background-color: #ffffff;
-          border: 1px solid #e2e8f0;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          padding: 50px 50px 40px 50px;
-          gap: 30px;
-        }
-
-        .ga-header-bar-top-right {
-          position: absolute;
-          top: 20px;
-          right: 30px;
-          z-index: 10;
-        }
-
-        .ga-left-content {
-          flex: 1;
-          max-width: 560px;
-          z-index: 2;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-
-        .ga-coming-soon {
-          font-family: 'Oswald', sans-serif;
-          font-size: 0.85rem;
-          text-transform: uppercase;
-          letter-spacing: 3px;
-          color: #bb0000;
-          margin-bottom: 6px;
-          font-weight: 600;
-        }
-
-        .ga-banner-title {
-          font-family: 'Bentham', serif;
-          font-size: clamp(2.2rem, 4.5vw, 4.8rem);
-          font-weight: 400;
-          color: #0b6623;
-          margin: 80px 0;
-          letter-spacing: 1px;
-          line-height: 1.05;
-        }
-
-        .ga-banner-subtitle {
-          font-family: 'Noto Serif Todhri', serif;
-          font-size: clamp(1.4rem, 1.4vw, 1.4rem);
-          font-weight: 400;
-          color: #4a5568;
-          margin-bottom: 20px;
-          line-height: 1.5;
-          padding: 0px;
-        }
-
-        .ga-banner-buttons {
-          display: flex;
-          gap: 12px;
-          justify-content: flex-start;
-          flex-wrap: wrap;
-        }
-
-        .ga-btn-primary, .ga-btn-secondary {
-          font-family: 'Oswald', sans-serif;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          padding: 10px 20px;
-          font-size: 0.9rem;
-          font-weight: 500;
-          border-radius: 4px;
-          cursor: pointer;
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-
-        .ga-btn-primary {
-          background-color: #7DCCAD;
-          color: #ffffff;
-          border: 2px solid #24B1B1;
-        }
-
-        .ga-btn-primary:hover {
-          background-color: #7DCCAD;
-          border-color: #24B1B1;
-        }
-
-        .ga-btn-secondary {
-          background-color: transparent;
-          color: #0b6623;
-          border: 2px solid #0b6623;
-        }
-
-        .ga-btn-secondary:hover {
-          background-color: rgba(11, 102, 35, 0.05);
-        }
-
-        .ga-right-image-container {
-          flex: 0 0 40%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 2;
-        }
-
-        .ga-banner-image {
-          max-height: 380px;
-          object-fit: cover;
-          border-radius: 8px;
-          margin: 30px;
-        }
-
-        .ga-banner-boy-image {
-          display: none
-        }
-
-        .ga-content-section {
-          padding: 30px 15px 15px;
-          text-align: center;
-          max-width: 800px;
-        }
-
-        .ga-section-title {
-          font-size: clamp(1.6rem, 2.5vw, 2.1rem);
-          color: #0b6623;
-          margin-bottom: 12px;
-          font-family: 'Bentham', serif;
-        }
-
-        .ga-section-text {
-          font-size: 1rem;
-          line-height: 1.7;
-          color: #555;
-        }
-
-        .ga-cards-container {
-          display: flex;
-          
-          justify-content: center;
-          max-width: 1200px;
-          width: 100%;
-          margin: 20px auto 40px;
-          flex-wrap: wrap;
-        }
-
-        .ga-section-image-card {
-          flex: 1;
-          width: 150px;
-          height: 520px;
-          background-color: #ffffff;
-          overflow: hidden;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-          border: 1px solid #e2e8f0;
-          display: flex;
-          flex-direction: column;
-          background-image: url('/images/md.jpeg');
-          background-size: cover;
-    
-          /* Step 4: Center the background */
-          background-position: center;
-        }
-        .ga-section-princi-image-card {
-          flex: 1;
-          width: 150px;
-          height: 520px;
-          background-color: #ffffff;
-          overflow: hidden;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-          border: 1px solid #e2e8f0;
-          display: flex;
-          flex-direction: column;
-          background-image: url('/images/princi.jpeg');
-          background-size: cover;
-    
-          /* Step 4: Center the background */
-          background-position: center;
-        }
-        .ga-section-image-text-card {
-          text-align: justify;
-          flex: 1;
-          width: 150px;
-          height: 520px;
-          background-color: #ffffff;
-          
-          overflow: hidden;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-          border: 1px solid #e2e8f0;
-          display: flex;
-          flex-direction: column;
-          font-family: 'Noto Serif Todhri', serif;
-          padding: 60px;
-          font-size: 16px;
-        }
-
-        .ga-section-image {
-          
-          object-fit: cover;
-          object-position: top;
-          display: block;
-        }
-        .modle {
-          display: none;
-        }
-
-        /* Responsive Media Query for Tablets and Mobiles */
-        @media screen and (max-width: 992px) {
-          .ga-banner-title
-          {
-            margin: 10px 0;
-            margin-bottom:30px;
-          }
-          .desk {
-            display: none;
-          }
-            .ga-banner-boy-image {
-              max-height: 350px;
-              object-fit: cover;
-              display: block;
-              margin-bottom: 15px;
-            }
-
-          .ga-banner-subtitle {
-            padding: 10px 20px;
-            font-size: clamp(0.8rem, 0.8vw, 0.8rem);
-          }
-          .ga-banner-wrapper {
-            flex-direction: column;
-            padding: 60px 20px 30px 20px;
-            text-align: center;
-            align-items: stretch;
-          }
-
-          .ga-header-bar-top-right {
-            top: 15px;
-            right: 15px;
-          }
-
-          .ga-left-content {
-            max-width: 100%;
-            align-items: center;
-            margin-top: 15px;
-            margin-bottom: 25px;
-          }
-
-          .ga-banner-buttons {
-            justify-content: center;
-            width: 100%;
-            align-items: center;
-          }
-
-          .ga-right-image-container {
-            width: 100%;
-            margin-top: 15px;
-          }
-
-          .ga-banner-image {
-            max-height: 280px;
-          }
-        }
-
-        @media screen and (max-width: 576px) {
-          .ga-page-wrapper {
-            padding: 0px;
-          }
-
-          .ga-banner-wrapper {
-            padding: 60px 20px 30px 20px;
-          }
-
-          .ga-banner-buttons {
-            flex-direction: column;
-            width: 100%;
-          }
-
-          .ga-btn-primary, .ga-btn-secondary {
-            width: 70%;
-            font-weight: 900;
-            text-align: center;
-
-          }
-
-          .ga-section-image {
-            height: 200px;
-          }
-        }
+        
       `}</style>
 
       <div className="ga-page-wrapper">
@@ -447,10 +125,8 @@ const GreenfieldAcademy = () => {
             </div>
 
           </div>
-          <div className="ga-cards-container" id="more">
-            
+          <div className="ga-cards-container">
             <div className="ga-section-princi-image-card">
-              
             </div>
             <div className="ga-section-image-text-card">
               <h3>গ্রীনফিল্ড একাডেমীলৈ স্বাগতম!</h3>
@@ -459,8 +135,6 @@ const GreenfieldAcademy = () => {
               আপুনি কি ভাল পায় আৰু এই পৃথিৱীখনক কেনেকৈ আৰু অলপ সুন্দৰ কৰি তুলিব পাৰি, 
               তাক বিচাৰি উলিওৱাৰ এক যাত্ৰা। টিীয়কৰ ঠিক প্রাণকেন্দ্রত অৱস্থিত আমাৰ এই গ্রীনফিল্ডত আমি অলপ ভিন্ন ধৰণে কাম-কাজবোৰ কৰিছোঁ। 
               পুৰণি, গতানুগতিক শ্ৰেণীকোঠা সলনি কৰি আমি এনে কিছুমান পৰিৱেশ গঢ়ি তুলিছোঁ যিয়ে ছাত্ৰ-ছাত্ৰীৰ মনত কৌতুহল জাগ্ৰত কৰে। 
-              
-
               আমাৰ আদৰণীয অভিভাৱকসকললৈ: সন্তানৰ উজ্জ্বল ভৱিষ্যতৰ দায়িত্ব আমাৰ ওপৰত অৰ্পণ কৰাৰ বাবে আপোনালোকক অশেষ ধন্যবাদ। আমি এই যাত্ৰাত ইজনে সিজনৰ সংগী, সেয়েহে আহক আমি যোগাযোগ সুদৃঢ় ৰাখোঁ, মানসিক মানসিক চাপ আঁতৰাওঁ আৰু এই বিদ্যালয়ৰ যাত্ৰাটোক অবিস্মৰণীয় কৰি তোলোঁ। আহক, সকলোৱে মিলি কিবা এক সুন্দৰ সূচনা কৰোঁ।
 
               <br/>
@@ -470,7 +144,24 @@ const GreenfieldAcademy = () => {
             </div>
             
           </div>
-          
+
+          <div className="ga-cards-container">
+            <div className="ga-section-princi-image-card" style={{backgroundImage: "url('/images/adv.jpg')"}}>
+            </div>
+            <div className="ga-section-image-text-card">
+              <h3>At Greenfield Academy, You Are More Than Your Marks!</h3>
+              <br/>
+              At Greenfield Academy, we believe that every child is unique and has something special to offer. We look beyond marks and focus on helping each student discover their strengths and grow with confidence. We want our students to enjoy learning and feel free to ask questions, explore new ideas and learn from their mistakes. Our teachers guide them with care and encourage them to do better every day. For us, education is not just about academic success. It is also about learning honesty, respect, kindness and responsibility. We believe that a good education helps children become not only successful students but also good human beings. With the support of our dedicated teachers and the cooperation of parents, we strive to create a happy and welcoming environment where every child feels valued and encouraged to follow their dreams. At Greenfield Academy, every child matters, every effort counts and every dream deserves a chance to shine.
+
+              <br/>
+              <br/>
+              <br/><i><h4>Bidyut P. Bharali</h4>
+              Advisor, Greenfield Academy</i>
+            </div>
+            
+          </div>
+
+
         </div>
         <h2>How to reach Greenfield Academy </h2>
           {SchoolMap()}
