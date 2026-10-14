@@ -1,0 +1,32 @@
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* --- Unified Header Bar (Desktop & Mobile) --- */
+  .holder {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 90px 20px 40px;
+  }
+  .drop-down {
+    padding: 10px 16px;
+    border-radius: 5px;
+    width: 100%;
+    border: 1px solid #777;
+    background: #fff;
+    font-family: fontBody;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    min-width: 220px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05)
+  }
+  /* --- Responsive Media Query --- */
+  @media screen and (max-width: 992px) {
+    .holder {
+      margin: 0 auto;
+      padding: 65px 5px;
+    }
+  }

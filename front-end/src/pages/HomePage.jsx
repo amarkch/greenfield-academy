@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 import GreenfieldHomePageHeaderBar from "../components/GreenfieldHomePageHeaderBar.jsx";
+import { Link } from "react-router-dom";
 
 const GreenfieldAcademy = () => {
   // Register service worker on component mount
@@ -27,6 +28,9 @@ const GreenfieldAcademy = () => {
     <>
       {/* Scoped CSS styles injected into the component */}
       <style>{`
+        html {
+          scroll-behavior: smooth;
+        }
         * {
           box-sizing: border-box;
           margin: 0;
@@ -200,7 +204,7 @@ const GreenfieldAcademy = () => {
 
         .ga-cards-container {
           display: flex;
-          gap: 20px;
+          
           justify-content: center;
           max-width: 1200px;
           width: 100%;
@@ -210,20 +214,55 @@ const GreenfieldAcademy = () => {
 
         .ga-section-image-card {
           flex: 1;
-          min-width: 260px;
-          max-width: 500px;
+          width: 150px;
+          height: 520px;
           background-color: #ffffff;
-          border-radius: 12px;
           overflow: hidden;
           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
           border: 1px solid #e2e8f0;
           display: flex;
           flex-direction: column;
+          background-image: url('/images/md.jpeg');
+          background-size: cover;
+    
+          /* Step 4: Center the background */
+          background-position: center;
+        }
+        .ga-section-princi-image-card {
+          flex: 1;
+          width: 150px;
+          height: 520px;
+          background-color: #ffffff;
+          overflow: hidden;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+          border: 1px solid #e2e8f0;
+          display: flex;
+          flex-direction: column;
+          background-image: url('/images/princi.jpeg');
+          background-size: cover;
+    
+          /* Step 4: Center the background */
+          background-position: center;
+        }
+        .ga-section-image-text-card {
+          text-align: justify;
+          flex: 1;
+          width: 150px;
+          height: 520px;
+          background-color: #ffffff;
+          
+          overflow: hidden;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+          border: 1px solid #e2e8f0;
+          display: flex;
+          flex-direction: column;
+          font-family: 'Noto Serif Todhri', serif;
+          padding: 60px;
+          font-size: 16px;
         }
 
         .ga-section-image {
-          width: 100%;
-          height: 240px;
+          
           object-fit: cover;
           object-position: top;
           display: block;
@@ -342,10 +381,9 @@ const GreenfieldAcademy = () => {
               </p>
               
               <div className="ga-banner-buttons">
-                <button className="ga-btn-primary" onClick={() => handleActionClick('Apply')}>
+                <a href="#more" className="ga-btn-primary">
                   Discover More
-                </button>
-                
+                </a>
               </div>
             </div>
 
@@ -367,21 +405,53 @@ const GreenfieldAcademy = () => {
             </p>
           </section>
 
-          <div className="ga-cards-container">
+          <div className="ga-cards-container" id="more">
+            
             <div className="ga-section-image-card">
-              <img 
-                src="https://res.cloudinary.com/ds72vzw9j/image/upload/v1787858609/d57c7bcb4ab088f17e46e354d4b28b99_mkrzo7.jpg" 
-                alt="Academy excellence and campus life" 
-                className="ga-section-image" 
-              />
+              
             </div>
-            <div className="ga-section-image-card">
-              <img 
-                src="https://res.cloudinary.com/ds72vzw9j/image/upload/v1787893729/62bf8a655caac3f85892594c7edabbc6_xrwbxn.jpg" 
-                alt="Academy excellence and campus life" 
-                className="ga-section-image" 
-              />
+            <div className="ga-section-image-text-card">
+              <h3>Welcome to Greenfield Academy!</h3>
+              <br/>
+              Education isn’t about just memorizing textbooks or surviving another round of exams—it’s about figuring out who you are, what you love, and how to leave the world a little better than you found it.
+
+              Here at Greenfield, nestled right in the heart of Titabar, we’re doing things differently. We’ve traded rigid, old-school classrooms for spaces that actually spark curiosity. Whether it’s building tech solutions in the computer lab, getting hands-on in our science spaces, or dominating the sports field, we want every student to feel seen, heard, and genuinely excited to walk through those school gates every morning.
+
+              Let’s be real: the world is moving fast. AI, climate shifts, creator economies—the rulebook is rewriting itself in real-time. That’s why our approach focuses less on rote learning and more on adaptability, emotional intelligence, and critical thinking. We’re building a community of creators, problem-solvers, and kind human beings.
+
+              To our amazing parents: thank you for trusting us with your kids' futures. We’re in this together, so let's keep the communication open, ditch the stress, and make this school journey unforgettable.
+
+              Let’s build something awesome together.
+
+              <br/>
+              <br/>
+              <br/><i><h4>Manish Krishna Kachari</h4>
+              Director, Greenfield Academy</i>
             </div>
+
+          </div>
+          <div className="ga-cards-container" id="more">
+            
+            <div className="ga-section-princi-image-card">
+              
+            </div>
+            <div className="ga-section-image-text-card">
+              <h3>গ্রীনফিল্ড একাডেমীলৈ স্বাগতম!</h3>
+              <br/>
+              শিক্ষা কেৱল পাঠ্যপুথি মুখস্থ কৰা বা ইখনৰ পাছত সিখন পৰীক্ষাত উত্তীৰ্ণ হোৱাই নহয়—ই হৈছে আপুনি প্ৰকৃততে কোন, 
+              আপুনি কি ভাল পায় আৰু এই পৃথিৱীখনক কেনেকৈ আৰু অলপ সুন্দৰ কৰি তুলিব পাৰি, 
+              তাক বিচাৰি উলিওৱাৰ এক যাত্ৰা। টিীয়কৰ ঠিক প্রাণকেন্দ্রত অৱস্থিত আমাৰ এই গ্রীনফিল্ডত আমি অলপ ভিন্ন ধৰণে কাম-কাজবোৰ কৰিছোঁ। 
+              পুৰণি, গতানুগতিক শ্ৰেণীকোঠা সলনি কৰি আমি এনে কিছুমান পৰিৱেশ গঢ়ি তুলিছোঁ যিয়ে ছাত্ৰ-ছাত্ৰীৰ মনত কৌতুহল জাগ্ৰত কৰে। 
+              
+
+              আমাৰ আদৰণীয অভিভাৱকসকললৈ: সন্তানৰ উজ্জ্বল ভৱিষ্যতৰ দায়িত্ব আমাৰ ওপৰত অৰ্পণ কৰাৰ বাবে আপোনালোকক অশেষ ধন্যবাদ। আমি এই যাত্ৰাত ইজনে সিজনৰ সংগী, সেয়েহে আহক আমি যোগাযোগ সুদৃঢ় ৰাখোঁ, মানসিক মানসিক চাপ আঁতৰাওঁ আৰু এই বিদ্যালয়ৰ যাত্ৰাটোক অবিস্মৰণীয় কৰি তোলোঁ। আহক, সকলোৱে মিলি কিবা এক সুন্দৰ সূচনা কৰোঁ।
+
+              <br/>
+              <br/>
+              <br/><i><h4>প্ৰশান্ত কুমাৰ ভাগৱতী</h4>
+              অধ্যক্ষ, গ্ৰীণফিল্ড একাডেমী</i>
+            </div>
+            
           </div>
         </div>
       </div>

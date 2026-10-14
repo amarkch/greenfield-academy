@@ -9,176 +9,200 @@ const host = "https://greenfield-academy-back-end.onrender.com";
 //const host = "http://localhost:3000";
 
 const statusMeta = {
-  done: { icon: CheckCircle2, label: "Completed" },
-  current: { icon: CircleDot, label: "Discuss Question and Answer" },
-  pending: { icon: Circle, label: "Start the Chapter" },
-  homeworkGiven: { icon: Circle, label: "Give Home Work" },
-  homeworkChecking: { icon: Circle, label: "Check Homework" },
-  homeworkChecked: { icon: Circle, label: "Mark as Complete" },
+  done: { icon: CheckCircle2, label: "Completed", bg: "#E6F4EA", color: "#137333" },
+  current: { icon: CircleDot, label: "Q&A Discussion done", bg: "#FEF7E0", color: "#B06000" },
+  pending: { icon: Circle, label: "Start this chapter", bg: "#777777", color: "#FFFFFF" },
+  homeworkGiven: { icon: Circle, label: "Homework Given", bg: "#E8F0FE", color: "#1A73E8" },
+  homeworkChecking: { icon: Circle, label: "Check Homework", bg: "#FCE8E6", color: "#C5221F" },
+  homeworkChecked: { icon: Circle, label: "Mark Complete", bg: "#E6F4EA", color: "#137333" },
 };
 const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChecking", "homeworkChecked", "done"];
+const statusMetaDisplaySequence = ["current", "homeworkGiven", "homeworkChecking", "homeworkChecked","pending",  "done"];
+const sortElementsByStatus = (items) => {
+  // Use spread [...items] to avoid mutating the original state array directly
+  return [...items].sort((a, b) => {
+    const indexA = statusMetaDisplaySequence.indexOf(a.status);
+    const indexB = statusMetaDisplaySequence.indexOf(b.status);
 
-function initials(name) {
-  return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
-}
+    // Fallback for any unknown status (puts them at the end)
+    const positionA = indexA !== -1 ? indexA : statusMetaDisplaySequence.length;
+    const positionB = indexB !== -1 ? indexB : statusMetaDisplaySequence.length;
+
+    return positionA - positionB;
+  });
+};
+
 function formatLabel(str) {
   if (!str) return "";
   return str
     .split("-")
     .map((word) => {
-      // Keep roman numerals fully capitalized (e.g., vii -> VII)
       if (/^[ivxlcdm]+$/i.test(word)) {
         return word.toUpperCase();
       }
-      // Capitalize standard words
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
     .join(" ");
 }
+
 const getProgressValue = (done, total) => {
   if (!total || total <= 0) return 0;
   return Math.round((done / total) * 100);
 };
+
 function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingChapterId }) {
-  const periodProgreess = getProgressValue(period.doneChaptersCount, period.totalChapters);
+  const periodProgress = getProgressValue(period.doneChaptersCount, period.totalChapters);
+  
   return (
-    <div style={{ marginBottom: "5px", background: C.paperCard, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
-      <button
+    <div style={{ 
+      background: C.paperCard, 
+      border: `1px solid ${C.line}`, 
+      borderRadius: 12, 
+      overflow: "hidden",
+      boxShadow: "0 1px 3px rgba(0,0,0,0.04)"
+    }}>
+      {/* Header Bar */}
+      <div 
         onClick={onToggle}
         style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-          padding: "16px 20px",
-          background: "#CFECF3",
-          border: "none",
-          cursor: "pointer",
-          textAlign: "left",
-        }}
-      >
-        <div style={{ width: 10, height: 10, borderRadius: 999, background: C.sky, flexShrink: 0 }} />
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 16, fontWeight: 900 }}>{formatLabel(period.class)}<br/><i>{formatLabel(period.subject)}</i></div>
-          <div style={{ fontSize: 12, fontWeight: 900, marginTop: 2 }}>{period.chapter}</div>
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
+        cursor: "pointer",
+        padding: "7px 10px",
+        background: "#F4F8FA",
+        borderBottom: isOpen ? `1px solid ${C.line}` : "none",
+      }}>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            background: "transparent",
+            border: "none",
+            textAlign: "left",
+            padding: 0
+          }}
+        >
+          
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: C.ink }}>
+              {formatLabel(period.class)} &bull; <span style={{ fontWeight: 500, fontStyle: "italic" }}>{formatLabel(period.subject)}</span>
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: C.slate, marginTop: 2 }}>{period.chapter}</div>
+          </div>
         </div>
-        <nav style={{ background: "#fff", display: "flex", flexDirection: "column", border: "solid 1px #aaa", borderRadius: "5px", gap: 4 }}>
+
+        {/* Student Roster Nav Link (Separate from toggle button) */}
+        <div style={{ display: "flex" }}>
           <NavLink
-            to={`/students/${period.class}`}
+            to={`/class/${period.class}`}
+            title="View Class Students"
             style={({ isActive }) => ({
               display: "flex",
               alignItems: "center",
-              gap: 8,
-              padding: "10px 12px",
-              borderRadius: 10,
-              textDecoration: "none",
-              fontFamily: fontBody,
-              fontWeight: 600,
-              fontSize: 14,
+              justifyContent: "center",
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              background: isActive ? C.sky : "#fff",
+              border: `1px solid ${C.line}`,
               color: isActive ? "#fff" : C.ink,
-              position: "relative",
+              textDecoration: "none",
+              transition: "all 0.2s ease"
             })}
           >
             <Users size={16} />
           </NavLink>
-        </nav>
-        <span style={{ fontFamily: fontMono, fontSize: 12, color: C.slate }}>{periodProgreess}%</span>
-        <ChevronDown
-          size={18}
-          color={C.slate}
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}
-        />
-      </button>
 
-      {isOpen && (
-        <div style={{ padding: "0 20px 18px", animation: "fadeIn 0.25s ease" }}>
-          <div style={{ height: 8, borderRadius: 999, background: C.paperCard, border: `1px solid ${C.line}`, marginBottom: 16 }}>
-            <div style={{ width: `${periodProgreess}%`, height: "100%", borderRadius: 999, background: C.sky }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 12, justifyContent: "flex-end" }}>
+            <button 
+              onClick={onToggle}
+              style={{ background: "transparent", border: "none", cursor: "pointer", padding: 4, display: "flex" }}
+            >
+              <ChevronDown
+                size={18}
+                color={C.slate}
+                style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}
+              />
+            </button>
           </div>
-          {period.chapters.map((ch, i) => {
-            const meta = statusMeta[ch.status];
-            const Icon = meta.icon;
-            const activeColor = ch.status === "done" ? C.mint : ch.status === "current" ? C.coral : ch.status === "pending" ? "#000" : "red";
-            const isUpdating = updatingChapterId === ch._id;
-            return (
-              <div
-                key={i}
-                className="chapter-row"
-                style={{
-                  borderTop: i === 0 ? "none" : `1px solid #000`,
-                }}
-              >
-                  <div style={{ display: "flex", flex: 1, alignItems: "center", gap: 10, flex: 1 }}>
-                    <span
-                      style={{
-                        fontFamily: "Bentham, serif",
-                        fontSize: 18,
-                        color: activeColor,
-                        fontWeight: ch.status == "pending" ? 500 : 800,
-                      }}
-                    >
-                      Ch-{i+1}: <i><b>{ch.title}</b></i>
+        </div>
+      </div>
+
+      {/* Accordion Body */}
+      {isOpen && (
+        <div style={{ padding: "5px", background: "#fff", animation: "fadeIn 0.25s ease" }}>
+          <div style={{ display: "flex", alignItems: "center", padding: "4px 0", justifyContent: "space-between" }}>
+            <span style={{ fontFamily: fontMono, fontSize: 12, fontWeight: 600, color: C.slate, padding: "0 10px 0 0"}}>Completed: {periodProgress}% </span>
+            <div style={{ width: "65%", height: 6, borderRadius: 999, background: "#F1F3F4", overflow: "hidden" }}>
+              <div style={{ width: `${periodProgress}%`, height: "100%", borderRadius: 999, background: C.sky, transition: "width 0.3s ease" }} />
+            </div>
+            
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            { sortElementsByStatus(period.chapters).map((ch, i) => {
+              const meta = statusMeta[ch.status] || statusMeta.pending;
+              const isUpdating = updatingChapterId === ch._id;
+              
+              return (
+                <div
+                  key={i}
+                  className="chapter-row"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "10px 12px",
+                    borderRadius: 8,
+                    background: i % 2 === 0 ? "#FAFBFC" : "#fff",
+                    border: `1px solid ${C.line}`,
+                    gap: 12
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
+                    <span style={{ fontSize: 14, color: C.ink, fontWeight: 500 }}>
+                      Ch-{ch.chapterNumber}: <strong style={{ fontWeight: 600 }}>{ch.title}</strong>{ch.status == "current" && <i> In progress</i>}
                     </span>
-                    {
-                      ch.status === "done"?
-                      <span style={{
-                        fontSize: 25,
-                        color: "#0a0"
-                      }}>✓</span>
-                      : null
-                    }
                   </div>
 
-                <div className="chapter-controls">
-                  {isUpdating ? (
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 160, gap: 6 }}>
-                      <Loader2 size={16} className="animate-spin" color={C.slate} />
-                      <span style={{ fontSize: 12, color: C.slate, fontWeight: 600 }}>Updating...</span>
-                    </div>
-                  ) : (
-                    <>
-                      {/*<button
-                                              disabled={ch.status === "pending"}
-                                              onClick={() => onStatusChange(ch._id, ch.status, "prev", ch.class, ch.title, ch.subject)}
-                                              style={{
-                                                padding: "7px 14px",
-                                                borderRadius: 9,
-                                                border: `1px solid ${C.line}`,
-                                                background: ch.status !== "pending" ? C.paperCard : null,
-                                                color: ch.status !== "pending" ? C.ink : null,
-                                                fontFamily: fontBody,
-                                                fontWeight: 600,
-                                                fontSize: 13,
-                                                cursor: "pointer",
-                                              }}
-                                            >
-                                              &lt;
-                                            </button>*/}
+                  <div className="chapter-controls">
+                    {isUpdating ? (
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 140, gap: 6, padding: 6 }}>
+                        <Loader2 size={14} className="animate-spin" color={C.slate} />
+                        <span style={{ fontSize: 12, color: C.slate, fontWeight: 600 }}>Updating...</span>
+                      </div>
+                    ) : (
                       <button
                         disabled={ch.status === "done"}
                         onClick={() => onStatusChange(ch._id, ch.status, "next", ch.class, ch.title, ch.subject)}
                         style={{
-                          padding: ch.status === "done" ? "0"  : "7px 14px",
-                          borderRadius: 3,
-                          border: ch.status === "done" ? "none" :`1px solid ${C.line}`,
-                          background: ch.status !== "done" ? "#eee" : "none",
-                          color: ch.status !== "done" ? C.ink : null,
+                          padding: "6px 12px",
+                          borderRadius: 6,
+                          border: `1px solid ${C.line}`,
+                          background: meta.bg,
+                          color: meta.color,
                           fontFamily: fontBody,
                           fontWeight: 600,
                           fontSize: 12,
-                          cursor: "pointer",
+                          cursor: ch.status === "done" ? "default" : "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          transition: "opacity 0.2s"
                         }}
                       >
-                        <span style={{ fontFamily: fontBody, fontSize: 14, color: activeColor, fontWeight: ch.status == "pending" ? 500 : 800, minWidth: 80, textAlign: "center" }}>{meta.label}</span>
+                        <span>{meta.label}</span>
+                        {ch.status === "done" && (
+                          <CheckCircle2 size={16} color="#137333" />
+                        )}
                       </button>
-                      
-                    </>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
@@ -195,7 +219,7 @@ export default function FacultyDetail() {
 
   useEffect(() => {
     setLoading(true);
-    relodTheChapterDetails();
+    reloadTheChapterDetails();
   }, [id]);
 
   const handleStatusChange = async (chapterId, status, direction, classId, title, sub) => {
@@ -228,14 +252,15 @@ export default function FacultyDetail() {
       })
         .then((res) => res.json())
         .then(() => {
-          relodTheChapterDetails();
+          reloadTheChapterDetails();
         });
     } catch (err) {
       console.error("Failed to update chapter status in backend:", err);
+      setUpdatingChapterId(null);
     }
   };
 
-  const relodTheChapterDetails = () => {
+  const reloadTheChapterDetails = () => {
     fetch(`${host}/api/get-teacher/${id}`)
       .then((res) => res.json())
       .then(({ data }) => {
@@ -249,6 +274,7 @@ export default function FacultyDetail() {
       })
       .catch((err) => {
         console.error("Failed to fetch teacher data:", err);
+        setLoading(false);
       });
   };
 
@@ -262,7 +288,6 @@ export default function FacultyDetail() {
           justifyContent: "center",
           minHeight: "60vh",
           gap: 12,
-          animation: "fadeIn 0.4s ease",
           color: C.ink,
           fontSize: 15,
           fontWeight: 600,
@@ -276,62 +301,88 @@ export default function FacultyDetail() {
 
   if (!teacher) {
     return (
-      <div style={{ animation: "fadeIn 0.4s ease" }}>
-        <p style={{ color: C.ink, fontSize: 15, padding: 5 }}>We couldn't find that faculty member.</p>
-        <Link to="/faculty" style={{ padding: 5, fontWeight: 600, color: C.ink }}>← Back to Faculty</Link>
+      <div style={{ padding: 24, textAlign: "center" }}>
+        <p style={{ color: C.ink, fontSize: 15, marginBottom: 12 }}>We couldn't find that faculty member.</p>
+        <Link to="/faculty" style={{ fontWeight: 600, color: C.sky, textDecoration: "none" }}>&larr; Back to Faculty</Link>
       </div>
     );
   }
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", maxWidth: 900, margin: "0 auto", paddingBottom: 40 }}>
       <GreenfieldHeaderBar />
-      <div style={{ display: "flex", alignItems: "center", gap: 18, marginTop: "55px", padding: "20px 10px" }}>
+      
+      {/* Teacher Profile Header Card */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 20,
+        marginTop: 70,
+        padding: 24,
+        background: C.paperCard,
+        border: `1px solid ${C.line}`,
+        borderRadius: 16,
+        boxShadow: "0 2px 6px rgba(0,0,0,0.03)"
+      }}>
         <div
           style={{
-            width: 90,
-            height: 90,
-            borderRadius: 18,
-            background: `${getRandomColor()}`,
-            color: teacher.color,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontWeight: 700,
-            fontSize: 24,
+            width: 84,
+            height: 84,
+            borderRadius: 14,
+            background: "#F0F4F8",
+            overflow: "hidden",
             flexShrink: 0,
+            border: `1px solid ${C.line}`
           }}
         >
-          <img style={{ display: "inline-block", overflow: "auto", borderRadius: "6px"}} src={`/images/${teacher._id}.png`} />
+          <img 
+            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+            src={`/images/${teacher._id}.png`} 
+            alt={teacher.name}
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
         </div>
-        <div style={{ fontFamily: "'Bentham', serif" }}>
-          <h1 style={{ fontWeight: 700, fontSize: 24, color: C.ink, margin: 0 }}>{teacher.name}</h1>
-          <div style={{ fontWeight: 900, fontSize: "15px" }}>
-            <div>{teacher.qualification}</div>
-            {teacher.classTeacherOf && <div style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 14, color: C.ink }}>Class Teacher: ({teacher.classTeacherOf.split("-")[1]})</div>}
-            <div>Email: {teacher.email}</div>
-            <div>Phone: {teacher.phone}</div>
-            
+
+        <div style={{ flex: 1 }}>
+          <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 22, color: C.ink, margin: 0 }}>{teacher.name}</h1>
+          <div style={{ fontSize: 14, color: C.slate, fontWeight: 600, marginTop: 2 }}>{teacher.qualification} &bull; <span style={{ color: C.sky }}>{teacher.subject}</span></div>
+          
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginTop: 10, fontSize: 13, color: C.ink, fontWeight: 500 }}>
+            {teacher.classTeacherOf && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <GraduationCap size={15} color={C.slate} />
+                <span>Class Teacher: <strong>{teacher.classTeacherOf.split("-")[1]}</strong></span>
+              </div>
+            )}
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <Mail size={15} color={C.slate} />
+              <span>{teacher.email}</span>
+            </div>
+            {teacher.phone && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span>Phone: {teacher.phone}</span>
+              </div>
+            )}
           </div>
-          <p style={{ fontSize: 14, color: teacher.color, fontWeight: 600, margin: "4px 0 0" }}>{teacher.subject}</p>
         </div>
       </div>
-      
-      <div style={{padding: 5 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
+      {/* Periods / Chapters Section */}
+      <div style={{ marginTop: 24 }}>
+        <h3 style={{ fontFamily: fontDisplay, fontSize: 18, color: C.ink, marginBottom: 12 }}>Assigned Classes & Syllabi</h3>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {periods?.map((s) => (
             <SubjectAccordion
               key={`${s.class}-${s.subject}`}
               period={s}
               isOpen={openId === `${s.class}-${s.subject}`}
-              onToggle={() => setOpenId(`${s.class}-${s.subject}`)}
+              onToggle={() => setOpenId(openId === `${s.class}-${s.subject}` ? null : `${s.class}-${s.subject}`)}
               onStatusChange={handleStatusChange}
               updatingChapterId={updatingChapterId}
             />
           ))}
         </div>
       </div>
-      
     </div>
   );
 }
