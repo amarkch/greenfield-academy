@@ -238,12 +238,10 @@ function SubjectAccordion({ authorizedFor, period, isOpen, onToggle, onStatusCha
                             border: `0px solid #fff`,
                             fontFamily: fontBody,
                             backgroundColor: "#eee",
-                            fontWeight: 600,
-                            fontSize: 12,
+                            fontSize: 11,
                             color: ch.status == "pending" ? "#000" : "red",
                             cursor: "default",
-                            display: "flex",
-                            alignItems: "center",
+                            width: "fit-content",
                             gap: 6,
                             transition: "opacity 0.2s"
                           }}
