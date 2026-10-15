@@ -18,9 +18,10 @@ const statusMeta = {
 };
 const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChecking", "homeworkChecked", "done"];
 const statusMetaDisplaySequence = ["current", "homeworkGiven", "homeworkChecking", "homeworkChecked","pending",  "done"];
-const sortElementsByStatus = (items) => {
+const sortElementsByStatus = (items, authorizedFor) => {
   // Use spread [...items] to avoid mutating the original state array directly
   return [...items].sort((a, b) => {
+    if(!authorizedFor) return 1;
     const indexA = statusMetaDisplaySequence.indexOf(a.status);
     const indexB = statusMetaDisplaySequence.indexOf(b.status);
 
@@ -142,7 +143,7 @@ function SubjectAccordion({ authorizedFor, period, isOpen, onToggle, onStatusCha
             
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            { sortElementsByStatus(period.chapters).map((ch, i) => {
+            { sortElementsByStatus(period.chapters, authorizedFor).map((ch, i) => {
               const meta = statusMeta[ch.status] || statusMeta.pending;
               const isUpdating = updatingChapterId === ch._id;
               
@@ -204,6 +205,63 @@ function SubjectAccordion({ authorizedFor, period, isOpen, onToggle, onStatusCha
                     )}
                   </div>
                 }
+                { 
+                  !authorizedFor && ch.status === "done" ?
+                  <button
+                        disabled={true}
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: 6,
+                          border: `1px solid ${C.line}`,
+                          background: meta.bg,
+                          color: meta.color,
+                          fontFamily: fontBody,
+                          fontWeight: 600,
+                          fontSize: 12,
+                          cursor: "default",
+                          width:"113px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6,
+                          transition: "opacity 0.2s"
+                        }}
+                      >
+                        <span>{meta.label}</span>
+                        {ch.status === "done" && (
+                          <CheckCircle2 size={16} color="#137333" />
+                        )}
+                      </button>
+                      : <button
+                          disabled={true}
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: 6,
+                            border: `1px solid ${C.line}`,
+                            background: meta.bg,
+                            color: meta.color,
+                            fontFamily: fontBody,
+                            fontWeight: 600,
+                            fontSize: 12,
+                            cursor: "default",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            transition: "opacity 0.2s"
+                          }}
+                        >
+                          <span>
+                            {ch.status == "pending" ? "Not Started" : null}
+                            {ch.status == "current" ? "In progress" : null}
+                            {ch.status == "homeworkGiven" ? "Homework Given to the students" : null}
+                            {ch.status == "homeworkChecking" ? "Teacher checking homework" : null}
+                            {ch.status == "homeworkChecked" ? "Chapter almost completed" : null}
+                            
+                          </span>
+                          
+                        </button>
+
+                }
+
                 </div>
               );
             })}
