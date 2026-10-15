@@ -50,9 +50,40 @@ export default function Students() {
     setSubjectProgressCount(d);
   };
 
+  
+const recalculateRatings = async () => {
+  try {
+    // First, recalculate student ratings
+    const ratingRes = await fetch(
+      `${host}/api/students-rating-recalculation/${className}`
+    );
+
+    if (!ratingRes.ok) {
+      throw new Error("Failed to recalculate student ratings");
+    }
+
+    // Then, fetch students after recalculation completes
+    const studentsRes = await fetch(
+      `${host}/api/get-students/${className}`
+    );
+
+    if (!studentsRes.ok) {
+      throw new Error("Failed to fetch students");
+    }
+
+    const studentData = await studentsRes.json();
+
+    //console.log(data);
+    setStudents(studentData.data);
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
+
   useEffect(() => {
     if (!className) return;
-
     setLoading(true);
     Promise.all([
       fetch(`${host}/api/subjects/${className}`).then((res) => {
@@ -118,6 +149,7 @@ export default function Students() {
             >
               Select Academic Class
             </label>
+
             <select
               value={className || ""}
               onChange={handleClassChange}
@@ -243,18 +275,23 @@ export default function Students() {
                 Students Directory
               </h3>
             </div>
-            <span
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: C.slate,
-                background: `${C.line}40`,
-                padding: "4px 10px",
-                borderRadius: 20,
-              }}
-            >
-              Total: {students.length}
-            </span>
+            <div style={{ display: "flex", alignItems: "center"}}>
+              <span
+                style={{
+                  fontSize: 20,
+                  fontWeight: 600,
+                  color: C.slate,
+                  background: `${C.line}40`,
+                  padding: "4px 10px",
+                  borderRadius: 20,
+                }}
+              >
+                Total students: {students.length}
+              </span>
+              <button className="ga-banner-buttons ga-btn-primary" onClick={recalculateRatings}>Refresh Ratings</button>
+            </div>
+            
+            
           </div>
 
           <div

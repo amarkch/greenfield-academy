@@ -13,8 +13,8 @@ const statusMeta = {
   current: { icon: CircleDot, label: "Q&A Discussion done", bg: "#FEF7E0", color: "#B06000" },
   pending: { icon: Circle, label: "Start this chapter", bg: "#777777", color: "#FFFFFF" },
   homeworkGiven: { icon: Circle, label: "Homework Given", bg: "#E8F0FE", color: "#1A73E8" },
-  homeworkChecking: { icon: Circle, label: "Check Homework", bg: "#FCE8E6", color: "#C5221F" },
-  homeworkChecked: { icon: Circle, label: "Mark Complete", bg: "#E6F4EA", color: "#137333" },
+  homeworkChecking: { icon: Circle, label: "Homework Checked", bg: "#FCE8E6", color: "#C5221F" },
+  homeworkChecked: { icon: Circle, label: "Mark as Completed", bg: "#E6F4EA", color: "#137333" },
 };
 const statusMetaSequence = ["pending", "current", "homeworkGiven", "homeworkChecking", "homeworkChecked", "done"];
 const statusMetaDisplaySequence = ["current", "homeworkGiven", "homeworkChecking", "homeworkChecked","pending",  "done"];
@@ -162,7 +162,7 @@ function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingCh
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
                     <span style={{ fontSize: 14, color: C.ink, fontWeight: 500 }}>
-                      Ch-{ch.chapterNumber}: <strong style={{ fontWeight: 600 }}>{ch.title}</strong>{ch.status == "current" && <i> In progress</i>}
+                      Ch-{ch.chapterNumber}: <strong style={{ fontWeight: 600 }}>{ch.title}</strong>{ch.status == "current" && <span style={{color: "red", fontSize: 12}}><i> (Chapter In progress...)</i></span>}
                     </span>
                   </div>
 

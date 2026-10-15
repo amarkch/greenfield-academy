@@ -381,19 +381,27 @@ async function connectDB() {
   return dbConnection;
 }
 
+
 app.get('/api/get-teachers-list', async (req, res) => {
   try {
     const db = await connectDB();
-    const teachers = await db.collection('faculty').find().toArray();
+
+    const teachers = await db.collection('faculty')
+      .find({})
+      .sort({ rank: 1 })
+      .toArray();
+
     res.json(teachers);
+
   } catch (error) {
     console.error('Database retrieval error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to fetch teacher data' 
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch teacher data'
     });
   }
 });
+
 
 app.post('/api/insert-teacher-data', async (req, res) => {
   try {
