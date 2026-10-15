@@ -231,17 +231,16 @@ function SubjectAccordion({ authorizedFor, period, isOpen, onToggle, onStatusCha
                           <CheckCircle2 size={16} color="#137333" />
                         )}
                       </button>
-                      : <button
+                      : !authorizedFor && <button
                           disabled={true}
                           style={{
                             padding: "6px 12px",
-                            borderRadius: 6,
-                            border: `1px solid ${C.line}`,
-                            background: meta.bg,
-                            color: meta.color,
+                            border: `0px solid #fff`,
                             fontFamily: fontBody,
+                            backgroundColor: "#eee",
                             fontWeight: 600,
                             fontSize: 12,
+                            color: ch.status == "pending" ? "#000" : "red",
                             cursor: "default",
                             display: "flex",
                             alignItems: "center",
