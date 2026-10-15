@@ -26,6 +26,10 @@ export default function StudentDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [showRemarkForm, setShowRemarkForm] = useState(false);
+  const [remark, setRemark] = useState("");
+  const [remarkSubmitting, setRemarkSubmitting] = useState(false);
+  const [remarkMessage, setRemarkMessage] = useState("");
   
   const displayMarksCategory = (cat) => {
     return <span style={{fontSize: "16px", color: cat == "Good" ? "green" :  cat == "Fail" ? "red" : "black" }}> - {cat}</span>
@@ -88,6 +92,41 @@ export default function StudentDetail() {
     }
   };
 
+  const handleRemarkSubmit = async (e) => {
+    e.preventDefault();
+    const trimmedRemark = remark.trim();
+    if (!trimmedRemark) {
+      setRemarkMessage("Please enter a remark.");
+      return;
+    }
+
+    setRemarkSubmitting(true);
+    setRemarkMessage("");
+
+    try {
+      const response = await fetch(`${host}/api/student-remark`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId,
+          remark: trimmedRemark
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save remark.");
+      }
+
+      setRemark("");
+      setShowRemarkForm(false);
+      setRemarkMessage("Remark saved successfully.");
+    } catch (err) {
+      setRemarkMessage(err.message || "Unable to save remark.");
+    } finally {
+      setRemarkSubmitting(false);
+    }
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <GreenfieldHeaderBar />
@@ -102,20 +141,21 @@ export default function StudentDetail() {
           <h3>Class: {studentsData.className} </h3>
           <h3>Roll: {studentsData.rollNumber} </h3>
           <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {[1, 2, 3, 4, 5].map((star) => {
-                      const rating = studentsData.rating || 0;
-                      const filled = star <= rating;
-                      return (
-                        <Star
-                          key={star}
-                          size={20}
-                          fill={filled ? "#F59E0B" : "transparent"}
-                          color={filled ? "#F59E0B" : "#D1D5DB"}
-                        />
-                      );
-                    })}
-                  </div>
+            {[1, 2, 3, 4, 5].map((star) => {
+              const rating = studentsData.rating || 0;
+              const filled = star <= rating;
+              return (
+                <Star
+                  key={star}
+                  size={20}
+                  fill={filled ? "#F59E0B" : "transparent"}
+                  color={filled ? "#F59E0B" : "#D1D5DB"}
+                />
+              );
+            })}
+          </div>
         </div>
+
       </div>
 
       {/* Filters: Horizontal scrollable/wrappable on mobile */}
@@ -150,8 +190,89 @@ export default function StudentDetail() {
             {f.label}
           </button>
         ))}
-      </div>
 
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", padding: "10px 0" }}>
+          <span style={{color: "red", fontSize: 12, padding: "5px 0"}}><i>(Only higher authority can add remark)</i></span>
+          <div style={{ display: "flex" }}>
+          <button
+            type="button"
+            onClick={() => {
+              setShowRemarkForm((shown) => !shown);
+              setRemarkMessage("");
+            }}
+            style={{
+              width: "150px",
+              padding: "8px 12px",
+              border: `1px solid ${C.line}`,
+              borderRadius: 8,
+              background: "Red",
+              color: "white",
+              fontFamily: fontBody,
+              fontWeight: 600,
+              cursor: "pointer",
+              
+            }}
+          >
+            {showRemarkForm ? "Cancel" : "Add Remark"}
+          </button>
+          {showRemarkForm && <button
+                type="submit"
+                disabled={remarkSubmitting}
+                style={{
+                  width: "150px",
+                  padding: "8px 12px",
+                  border: "none",
+                  borderRadius: 8,
+                  background: C.ink,
+                  color: "#fff",
+                  fontFamily: fontBody,
+                  fontWeight: 600,
+                  cursor: remarkSubmitting ? "wait" : "pointer",
+                  opacity: remarkSubmitting ? 0.7 : 1
+                }}
+              >
+                {remarkSubmitting ? "Saving..." : "Save Remark"}
+              </button>
+            }
+            </div>
+          {showRemarkForm && (
+            <form
+              onSubmit={handleRemarkSubmit}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+                marginTop: 10,
+                minWidth: 220
+              }}
+            >
+              <textarea
+                value={remark}
+                onChange={(e) => setRemark(e.target.value)}
+                placeholder="Enter student remark..."
+                rows={3}
+                required
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: 10,
+                  border: `1px solid ${C.line}`,
+                  borderRadius: 8,
+                  fontFamily: fontBody,
+                  fontSize: 13,
+                  resize: "vertical"
+                }}
+              />
+              
+            </form>
+          )}
+          {remarkMessage && (
+            <p role="status" style={{ fontFamily: fontBody, fontSize: 12, marginTop: 8, color: remarkMessage.includes("successfully") ? "green" : "red" }}>
+              {remarkMessage}
+            </p>
+          )}
+        </div>
       {/* Notifications List */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {loading && (

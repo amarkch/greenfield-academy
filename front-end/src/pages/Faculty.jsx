@@ -19,7 +19,7 @@ export default function Faculty() {
         setLoading(true);
         const response = await fetch("https://greenfield-academy-back-end.onrender.com/api/get-teachers-list"); // Replace with your actual API endpoint
         
-        if (!response.ok) {
+      if (!response.ok) {
           throw new Error("Failed to fetch faculty list");
         }
         const data = await response.json();

@@ -21,6 +21,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/academic-home" element={<AcademicHome />} />

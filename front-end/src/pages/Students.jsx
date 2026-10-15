@@ -199,7 +199,7 @@ const recalculateRatings = async () => {
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
               <BookOpen size={20} color={C.ink} />
               <h3 style={{ fontFamily: fontDisplay, fontSize: 20, fontWeight: 700, margin: 0, color: C.ink }}>
-                Class Subjects & Faculty
+                Class Subjects & Teachers
               </h3>
             </div>
             <div
@@ -243,11 +243,11 @@ const recalculateRatings = async () => {
                       <b style={{ fontSize: 16, fontFamily: fontDisplay, display: "block", marginBottom: 4 }}>
                         {std.subjectName}
                       </b>
-                      <span style={{ fontSize: 13, color: C.slate, fontFamily: fontBody }}>
-                        {std.teacherName}
+                      <span style={{ fontSize: 14, color: C.slate, fontFamily: fontBody }}>
+                        <i>{std.teacherName}</i>
                       </span>
                     </div>
-                    <div style={{ marginTop: 12, paddingTop: 10, borderTop: `1px solid ${C.line}40` }}>
+                    <div style={{ marginTop: 5, paddingTop: 5, borderTop: `1px solid ${C.line}40` }}>
                       <span
                         style={{
                           fontSize: 12,
@@ -268,24 +268,15 @@ const recalculateRatings = async () => {
 
         {/* Students List Section */}
         <div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", marginBottom: 14 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <GraduationCap size={22} color={C.ink} />
               <h3 style={{ fontFamily: fontDisplay, fontSize: 20, fontWeight: 700, margin: 0, color: C.ink }}>
                 Students Directory
               </h3>
             </div>
-            <div style={{ display: "flex", alignItems: "center"}}>
-              <span
-                style={{
-                  fontSize: 20,
-                  fontWeight: 600,
-                  color: C.slate,
-                  background: `${C.line}40`,
-                  padding: "4px 10px",
-                  borderRadius: 20,
-                }}
-              >
+            <div style={{ display: "flex", alignItems: "center", padding: "5px"}}>
+              <span className="total-count">
                 Total students: {students.length}
               </span>
               <button className="ga-banner-buttons ga-btn-primary" onClick={recalculateRatings}>Refresh Ratings</button>

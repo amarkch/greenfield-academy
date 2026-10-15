@@ -50,7 +50,7 @@ const getProgressValue = (done, total) => {
   return Math.round((done / total) * 100);
 };
 
-function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingChapterId }) {
+function SubjectAccordion({ authorizedFor, period, isOpen, onToggle, onStatusChange, updatingChapterId }) {
   const periodProgress = getProgressValue(period.doneChaptersCount, period.totalChapters);
   
   return (
@@ -168,8 +168,9 @@ function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingCh
                       {ch.status == "homeworkChecked" && <span style={{color: "green", fontSize: 12}}><i> (Homework checking done)</i></span>}
                     </span>
                   </div>
-
-                  <div className="chapter-controls">
+                  {
+                    authorizedFor &&
+                    <div className="chapter-controls">
                     {isUpdating ? (
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 140, gap: 6, padding: 6 }}>
                         <Loader2 size={14} className="animate-spin" color={C.slate} />
@@ -202,6 +203,7 @@ function SubjectAccordion({ period, isOpen, onToggle, onStatusChange, updatingCh
                       </button>
                     )}
                   </div>
+                }
                 </div>
               );
             })}
@@ -218,10 +220,12 @@ export default function FacultyDetail() {
   const [periods, setPeriods] = useState(null);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState(null);
+  const [authorizedFor, setAuthorizedFor] = useState(null);
   const [updatingChapterId, setUpdatingChapterId] = useState(null);
 
   useEffect(() => {
     setLoading(true);
+    setAuthorizedFor(localStorage.getItem("teacherId") == id);
     reloadTheChapterDetails();
   }, [id]);
 
@@ -376,6 +380,7 @@ export default function FacultyDetail() {
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {periods?.map((s) => (
             <SubjectAccordion
+              authorizedFor={authorizedFor}
               key={`${s.class}-${s.subject}`}
               period={s}
               isOpen={openId === `${s.class}-${s.subject}`}
