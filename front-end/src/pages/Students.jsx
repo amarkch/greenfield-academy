@@ -4,8 +4,8 @@ import { ChevronRight, Star, BookOpen, UserCheck, GraduationCap } from "lucide-r
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 import "./ClassDetails.css";
-// const host = "https://greenfield-academy-back-end.onrender.com";
-const host = "http://localhost:3000";
+const host = "https://greenfield-academy-back-end.onrender.com";
+//const host = "http://localhost:3000";
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 2);
@@ -381,7 +381,7 @@ const recalculateRatings = async () => {
                       return (
                         <Star
                           key={star}
-                          size={13}
+                          size={14}
                           fill={filled ? "#F59E0B" : "transparent"}
                           color={filled ? "#F59E0B" : "#D1D5DB"}
                         />

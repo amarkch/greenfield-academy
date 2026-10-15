@@ -13,23 +13,7 @@ const GreenfieldHeaderBar = () => {
     setMobileMenuOpen(false);
     setDropdownOpen(false);
     setMobileDataOpen(false);
-    if(portalName == "Ratings Recalculate") {
-      
-      fetch(`${host}/api/students-rating-recalculation`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch students");
-        return res.json();
-      })
-      .then((responseData) => {
-        console.log(responseData);
-        alert(`Students rating recalculation request sent`);
-      })
-      .catch((err) => {
-        alert(err.message);
-        
-      });
-    }
-    else alert(`Navigating to ${portalName} Portal`);
+    
   };
 
   const closeAllMenus = () => {
@@ -69,7 +53,7 @@ const GreenfieldHeaderBar = () => {
                 <Link to="/students-data/" className="ga-dropdown-item" onClick={closeAllMenus}>Student's Data</Link>
                 <Link to="/subject-data/" className="ga-dropdown-item" onClick={closeAllMenus}>Subject Data</Link>
                 <Link to="/marks-data/" className="ga-dropdown-item" onClick={closeAllMenus}>Marks</Link>
-                <button className="ga-desktop-nav-link" onClick={() => handleNavClick('Ratings Recalculate')}>Re Calculate the Ratings</button>
+                
               </div>
             )}
           </div>

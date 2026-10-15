@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { ClipboardList, CalendarDays, AlertTriangle, Megaphone } from "lucide-react";
+import { ClipboardList, CalendarDays, AlertTriangle, Megaphone, Star } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
 const typeMeta = {
   assignment: { icon: ClipboardList, color: C.marigold, label: "Assignment" },
   marks: { icon: CalendarDays, color: C.sky, label: "Event" },
+  remarksFromHigherAuthority: { icon: CalendarDays, color: C.sky, label: "Event" },
 };
 
 const filters = [
   { id: "all", label: "All" },
   { id: "assignment", label: "Assignments" },
-  { id: "marks", label: "Marks" }
+  { id: "marks", label: "Marks" },
+  { id: "remarks", label: "Remarks" }
 ];
 const host = "https://greenfield-academy-back-end.onrender.com";
 //const host = "http://localhost:3000";
@@ -89,7 +91,7 @@ export default function StudentDetail() {
   return (
     <div style={{ position: "relative" }}>
       <GreenfieldHeaderBar />
-      <div style={{ marginBottom: 20,  marginTop: 70, fontFamily: "'Bentham', serif", display: "inline-block"}}>
+      <div style={{ marginBottom: 20,  marginTop: 70, fontFamily: "'Bentham', serif", display: "flex", alignItems: "center"}}>
         <div style={{width: "100px", height: "100px", float: "left"}}>
           {studentsData.gender ? <img src={studentsData.gender == "male" ? `/images/ma.png` : `/images/fe.png`} style={{width: "100%", height: "100%"}} /> : <span>Image</span>}
         </div>
@@ -99,6 +101,20 @@ export default function StudentDetail() {
           </h1>
           <h3>Class: {studentsData.className} </h3>
           <h3>Roll: {studentsData.rollNumber} </h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const rating = studentsData.rating || 0;
+                      const filled = star <= rating;
+                      return (
+                        <Star
+                          key={star}
+                          size={20}
+                          fill={filled ? "#F59E0B" : "transparent"}
+                          color={filled ? "#F59E0B" : "#D1D5DB"}
+                        />
+                      );
+                    })}
+                  </div>
         </div>
       </div>
 
