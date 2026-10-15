@@ -332,15 +332,13 @@ export default function StudentDetail() {
                   
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                      <span style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 13, color: C.ink, wordBreak: "break-word" }}>
+                      <span style={{ fontFamily: fontBody, fontWeight: 500, fontSize: 14, color: C.ink, wordBreak: "break-word" }}>
                         {n.title} {n.type == "marks" ? displayMarksCategory(n.marksCategory) : ""}
                       </span>
-                      {!n.read && (
-                        <span style={{ width: 6, height: 6, borderRadius: 999, background: meta.color, flexShrink: 0 }} />
-                      )}
+                      
                     </div>
-                    <p style={{ fontFamily: fontBody, fontSize: 12, color: C.slate, margin: "4px 0 0", wordBreak: "break-word" }}>
-                      {n.message}
+                    <p style={{ fontWeight: 700, fontFamily: fontBody, fontSize: 15, color: C.slate, margin: "4px 0 0", wordBreak: "break-word" }}>
+                      Chapter: <i>{n.message}</i>
                     </p>
                     <span style={{ fontFamily: fontBody, fontSize: 11, color: C.slate, opacity: 0.8, display: "block", marginTop: 4 }}>
                       {n.date}

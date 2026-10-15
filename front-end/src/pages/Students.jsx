@@ -252,11 +252,14 @@ const recalculateRatings = async () => {
                         style={{
                           fontSize: 12,
                           fontWeight: 700,
-                          color: getProgressColor(progress),
+                          color: "#009",
                           fontFamily: fontBody,
                         }}
                       >
                         Completed: {progress}%
+                        <div style={{ width: "65%", height: 7, borderRadius: 2, background: "#ddd", overflow: "hidden", border: "solid 1px #aaa" }}>
+                          <div style={{ width: `${progress}%`, height: "100%", borderRadius: 5, background: "#A00", transition: "width 0.3s ease" }} />
+                        </div>
                       </span>
                     </div>
                   </Link>
