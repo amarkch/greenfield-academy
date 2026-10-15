@@ -224,6 +224,9 @@ export default function FacultyDetail() {
   const [updatingChapterId, setUpdatingChapterId] = useState(null);
 
   useEffect(() => {
+    if(id=="masnnuklelhd") {
+      localStorage.removeItem("teacherId", null);
+    }
     setLoading(true);
     setAuthorizedFor(localStorage.getItem("teacherId") == id);
     reloadTheChapterDetails();
