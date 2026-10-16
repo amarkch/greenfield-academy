@@ -33,6 +33,12 @@ const getProgressValue = (done, total) => {
   return Math.round((done / total) * 100);
 };
 
+function formatClass(className) {
+  return className
+    .replace("class-", "Class ")
+    .replace(/\b[a-z]+\b/g, word => word.toUpperCase())
+    .replace(/^CLASS/, "Class");
+}
 export default function Students() {
   const { className } = useParams();
   const navigate = useNavigate();
@@ -122,26 +128,12 @@ const recalculateRatings = async () => {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
         {/* Top Control Bar: Class Selector & Title */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            flexWrap: "wrap",
-            gap: 16,
-            background: C.paperCard,
-            padding: "20px 24px",
-            borderRadius: 16,
-            border: `1px solid ${C.line}`,
-            boxShadow: "0 2px 10px rgba(0,0,0,0.02)",
-          }}
-        >
+        <div className="class-selection-box">
           <div style={{width: "100%"}}>
             <label
               style={{
                 display: "block",
                 fontSize: 13,
-                fontWeight: 600,
                 color: C.slate,
                 marginBottom: 6,
                 fontFamily: fontBody,
@@ -154,6 +146,7 @@ const recalculateRatings = async () => {
               value={className || ""}
               onChange={handleClassChange}
               className="drop-down"
+              style={{fontSize: "10px"}}
             >
               <option value="" disabled>
                 Choose class...
@@ -167,30 +160,10 @@ const recalculateRatings = async () => {
           </div>
 
           {className !== "all" && (
-            <div style={{ textAlign: "right" }}>
-              <span
-                style={{
-                  fontSize: 12,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                  color: C.slate,
-                  fontWeight: 700,
-                }}
-              >
-                Current View
-              </span>
-              <div
-                style={{
-                  fontFamily: fontDisplay,
-                  fontSize: 28,
-                  fontWeight: 800,
-                  color: C.ink,
-                }}
-              >
-                {className}
+             <div className="current-view-class-name">
+                {formatClass(className)} - Academic progress
               </div>
-            </div>
-          )}
+            )}
         </div>
 
         {/* Subjects Section */}
@@ -198,36 +171,18 @@ const recalculateRatings = async () => {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
               <BookOpen size={20} color={C.ink} />
-              <h3 style={{ fontFamily: fontDisplay, fontSize: 20, fontWeight: 700, margin: 0, color: C.ink }}>
-                Class Subjects & Teachers
-              </h3>
+              <h4>
+                Progress in every subjects
+              </h4>
             </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-                gap: "14px",
-              }}
-            >
+            <div className="subject-card-grid">
               {subjects.map((std) => {
                 const progress = subjectProgressCount[std.subjectName] || 0;
                 return (
                   <Link
                     key={std.id || std._id}
                     to={`/faculty/${std.teacherId}`}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      padding: "16px",
-                      background: C.paperCard,
-                      border: `1px solid ${C.line}`,
-                      borderRadius: 14,
-                      textDecoration: "none",
-                      color: C.ink,
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
-                      transition: "all 0.2s ease-in-out",
-                    }}
+                    className="card-inside"
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = "translateY(-2px)";
                       e.currentTarget.style.boxShadow = "0 6px 16px rgba(0,0,0,0.06)";
@@ -239,28 +194,21 @@ const recalculateRatings = async () => {
                       e.currentTarget.style.borderColor = C.line;
                     }}
                   >
-                    <div>
-                      <b style={{ fontSize: 16, fontFamily: fontDisplay, display: "block", marginBottom: 4 }}>
+                    <div className="subject-card">
+                      <span className="s-name">
                         {std.subjectName}
-                      </b>
-                      <span style={{ fontSize: 14, color: C.slate, fontFamily: fontBody }}>
+                      </span>
+                      <span className="t-name">
                         <i>{std.teacherName}</i>
                       </span>
                     </div>
-                    <div style={{ marginTop: 5, paddingTop: 5, borderTop: `1px solid ${C.line}40` }}>
-                      <span
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 700,
-                          color: "#009",
-                          fontFamily: fontBody,
-                        }}
-                      >
+                    <div className="subject-progress-bar">
+                      
                         Completed: {progress}%
-                        <div style={{ width: "65%", height: 7, borderRadius: 2, background: "#ddd", overflow: "hidden", border: "solid 1px #aaa" }}>
-                          <div style={{ width: `${progress}%`, height: "100%", borderRadius: 5, background: "#A00", transition: "width 0.3s ease" }} />
+                        <div className="bar-outside">
+                          <div style={{ width: `${progress}%`, height: "100%", borderRadius: 5, background: "green", transition: "width 0.3s ease" }} />
                         </div>
-                      </span>
+                      
                     </div>
                   </Link>
                 );
