@@ -13,8 +13,7 @@ import InsertTeacherData from "./pages/InsertTeacherData.jsx";
 import InsertStudentData from "./pages/InsertStudentData.jsx";
 import InsertSubjectData from "./pages/InsertSubjectData.jsx";
 import InsertMarks from "./pages/InsertMarks.jsx";
-
-
+import ParentsDashboard from "./pages/ParentsDashboard.jsx";
 
 
 export default function App() {
@@ -35,6 +34,10 @@ export default function App() {
           <Route path="/students-data" element={<InsertStudentData />} />
           <Route path="/subject-data" element={<InsertSubjectData />} />
           <Route path="/marks-data" element={<InsertMarks />} />
+          <Route
+            path="/parents-dashboard"
+            element={<ParentsDashboard />}
+          />
           
         </Route>
       </Routes>

@@ -146,7 +146,6 @@ const recalculateRatings = async () => {
               value={className || ""}
               onChange={handleClassChange}
               className="drop-down"
-              style={{fontSize: "10px"}}
             >
               <option value="" disabled>
                 Choose class...

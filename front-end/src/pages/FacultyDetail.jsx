@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, Outlet, useParams, Link } from "react-router-dom";
-import { CheckCircle2, CircleDot, Circle, ArrowLeft, Mail, GraduationCap, BriefcaseBusiness, Users, ChevronDown, Loader2 } from "lucide-react";
+import { CheckCircle2, CircleDot, Circle, ArrowLeft, Phone, Mail, GraduationCap, BriefcaseBusiness, Users, ChevronDown, Loader2 } from "lucide-react";
 import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js";
 import "./FacultyDetail.css";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
@@ -87,12 +87,19 @@ function SubjectAccordion({ authorizedFor, period, isOpen, onToggle, onStatusCha
           }}
         >
           
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 15, fontWeight: 700, color: C.ink }}>
+          <div style={{ flex: 1, width: "100%" }}>
+            <div className="accordian-title">
               {formatLabel(period.class)} &bull; <span style={{ fontWeight: 900, fontStyle: "italic" }}>{formatLabel(period.subject)}</span>
             </div>
             <div style={{ fontSize: 13, fontWeight: 600, color: C.slate, marginTop: 2 }}>{period.chapter}</div>
+            <div className="progress-bar">
+              <span style={{ fontFamily: fontMono, fontSize: 12, fontWeight: 600, color: C.slate, padding: "0 2px 0 0"}}>Done:{periodProgress}% </span>
+              <div className="progress-bar-outer-layer">
+                <div style={{ width: `${periodProgress}%`, height: "100%", background: C.sky, transition: "width 0.3s ease" }} />
+              </div>
+            </div>
           </div>
+
         </div>
 
         {/* Student Roster Nav Link (Separate from toggle button) */}
@@ -128,20 +135,14 @@ function SubjectAccordion({ authorizedFor, period, isOpen, onToggle, onStatusCha
                 style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}
               />
             </button>
+
           </div>
         </div>
       </div>
 
       {/* Accordion Body */}
       {isOpen && (
-        <div style={{ padding: "5px", background: "#fff", animation: "fadeIn 0.25s ease" }}>
-          <div style={{ display: "flex", alignItems: "center", padding: "4px 0", justifyContent: "space-between" }}>
-            <span style={{ fontFamily: fontMono, fontSize: 12, fontWeight: 600, color: C.slate, padding: "0 10px 0 0"}}>Completed: {periodProgress}% </span>
-            <div style={{ width: "65%", height: 6, borderRadius: 999, background: "#F1F3F4", overflow: "hidden" }}>
-              <div style={{ width: `${periodProgress}%`, height: "100%", borderRadius: 999, background: C.sky, transition: "width 0.3s ease" }} />
-            </div>
-            
-          </div>
+        <div style={{ padding: "5px 15px", background: "#fff", animation: "fadeIn 0.25s ease" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             { sortElementsByStatus(period.chapters, authorizedFor).map((ch, i) => {
               const meta = statusMeta[ch.status] || statusMeta.pending;
@@ -359,7 +360,7 @@ export default function FacultyDetail() {
         }}
       >
         <Loader2 size={32} className="animate-spin" color={C.sky} />
-        <span>Loading faculty details...</span>
+        <span>Loading teachers details...</span>
       </div>
     );
   }
@@ -378,17 +379,7 @@ export default function FacultyDetail() {
       <GreenfieldHeaderBar />
       
       {/* Teacher Profile Header Card */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 20,
-        marginTop: 70,
-        padding: 24,
-        background: C.paperCard,
-        border: `1px solid ${C.line}`,
-        borderRadius: 16,
-        boxShadow: "0 2px 6px rgba(0,0,0,0.03)"
-      }}>
+      <div className="profile-pic-holder">
         <div
           style={{
             width: 84,
@@ -409,22 +400,23 @@ export default function FacultyDetail() {
         </div>
 
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontFamily: fontDisplay, fontWeight: 700, fontSize: 22, color: C.ink, margin: 0 }}>{teacher.name}</h1>
-          <div style={{ fontSize: 14, color: C.slate, fontWeight: 600, marginTop: 2 }}>{teacher.qualification} &bull; <span style={{ color: C.sky }}>{teacher.subject}</span></div>
+          <h1 className="teacher-name-in-profile">{teacher.name}</h1>
+          <div style={{ fontSize: 12, color: C.slate, fontWeight: 600, marginTop: 2 }}>{teacher.qualification} &bull; <span style={{ color: C.sky }}>{teacher.subjects}</span></div>
           
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginTop: 10, fontSize: 13, color: C.ink, fontWeight: 500 }}>
+          <div style={{ display: "flex", gap: "0 12px", flexWrap: "wrap", marginTop: 10, fontSize: 12, color: C.ink, fontWeight: 500 }}>
             {teacher.classTeacherOf && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <GraduationCap size={15} color={C.slate} />
-                <span>Class Teacher: <strong>{teacher.classTeacherOf.split("-")[1]}</strong></span>
+                <span>Class Teacher: <strong>{formatLabel(teacher.classTeacherOf)}</strong></span>
               </div>
             )}
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ display: "flex", fontSize: 10, alignItems: "center", gap: 1 }}>
               <Mail size={15} color={C.slate} />
-              <span>{teacher.email}</span>
+              <span style={{wordWrap: "anywhere"}}>{teacher.email}</span>
             </div>
             {teacher.phone && (
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ display: "flex", fontSize: 10, alignItems: "center", gap: 1 }}>
+                <Phone size={15} color={C.slate} />
                 <span>Phone: {teacher.phone}</span>
               </div>
             )}
@@ -434,7 +426,7 @@ export default function FacultyDetail() {
 
       {/* Periods / Chapters Section */}
       <div style={{ marginTop: 24 }}>
-        <h3 style={{ fontFamily: fontDisplay, fontSize: 18, color: C.ink, marginBottom: 12 }}>Assigned Classes & Syllabi</h3>
+        <h3 style={{ fontFamily: fontDisplay, fontSize: 12, color: C.ink, marginBottom: 12 }}>Assigned Classes & Syllabi</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {periods?.map((s) => (
             <SubjectAccordion

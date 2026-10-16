@@ -35,7 +35,8 @@ const GreenfieldHeaderBar = () => {
           <Link to="/class/all" className="ga-desktop-nav-link">Class</Link>
           <Link to="/faculty/" className="ga-desktop-nav-link">Teachers</Link>
           
-          <div 
+          {
+            localStorage.getItem("teacherId") && <div 
             className="ga-dropdown-container"
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
@@ -57,8 +58,9 @@ const GreenfieldHeaderBar = () => {
               </div>
             )}
           </div>
+        }
 
-          <button className="ga-desktop-nav-link" onClick={() => handleNavClick('Parents')}>Parents</button>
+          <Link to="/parents-dashboard" className="ga-mobile-nav-link" onClick={closeAllMenus}>Parents</Link>
         </nav>
 
         {/* Mobile Menu Toggle Button */}
@@ -77,13 +79,15 @@ const GreenfieldHeaderBar = () => {
           <Link to="/class/all" className="ga-mobile-nav-link" onClick={closeAllMenus}>Class <span>→</span></Link>
           <Link to="/faculty/" className="ga-mobile-nav-link" onClick={closeAllMenus}>Teachers <span>→</span></Link>
           
+          {
+            localStorage.getItem("teacherId") &&
           <button 
             className="ga-mobile-nav-link" 
             onClick={() => setMobileDataOpen(!mobileDataOpen)}
           >
             Enter Data <span>{mobileDataOpen ? '▴' : '▾'}</span>
           </button>
-          
+          }
           {mobileDataOpen && (
             <>
               <Link to="/teacher-data/" className="ga-mobile-sub-link" onClick={closeAllMenus}>Teacher's Data <span>→</span></Link>
@@ -92,8 +96,9 @@ const GreenfieldHeaderBar = () => {
               <Link to="/marks-data/" className="ga-mobile-sub-link" onClick={closeAllMenus}>Marks <span>→</span></Link>
             </>
           )}
-
-          <button className="ga-mobile-nav-link" onClick={() => handleNavClick('Parents')}>Parents <span>→</span></button>
+          
+          <Link to="/parents-dashboard" className="ga-mobile-nav-link" onClick={closeAllMenus}>Parents <span>→</span></Link>
+          
         </nav>
       </header>
     </>

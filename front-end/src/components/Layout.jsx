@@ -243,7 +243,7 @@ export default function Layout() {
 
         <div className="layout-content">
           {
-            !localStorage.getItem("teacherId") && <div className="overlay">
+            !localStorage.getItem("teacherId") && new URLSearchParams(window.location.search).get("teach") == "_SECRET" && <div className="overlay">
               <h3 style={{color: "#fff"}}>Select Your Profile</h3>
               <div style={{ maxHeight: "calc(100vh - 40px)", overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 7 }}>
                 {teachersData.map((f) => (
