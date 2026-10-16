@@ -198,9 +198,10 @@ const GreenfieldHeaderBar = () => {
           <Link to="/teacher-data/" className="ga-desktop-nav-link">
             Enter Data
           </Link>
-          <button className="ga-desktop-nav-link" onClick={() => handleNavClick('Parents')}>
+          <Link to="/parents-dashboard/" className="ga-desktop-nav-link">
             Parents
-          </button>
+          </Link>
+          
         </nav>
 
         {/* Mobile Menu Toggle Button */}
