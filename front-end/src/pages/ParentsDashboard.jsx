@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
-import "./ParentDashBoard.css";
+import "./ParentDashboard.css";
 // Demo data — replace with your selected students later.
 const students = [
   {
