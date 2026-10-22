@@ -4,7 +4,7 @@ import { ChevronRight, Star, BookOpen, UserCheck, GraduationCap } from "lucide-r
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 import "./ClassDetails.css";
-const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "https://greenfield-academy-ipqx.onrender.com";
 //const host = "http://localhost:3000";
 
 function initials(name) {

@@ -68,7 +68,7 @@ export default function ParentsDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const host = "https://greenfield-academy-back-end.onrender.com";
+  const host = "https://greenfield-academy-ipqx.onrender.com";
   //const host = "http://localhost:3000";
 
   const fetchStudentsByClass = async (className) => {

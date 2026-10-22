@@ -5,7 +5,7 @@ import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js"
 import "./FacultyDetail.css";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
-const host = "https://greenfield-academy-back-end.onrender.com";
+const host = "https://greenfield-academy-ipqx.onrender.com";
 //const host = "http://localhost:3000";
 
 const statusMeta = {
