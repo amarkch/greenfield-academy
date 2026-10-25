@@ -210,22 +210,6 @@ body {
   /* Step 4: Center the background */
   background-position: center;
 }
-.ga-section-princi-image-card {
-  flex: 1;
-  width: 150px;
-  height: 520px;
-  background-color: #ffffff;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  background-image: url('/images/princi.jpeg');
-  background-size: cover;
-
-  /* Step 4: Center the background */
-  background-position: center;
-}
 .ga-section-image-text-card {
   text-align: justify;
   flex: 1;
@@ -313,15 +297,17 @@ body {
   .ga-cards-container {
     flex-direction: column;
   }
-  .ga-section-image-card, .ga-section-princi-image-card, .ga-section-image-text-card {
+  .ga-section-image-card, .ga-section-princi-image-card {
     width: 100%;
     height: 200px;
     flex: none;
   }
   .ga-section-image-text-card {
     padding: 20px;
-    height: 530px;
+    height: auto;
     font-size: 14px;
+    width: 100%;
+    flex: none;
   }
   .ga-page-wrapper {
     padding: 0px;
