@@ -308,7 +308,7 @@ html {
           }
           .ga-section-image-text-card {
             padding: 20px;
-            height: 530px;
+            height: auto;
             font-size: 14px;
           }
           .ga-page-wrapper {
