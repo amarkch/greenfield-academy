@@ -384,12 +384,13 @@ async function connectDB() {
 
 app.get('/api/get-teachers-list', async (req, res) => {
   try {
-    const teachers = await db.collection("faculty")
-    .find({ isDeleted: { $ne: true } })
-    .sort({ rank: 1 })
-    .toArray();
+        const db = await connectDB();
+        const teachers = await db.collection("faculty")
+        .find({ isDeleted: { $ne: true } })
+        .sort({ rank: 1 })
+        .toArray();
 
-  res.json(teachers);
+      res.json(teachers);
 
   } catch (error) {
     console.error('Database retrieval error:', error);
