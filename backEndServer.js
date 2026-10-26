@@ -384,14 +384,12 @@ async function connectDB() {
 
 app.get('/api/get-teachers-list', async (req, res) => {
   try {
-    const db = await connectDB();
+    const teachers = await db.collection("faculty")
+    .find({ isDeleted: { $ne: true } })
+    .sort({ rank: 1 })
+    .toArray();
 
-    const teachers = await db.collection('faculty')
-      .find({})
-      .sort({ rank: 1 })
-      .toArray();
-
-    res.json(teachers);
+  res.json(teachers);
 
   } catch (error) {
     console.error('Database retrieval error:', error);
@@ -697,6 +695,49 @@ app.patch('/api/change-notification-status', async (req, res) => {
     return res.status(500).json({ 
       success: false, 
       error: 'Internal server error' 
+    });
+  }
+});
+
+app.patch("/api/delete-faculty/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid faculty ID"
+      });
+    }
+
+    const result = await db.collection("faculty").updateOne(
+      { _id: new ObjectId(id), isDeleted: { $ne: true } },
+      {
+        $set: {
+          isDeleted: true,
+          deletedAt: new Date()
+        }
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Faculty not found or already deleted"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Faculty deleted successfully"
+    });
+
+  } catch (error) {
+    console.error("Soft delete faculty error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete faculty"
     });
   }
 });

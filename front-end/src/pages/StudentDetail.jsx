@@ -369,7 +369,7 @@ export default function StudentDetail() {
                   >
                     {n.type == "marks" ? "Viewed by Parents" : "Done"}  ✓
                   </span>
-                ) : (n.teacherId == null || whoIs == n.teacherId) ? (
+                ) : whoIs !=null && (n.teacherId == null || whoIs == n.teacherId) ? (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
