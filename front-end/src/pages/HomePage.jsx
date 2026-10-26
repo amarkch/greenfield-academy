@@ -106,22 +106,25 @@ const GreenfieldAcademy = () => {
               
             </div>
             <div className="ga-section-image-text-card">
-              <h3>Welcome to Greenfield Academy!</h3>
+              <h3>A NOTE FROM THE MANAGING DIRECTOR</h3>
               <br/>
-              Education isn’t about just memorizing textbooks or surviving another round of exams—it’s about figuring out who you are, what you love, and how to leave the world a little better than you found it.
+              Dear <br/>
+              &nbsp; &nbsp;
+              &nbsp;
+              Students, Parents and Well-wishers,
 
-              Here at Greenfield, nestled right in the heart of Titabar, we’re doing things differently. We’ve traded rigid, old-school classrooms for spaces that actually spark curiosity. Whether it’s building tech solutions in the computer lab, getting hands-on in our science spaces, or dominating the sports field, we want every student to feel seen, heard, and genuinely excited to walk through those school gates every morning.
+It gives me great pleasure to welcome you to GREENFIELD ACADEMY, Titabor, a place where learning goes beyond textbooks and every child is encouraged to grow with confidence, curiosity and character.
 
-              Let’s be real: the world is moving fast. AI, climate shifts, creator economies—the rulebook is rewriting itself in real-time. That’s why our approach focuses less on rote learning and more on adaptability, emotional intelligence, and critical thinking. We’re building a community of creators, problem-solvers, and kind human beings.
-
-              To our amazing parents: thank you for trusting us with your kids' futures. We’re in this together, so let's keep the communication open, ditch the stress, and make this school journey unforgettable.
-
-              Let’s build something awesome together.
+At Greenfield Academy, we believe that education should nurture not only academic excellence but also creativity, empathy, discipline and a strong sense of responsibility. Our dedicated teachers work closely with students to help them discover their strengths, pursue their passions and become thoughtful contributors to society.
 
               <br/>
+              We are equally grateful to our parents for their continued trust and partnership. Together, we strive to create a safe, inclusive and inspiring environment where every learner feels valued and empowered to achieve their best.
+
+Thank you for being a part of Greenfield Academy.
+
               <br/>
-              <br/><i><h4>Manish Krishna Kachari</h4>
-              Director, Greenfield Academy</i>
+              <br/><i><h4>Manish Krishnan</h4>
+              Managing Director, Greenfield Academy</i>
             </div>
 
           </div>
@@ -133,7 +136,7 @@ const GreenfieldAcademy = () => {
               <br/>
               শিক্ষা কেৱল পাঠ্যপুথি মুখস্থ কৰা বা ইখনৰ পাছত সিখন পৰীক্ষাত উত্তীৰ্ণ হোৱাই নহয়—ই হৈছে আপুনি প্ৰকৃততে কোন, 
               আপুনি কি ভাল পায় আৰু এই পৃথিৱীখনক কেনেকৈ আৰু অলপ সুন্দৰ কৰি তুলিব পাৰি, 
-              তাক বিচাৰি উলিওৱাৰ এক যাত্ৰা। টিীয়কৰ ঠিক প্রাণকেন্দ্রত অৱস্থিত আমাৰ এই গ্রীনফিল্ডত আমি অলপ ভিন্ন ধৰণে কাম-কাজবোৰ কৰিছোঁ। 
+              তাক বিচাৰি উলিওৱাৰ এক যাত্ৰা। তিতাবৰৰ ঠিক প্রাণকেন্দ্রত অৱস্থিত আমাৰ এই গ্রীনফিল্ডত আমি অলপ ভিন্ন ধৰণে কাম-কাজবোৰ কৰিছোঁ। 
               পুৰণি, গতানুগতিক শ্ৰেণীকোঠা সলনি কৰি আমি এনে কিছুমান পৰিৱেশ গঢ়ি তুলিছোঁ যিয়ে ছাত্ৰ-ছাত্ৰীৰ মনত কৌতুহল জাগ্ৰত কৰে। 
               আমাৰ আদৰণীয অভিভাৱকসকললৈ: সন্তানৰ উজ্জ্বল ভৱিষ্যতৰ দায়িত্ব আমাৰ ওপৰত অৰ্পণ কৰাৰ বাবে আপোনালোকক অশেষ ধন্যবাদ। আমি এই যাত্ৰাত ইজনে সিজনৰ সংগী, সেয়েহে আহক আমি যোগাযোগ সুদৃঢ় ৰাখোঁ, মানসিক মানসিক চাপ আঁতৰাওঁ আৰু এই বিদ্যালয়ৰ যাত্ৰাটোক অবিস্মৰণীয় কৰি তোলোঁ। আহক, সকলোৱে মিলি কিবা এক সুন্দৰ সূচনা কৰোঁ।
 

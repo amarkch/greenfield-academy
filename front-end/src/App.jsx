@@ -35,10 +35,9 @@ export default function App() {
           <Route path="/subject-data" element={<InsertSubjectData />} />
           <Route path="/marks-data" element={<InsertMarks />} />
           <Route
-            path="/parents-dashboard"
+            path="/parents-dashboard/:name?/:stdClass?/:roll?/:gender?/:id?"
             element={<ParentsDashboard />}
           />
-          
         </Route>
       </Routes>
     </BrowserRouter>

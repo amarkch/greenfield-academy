@@ -1,6 +1,6 @@
 
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import {
   GraduationCap,
   Star,
@@ -62,45 +62,88 @@ function formatClass(className = "") {
   return `Class ${names[key] || key.toUpperCase()}`;
 }
 
+
+const getExistingDetails = () => {
+  try {
+    const preferredChildren = JSON.parse(
+      window.localStorage.getItem("setUpData") || "{}"
+    );
+
+    return Array.isArray(preferredChildren) ? preferredChildren : {};
+  } catch (error) {
+    console.error("Error reading setUpData:", error);
+    return {};
+  }
+};
+
+
+const saveStudentToLocalStorage = (newStudent) => {
+  // 1. Retrieve existing students from localStorage (default to empty array if none exist)
+  const existingStudents = JSON.parse(localStorage.getItem('students')) || [];
+
+  // 2. Check if a student with the same ID already exists
+  const studentExists = existingStudents.some(
+    (student) => student.id === newStudent.id
+  );
+
+  if (studentExists) {
+    console.warn(`Student with ID "${newStudent.id}" already exists.`);
+    return { success: false, message: 'Student ID already exists in storage.' };
+  }
+
+  // 3. Append the new student to the array
+  const updatedStudents = [...existingStudents, newStudent];
+
+  // 4. Save the updated array back to localStorage
+  localStorage.setItem('students', JSON.stringify(updatedStudents));
+
+  return { success: true, message: 'Student saved successfully!' };
+};
+
 export default function ParentsDashboard() {
   const [selectedClass, setSelectedClass] = useState("");
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { name, stdClass, roll, gender, id } = useParams();
 
   const host = "https://greenfield-academy-ipqx.onrender.com";
   //const host = "http://localhost:3000";
+  useEffect(() => {
+    if(name && stdClass && roll && gender && id)
+      saveStudentToLocalStorage({name, stdClass, roll, gender, id});
+    setStudents(JSON.parse(window.localStorage.getItem("students")));
+  }, []);
+  // const fetchStudentsByClass = async (className) => {
+  //   setSelectedClass(className);
+  //   setStudents([]);
+  //   setError("");
 
-  const fetchStudentsByClass = async (className) => {
-    setSelectedClass(className);
-    setStudents([]);
-    setError("");
+  //   if (!className) return;
 
-    if (!className) return;
+  //   setLoading(true);
 
-    setLoading(true);
+  //   try {
+  //     const response = await fetch(
+  //       `${host}/api/get-students/${encodeURIComponent(className)}`
+  //     );
 
-    try {
-      const response = await fetch(
-        `${host}/api/get-students/${encodeURIComponent(className)}`
-      );
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch students");
+  //     }
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch students");
-      }
+  //     const responseData = await response.json();
+  //     // Supports either an array or { students: [...] }
+  //     const studentList = responseData.data;
 
-      const responseData = await response.json();
-      // Supports either an array or { students: [...] }
-      const studentList = responseData.data;
-
-      setStudents(studentList);
-    } catch (err) {
-      console.error("Error fetching students:", err);
-      setError("Unable to load students. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     setStudents(studentList);
+  //   } catch (err) {
+  //     console.error("Error fetching students:", err);
+  //     setError("Unable to load students. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div
@@ -204,94 +247,7 @@ export default function ParentsDashboard() {
         </section>
 
         {/* Summary cards */}
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(155px, 1fr))",
-            gap: 14,
-            marginBottom: 32
-          }}
-        >
-          
 
-
-
-
-          <div
-            className="inputGroup"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 8,
-              width: "100%",
-              maxWidth: 320,
-              marginBottom: 20
-            }}
-          >
-            <label
-              htmlFor="classSelect"
-              style={{
-                fontSize: 13,
-                fontWeight: 650,
-                color: C.ink
-              }}
-            >
-              Select Class
-            </label>
-
-            <select
-              id="classSelect"
-              value={selectedClass}
-              onChange={(e) => fetchStudentsByClass(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px 14px",
-                border: `1px solid ${C.line}`,
-                borderRadius: 10,
-                background: C.paperCard || "#FFFFFF",
-                color: C.ink,
-                fontFamily: fontBody,
-                fontSize: 14,
-                outline: "none",
-                cursor: "pointer"
-              }}
-            >
-              <option value="">Select a class</option>
-              <option value="nursery">Nursery</option>
-              <option value="lkg">LKG</option>
-              <option value="ukg">UKG</option>
-              <option value="class-i">Class I</option>
-              <option value="class-ii">Class II</option>
-              <option value="class-iii">Class III</option>
-              <option value="class-iv">Class IV</option>
-              <option value="class-v">Class V</option>
-              <option value="class-vi">Class VI</option>
-              <option value="class-vii">Class VII</option>
-              <option value="class-viii">Class VIII</option>
-              <option value="class-ix">Class IX</option>
-              <option value="class-x">Class X</option>
-            </select>
-
-            {loading && (
-              <p style={{ fontSize: 13, color: C.slate }}>
-                Loading students...
-              </p>
-            )}
-
-            {error && (
-              <p style={{ fontSize: 13, color: "#DC2626" }}>
-                {error}
-              </p>
-            )}
-
-            {!loading && selectedClass && !error && students.length === 0 && (
-              <p style={{ fontSize: 13, color: C.slate }}>
-                No students found in {formatClass(selectedClass)}.
-              </p>
-            )}
-          </div>
-
-        </section>
 
         {/* Children heading */}
         <section>
@@ -305,30 +261,6 @@ export default function ParentsDashboard() {
               marginBottom: 18
             }}
           >
-            <div>
-              <h2
-                style={{
-                  fontFamily: fontDisplay,
-                  color: C.ink,
-                  fontSize: 23,
-                  margin: "0 0 6px",
-                  fontWeight: 750
-                }}
-              >
-                Select your children
-              </h2>
-
-              <p
-                style={{
-                  color: C.slate,
-                  fontSize: 13,
-                  margin: 0
-                }}
-              >
-                View your children's academic profiles.
-              </p>
-            </div>
-
             <span
               style={{
                 padding: "7px 12px",
@@ -352,15 +284,10 @@ export default function ParentsDashboard() {
             }}
           >
             {students.map(student => {
-              const rating = Math.max(
-                0,
-                Math.min(5, Number(student.rating) || 0)
-              );
-
               return (
                 <Link
-                  key={student._id}
-                  to={`/student-details/${student._id}`}
+                  key={student.id}
+                  to={`/student-details/${student.id}`}
                   style={{
                     display: "block",
                     textDecoration: "none",
@@ -437,7 +364,7 @@ export default function ParentsDashboard() {
                           padding: "5px 8px"
                         }}
                       >
-                        {formatClass(student.className)}
+                        {formatClass(student.stdClass)}
                       </span>
                     </div>
 
@@ -459,7 +386,7 @@ export default function ParentsDashboard() {
                     </span>
 
                     <strong style={{ color: C.ink, fontSize: 14 }}>
-                      {student.rollNumber ?? "—"}
+                      {student.roll ?? "—"}
                     </strong>
                   </div>
 
@@ -471,29 +398,6 @@ export default function ParentsDashboard() {
                       gap: 8
                     }}
                   >
-                    <div>
-                      <div
-                        style={{
-                          color: C.slate,
-                          fontSize: 11,
-                          marginBottom: 6
-                        }}
-                      >
-                        Student Rating
-                      </div>
-
-                      <div style={{ display: "flex", gap: 3 }}>
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Star
-                            key={star}
-                            size={16}
-                            fill={star <= rating ? "#F59E0B" : "transparent"}
-                            color={star <= rating ? "#F59E0B" : "#D1D5DB"}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
                     <span
                       style={{
                         fontSize: 12,
