@@ -312,6 +312,7 @@ export default function FacultyDetail() {
           chapterId: chapterId,
           chapterStatus: newStatus,
           classId: classId,
+          teacherId: teacher._id,
           title: title,
           subject: sub
         }),

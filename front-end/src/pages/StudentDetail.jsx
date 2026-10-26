@@ -22,6 +22,7 @@ const host = "https://greenfield-academy-ipqx.onrender.com";
 export default function StudentDetail() {
   const { studentId } = useParams();
   const [items, setItems] = useState([]);
+  const [whoIs, setWhoIs] = useState(window.localStorage.getItem("teacherId"));
   const [studentsData, setStudentsData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -192,87 +193,92 @@ export default function StudentDetail() {
         ))}
 
       </div>
-      <div style={{ display: "flex", flexDirection: "column", padding: "10px 0" }}>
-          <span style={{color: "red", fontSize: 12, padding: "5px 0"}}><i>(Only higher authority can add remark)</i></span>
-          <div style={{ display: "flex" }}>
-          <button
-            type="button"
-            onClick={() => {
-              setShowRemarkForm((shown) => !shown);
-              setRemarkMessage("");
-            }}
-            style={{
-              width: "150px",
-              padding: "8px 12px",
-              border: `1px solid ${C.line}`,
-              borderRadius: 8,
-              background: "Red",
-              color: "white",
-              fontFamily: fontBody,
-              fontWeight: 600,
-              cursor: "pointer",
-              
-            }}
-          >
-            {showRemarkForm ? "Cancel" : "Add Remark"}
-          </button>
-          {showRemarkForm && <button
-                type="submit"
-                disabled={remarkSubmitting}
-                style={{
-                  width: "150px",
-                  padding: "8px 12px",
-                  border: "none",
-                  borderRadius: 8,
-                  background: C.ink,
-                  color: "#fff",
-                  fontFamily: fontBody,
-                  fontWeight: 600,
-                  cursor: remarkSubmitting ? "wait" : "pointer",
-                  opacity: remarkSubmitting ? 0.7 : 1
-                }}
-              >
-                {remarkSubmitting ? "Saving..." : "Save Remark"}
-              </button>
-            }
-            </div>
-          {showRemarkForm && (
-            <form
-              onSubmit={handleRemarkSubmit}
+      {
+        (whoIs == "6ac67597fc864121be000322" || whoIs == "6a98284f551b3fd1d79b4317") &&
+        <div style={{ display: "flex", flexDirection: "column", padding: "10px 0" }}>
+
+        <span style={{color: "red", fontSize: 12, padding: "5px 0"}}><i>(Only higher authority can add remark)</i></span>
+        <div style={{ display: "flex" }}>
+        <button
+          type="button"
+          onClick={() => {
+            setShowRemarkForm((shown) => !shown);
+            setRemarkMessage("");
+          }}
+          style={{
+            width: "150px",
+            padding: "8px 12px",
+            border: `1px solid ${C.line}`,
+            borderRadius: 8,
+            background: "Red",
+            color: "white",
+            fontFamily: fontBody,
+            fontWeight: 600,
+            cursor: "pointer",
+            
+          }}
+        >
+          {showRemarkForm ? "Cancel" : "Add Remark"}
+        </button>
+        {showRemarkForm && <button
+              type="submit"
+              disabled={remarkSubmitting}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 8,
-                marginTop: 10,
-                minWidth: 220
+                width: "150px",
+                padding: "8px 12px",
+                border: "none",
+                borderRadius: 8,
+                background: C.ink,
+                color: "#fff",
+                fontFamily: fontBody,
+                fontWeight: 600,
+                cursor: remarkSubmitting ? "wait" : "pointer",
+                opacity: remarkSubmitting ? 0.7 : 1
               }}
             >
-              <textarea
-                value={remark}
-                onChange={(e) => setRemark(e.target.value)}
-                placeholder="Enter student remark..."
-                rows={3}
-                required
-                style={{
-                  width: "100%",
-                  boxSizing: "border-box",
-                  padding: 10,
-                  border: `1px solid ${C.line}`,
-                  borderRadius: 8,
-                  fontFamily: fontBody,
-                  fontSize: 13,
-                  resize: "vertical"
-                }}
-              />
-              
-            </form>
-          )}
-          {remarkMessage && (
-            <p role="status" style={{ fontFamily: fontBody, fontSize: 12, marginTop: 8, color: remarkMessage.includes("successfully") ? "green" : "red" }}>
-              {remarkMessage}
-            </p>
-          )}
-        </div>
+              {remarkSubmitting ? "Saving..." : "Save Remark"}
+            </button>
+          }
+          </div>
+        {showRemarkForm && (
+          <form
+            onSubmit={handleRemarkSubmit}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              marginTop: 10,
+              minWidth: 220
+            }}
+          >
+            <textarea
+              value={remark}
+              onChange={(e) => setRemark(e.target.value)}
+              placeholder="Enter student remark..."
+              rows={3}
+              required
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                padding: 10,
+                border: `1px solid ${C.line}`,
+                borderRadius: 8,
+                fontFamily: fontBody,
+                fontSize: 13,
+                resize: "vertical"
+              }}
+            />
+            
+          </form>
+        )}
+        {remarkMessage && (
+          <p role="status" style={{ fontFamily: fontBody, fontSize: 12, marginTop: 8, color: remarkMessage.includes("successfully") ? "green" : "red" }}>
+            {remarkMessage}
+          </p>
+        )}
+      </div>
+      }
+      
       {/* Notifications List */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {loading && (
@@ -363,7 +369,7 @@ export default function StudentDetail() {
                   >
                     {n.type == "marks" ? "Viewed by Parents" : "Done"}  ✓
                   </span>
-                ) : (
+                ) : (n.teacherId == null || whoIs == n.teacherId) ? (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -385,7 +391,7 @@ export default function StudentDetail() {
                   >
                     {n.type == "marks" ? "Viewed by Parents" : "Received"}
                   </button>
-                )}
+                ) : null}
               </div>
             );
           } else {

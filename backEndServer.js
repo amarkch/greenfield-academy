@@ -704,7 +704,7 @@ app.patch('/api/change-notification-status', async (req, res) => {
 app.post('/api/update-chapter-status', async (req, res) => {
   try {
     const db = await connectDB();
-    const { chapterId, chapterStatus, classId, title, subject } = req.body;
+    const { chapterId, chapterStatus, classId, title, subject, teacherId } = req.body;
 
     // Update the chapter status
     await db.collection("chapters").updateOne(
@@ -723,6 +723,7 @@ app.post('/api/update-chapter-status', async (req, res) => {
           studentId: student._id,
           classId: classId,
           chapterId: new ObjectId(chapterId),
+          teacherId: new ObjectId(teacherId),
           message: title,
           title: 'Assignment ['+subject+']',
           type: "assignment",
