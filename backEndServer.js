@@ -703,7 +703,7 @@ app.patch('/api/change-notification-status', async (req, res) => {
 app.patch("/api/delete-faculty/:id", async (req, res) => {
   try {
     const { id } = req.params;
-
+    const db = await connectDB();
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,

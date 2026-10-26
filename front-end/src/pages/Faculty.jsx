@@ -14,7 +14,11 @@ import {
   getRandomColor
 } from "../theme.js";
 
+
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+
+const host = "https://greenfield-academy-ipqx.onrender.com";
+//const host = "http://localhost:3000";
 
 function initials(name) {
   return name.replace(/^(Mr\.|Mrs\.|Ms\.)\s*/, "").split(" ").map((w) => w[0]).join("").slice(0, 3);
@@ -30,7 +34,7 @@ export default function Faculty() {
     async function fetchFaculty() {
       try {
         setLoading(true);
-        const response = await fetch("https://greenfield-academy-ipqx.onrender.com/api/get-teachers-list"); // Replace with your actual API endpoint
+        const response = await fetch(host+"/api/get-teachers-list"); // Replace with your actual API endpoint
         
       if (!response.ok) {
           throw new Error("Failed to fetch faculty list");
@@ -56,7 +60,7 @@ export default function Faculty() {
 
     try {
       const response = await fetch(
-        `https://greenfield-academy-ipqx.onrender.com/api/delete-faculty/${id}`,
+        `${host}/api/delete-faculty/${id}`,
         {
           method: "PATCH"
         }
