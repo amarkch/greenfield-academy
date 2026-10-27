@@ -132,18 +132,20 @@ Thank you for being a part of Greenfield Academy.
             <div className="ga-section-princi-image-card">
             </div>
             <div className="ga-section-image-text-card">
-              <h3>গ্রীনফিল্ড একাডেমীলৈ স্বাগতম!</h3>
+              <span><i>Children are like buds in a garden<br/> should be carefully and lovingly nurtur <br/>as they are the future of the nation
+              <br/>and the citizen of tomorrow</i></span>
+              <h4>
+              - Pt. Jawaharlal Nehru.
+              </h4>
               <br/>
-              শিক্ষা কেৱল পাঠ্যপুথি মুখস্থ কৰা বা ইখনৰ পাছত সিখন পৰীক্ষাত উত্তীৰ্ণ হোৱাই নহয়—ই হৈছে আপুনি প্ৰকৃততে কোন, 
-              আপুনি কি ভাল পায় আৰু এই পৃথিৱীখনক কেনেকৈ আৰু অলপ সুন্দৰ কৰি তুলিব পাৰি, 
-              তাক বিচাৰি উলিওৱাৰ এক যাত্ৰা। তিতাবৰৰ ঠিক প্রাণকেন্দ্রত অৱস্থিত আমাৰ এই গ্রীনফিল্ডত আমি অলপ ভিন্ন ধৰণে কাম-কাজবোৰ কৰিছোঁ। 
-              পুৰণি, গতানুগতিক শ্ৰেণীকোঠা সলনি কৰি আমি এনে কিছুমান পৰিৱেশ গঢ়ি তুলিছোঁ যিয়ে ছাত্ৰ-ছাত্ৰীৰ মনত কৌতুহল জাগ্ৰত কৰে। 
-              আমাৰ আদৰণীয অভিভাৱকসকললৈ: সন্তানৰ উজ্জ্বল ভৱিষ্যতৰ দায়িত্ব আমাৰ ওপৰত অৰ্পণ কৰাৰ বাবে আপোনালোকক অশেষ ধন্যবাদ। আমি এই যাত্ৰাত ইজনে সিজনৰ সংগী, সেয়েহে আহক আমি যোগাযোগ সুদৃঢ় ৰাখোঁ, মানসিক মানসিক চাপ আঁতৰাওঁ আৰু এই বিদ্যালয়ৰ যাত্ৰাটোক অবিস্মৰণীয় কৰি তোলোঁ। আহক, সকলোৱে মিলি কিবা এক সুন্দৰ সূচনা কৰোঁ।
-
+              The school GREENFIELD ACADEMY, TITABAR, is an English Medium School established in 1995 on the basis of new concept. It is a school teaching using internet. Now-a-days, it is very common and perfect to study in an English medium school to be fit for higher education. The school is going to be grown up to higher secondary level. The wards of 3 years and onward may take admission.
+              To provide quality education to the students through scholastic and nonscholastic activities is our aim. The school has the aim of all round development of the students and to build up their career as a better human being.
+              The school will develop the thought language (ASSAMESE) from their starting phase of education. We are going to adopt digital attendance, digital correspondence system from the next year to provide details of the students.
+              We need your suggestions to provide the students the perfect environment of study.
+              With hope of your co-operation.
               <br/>
-              <br/>
-              <br/><i><h4>প্ৰশান্ত কুমাৰ ভাগৱতী</h4>
-              অধ্যক্ষ, গ্ৰীণফিল্ড একাডেমী</i>
+              <br/><i><h4>Prasanta Kumar Bhogawati</h4>
+              Principal Greenfield Academy, Titabar</i>
             </div>
             
           </div>
