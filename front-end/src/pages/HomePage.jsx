@@ -60,7 +60,7 @@ const GreenfieldAcademy = () => {
             <div className="ga-left-content">
               <div className="ga-right-image-container mobile">
               <img 
-                src={Math.round(Math.random()) ? "/images/the-girl.png" : "/images/the-boy.jpg"} 
+                src={Math.round(Math.random()) ? "/images/the-boy.jpg" : "/images/the-boy.jpg"} 
                 alt="Student studying code sketches" 
                 className="ga-banner-boy-image" 
               />
