@@ -614,6 +614,49 @@ app.get('/api/subjects/:className', async (req, res) => {
     });
   }
 });
+
+
+app.get('/api/get-student-marks/:studentId', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { studentId } = req.params;
+
+    // Validate if studentId is a valid ObjectId
+    if (!ObjectId.isValid(studentId)) {
+      return res.status(400).json({ error: 'Invalid student ID format' });
+    }
+
+    const studentObjectId = new ObjectId(studentId);
+
+    // Fetch student details from the 'students' collection
+    const student = await db.collection("students").findOne({ _id: studentObjectId });
+
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    // Fetch ONLY notifications where type is "marks" and studentId matches
+    const notifications = await db.collection("notifications").find({ 
+      studentId: { 
+        $in: [
+          studentObjectId, 
+          studentId
+        ] 
+      },
+      type: "marks" // 👈 Added filter for notification type
+    }).toArray();
+
+    // Return combined student profile and notifications data
+    return res.status(200).json({
+      student,
+      notifications: notifications || []
+    });
+  } catch (error) {
+    console.error('Error fetching student details and notifications:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.get('/api/student-notifications/:studentId', async (req, res) => {
   try {
     const db = await connectDB();
@@ -856,7 +899,7 @@ app.post('/api/insert-student-marks', async (req, res) => {
     const notification = {
       studentId: new ObjectId(student),
       classId: className,
-      subjectId: new ObjectId(subject),
+      subjectName: subject,
       message: `Exam: ${examName} | Score: ${acquiredMarks}/${totalMarks}${remarks ? ' | Remarks: ' + remarks : ''}`,
       title: `[${examName}] Score: ${acquiredMarks}/${totalMarks}`,
       marksCategory: getStudentMarksLabel(Number(acquiredMarks), Number(totalMarks)),

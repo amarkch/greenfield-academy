@@ -155,7 +155,7 @@ function InsertStudentMarks() {
                 {!formData.className ? 'Select a class first' : loadingData ? 'Loading...' : 'Select Subject'}
               </option>
               {subjectOptions.map((sub) => (
-                <option key={sub._id || sub.subjectName} value={sub._id || sub.subjectName}>
+                <option key={sub._id || sub.subjectName} value={sub.name || sub.subjectName}>
                   {sub.subjectName || sub.name}
                 </option>
               ))}
