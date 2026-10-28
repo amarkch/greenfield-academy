@@ -889,10 +889,10 @@ app.post('/api/insert-student-marks', async (req, res) => {
       });
     }
 
-    if (!ObjectId.isValid(student) || !ObjectId.isValid(subject)) {
+    if (!ObjectId.isValid(student)) {
       return res.status(400).json({ 
         success: false,
-        error: 'Invalid student or subject ID format' 
+        error: 'Invalid student ID format' 
       });
     }
 
