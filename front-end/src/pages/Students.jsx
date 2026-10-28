@@ -39,6 +39,7 @@ function formatClass(className) {
     .replace(/\b[a-z]+\b/g, word => word.toUpperCase())
     .replace(/^CLASS/, "Class");
 }
+
 export default function Students() {
   const { className } = useParams();
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ export default function Students() {
   const [subjectProgressCount, setSubjectProgressCount] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false); // Added loading state for button
 
   const processSubjectProgress = (data) => {
     let d = {};
@@ -56,37 +58,36 @@ export default function Students() {
     setSubjectProgressCount(d);
   };
 
-  
-const recalculateRatings = async () => {
-  try {
-    // First, recalculate student ratings
-    const ratingRes = await fetch(
-      `${host}/api/students-rating-recalculation/${className}`
-    );
+  const recalculateRatings = async () => {
+    setRefreshing(true); // Start loading indication
+    try {
+      // First, recalculate student ratings
+      const ratingRes = await fetch(
+        `${host}/api/students-rating-recalculation/${className}`
+      );
 
-    if (!ratingRes.ok) {
-      throw new Error("Failed to recalculate student ratings");
+      if (!ratingRes.ok) {
+        throw new Error("Failed to recalculate student ratings");
+      }
+
+      // Then, fetch students after recalculation completes
+      const studentsRes = await fetch(
+        `${host}/api/get-students/${className}`
+      );
+
+      if (!studentsRes.ok) {
+        throw new Error("Failed to fetch students");
+      }
+
+      const studentData = await studentsRes.json();
+      setStudents(studentData.data);
+
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setRefreshing(false); // Stop loading indication regardless of success/failure
     }
-
-    // Then, fetch students after recalculation completes
-    const studentsRes = await fetch(
-      `${host}/api/get-students/${className}`
-    );
-
-    if (!studentsRes.ok) {
-      throw new Error("Failed to fetch students");
-    }
-
-    const studentData = await studentsRes.json();
-
-    //console.log(data);
-    setStudents(studentData.data);
-
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
-
+  };
 
   useEffect(() => {
     if (!className) return;
@@ -161,8 +162,8 @@ const recalculateRatings = async () => {
           {className !== "all" && (
              <div className="current-view-class-name">
                 {formatClass(className)} - Academic progress
-              </div>
-            )}
+             </div>
+          )}
         </div>
 
         {/* Subjects Section */}
@@ -202,12 +203,10 @@ const recalculateRatings = async () => {
                       </span>
                     </div>
                     <div className="subject-progress-bar">
-                      
                         Completed: {progress}%
                         <div className="bar-outside">
                           <div style={{ width: `${progress}%`, height: "100%", borderRadius: 5, background: "green", transition: "width 0.3s ease" }} />
                         </div>
-                      
                     </div>
                   </Link>
                 );
@@ -225,14 +224,22 @@ const recalculateRatings = async () => {
                 Students Directory
               </h3>
             </div>
-            <div style={{ display: "flex", alignItems: "center", padding: "5px"}}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "5px"}}>
               <span className="total-count">
                 Total students: {students.length}
               </span>
-              <button className="ga-banner-buttons ga-btn-primary" onClick={recalculateRatings}>Refresh Ratings</button>
+              <button 
+                className="ga-banner-buttons ga-btn-primary" 
+                onClick={recalculateRatings}
+                disabled={refreshing}
+                style={{ 
+                  opacity: refreshing ? 0.7 : 1, 
+                  cursor: refreshing ? "not-allowed" : "pointer" 
+                }}
+              >
+                {refreshing ? "Refreshing..." : "Refresh Ratings"}
+              </button>
             </div>
-            
-            
           </div>
 
           <div

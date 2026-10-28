@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { ClipboardList, CalendarDays, AlertTriangle, Megaphone, Star } from "lucide-react";
+import { ClipboardList, CalendarDays, AlertTriangle, Megaphone, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
 import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
 
@@ -32,9 +32,13 @@ export default function StudentDetail() {
   const [remarkSubmitting, setRemarkSubmitting] = useState(false);
   const [remarkMessage, setRemarkMessage] = useState("");
   
+  // Accordion state: tracks which subject section is currently open (only one at a time)
+  const [openSubject, setOpenSubject] = useState(null);
+  
   const displayMarksCategory = (cat) => {
     return <span style={{fontSize: "16px", color: cat == "Good" ? "green" :  cat == "Fail" ? "red" : "black" }}> - {cat}</span>
   }
+
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -49,6 +53,11 @@ export default function StudentDetail() {
           setItems(data.notifications);
           setStudentsData(data.student);
           setLoading(false);
+          // Optionally open the first subject by default if notifications exist
+          if (data.notifications && data.notifications.length > 0) {
+            const firstSubject = data.notifications[0].subject || data.notifications[0].title || "General";
+            setOpenSubject(firstSubject);
+          }
         }
       })
       .catch((err) => {
@@ -64,6 +73,17 @@ export default function StudentDetail() {
   }, [studentId]);
 
   const visible = filter === "all" ? items : items.filter((n) => n.type === filter);
+  
+  // Group visible notifications by subject (falls back to title or "General")
+  const groupedNotifications = visible.reduce((acc, n) => {
+    const subjectKey = n.subject || n.title || "General";
+    if (!acc[subjectKey]) {
+      acc[subjectKey] = [];
+    }
+    acc[subjectKey].push(n);
+    return acc;
+  }, {});
+
   const markRead = (id) => setItems(items.map((n) => (n.id === id ? { ...n, read: true } : n)));
   
   const handleStatusChange = async (notificationId, newStatus) => {
@@ -86,7 +106,6 @@ export default function StudentDetail() {
       const data = await response.json();
       console.log('Status updated successfully:', data);
       
-      // Update local state so the UI updates immediately
       setItems(items.map((n) => (n._id === notificationId ? { ...n, status: newStatus } : n)));
     } catch (error) {
       console.error('Error updating status:', error);
@@ -156,10 +175,9 @@ export default function StudentDetail() {
             })}
           </div>
         </div>
-
       </div>
 
-      {/* Filters: Horizontal scrollable/wrappable on mobile */}
+      {/* Filters */}
       <div 
         style={{ 
           display: "flex", 
@@ -191,36 +209,34 @@ export default function StudentDetail() {
             {f.label}
           </button>
         ))}
-
       </div>
+
       {
         (whoIs == "6ac67597fc864121be000322" || whoIs == "6a98284f551b3fd1d79b4317") &&
         <div style={{ display: "flex", flexDirection: "column", padding: "10px 0" }}>
-
-        <span style={{color: "red", fontSize: 12, padding: "5px 0"}}><i>(Only higher authority can add remark)</i></span>
-        <div style={{ display: "flex" }}>
-        <button
-          type="button"
-          onClick={() => {
-            setShowRemarkForm((shown) => !shown);
-            setRemarkMessage("");
-          }}
-          style={{
-            width: "150px",
-            padding: "8px 12px",
-            border: `1px solid ${C.line}`,
-            borderRadius: 8,
-            background: "Red",
-            color: "white",
-            fontFamily: fontBody,
-            fontWeight: 600,
-            cursor: "pointer",
-            
-          }}
-        >
-          {showRemarkForm ? "Cancel" : "Add Remark"}
-        </button>
-        {showRemarkForm && <button
+          <span style={{color: "red", fontSize: 12, padding: "5px 0"}}><i>(Only higher authority can add remark)</i></span>
+          <div style={{ display: "flex" }}>
+          <button
+            type="button"
+            onClick={() => {
+              setShowRemarkForm((shown) => !shown);
+              setRemarkMessage("");
+            }}
+            style={{
+              width: "150px",
+              padding: "8px 12px",
+              border: `1px solid ${C.line}`,
+              borderRadius: 8,
+              background: "Red",
+              color: "white",
+              fontFamily: fontBody,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            {showRemarkForm ? "Cancel" : "Add Remark"}
+          </button>
+          {showRemarkForm && <button
               type="submit"
               disabled={remarkSubmitting}
               style={{
@@ -240,47 +256,46 @@ export default function StudentDetail() {
             </button>
           }
           </div>
-        {showRemarkForm && (
-          <form
-            onSubmit={handleRemarkSubmit}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 8,
-              marginTop: 10,
-              minWidth: 220
-            }}
-          >
-            <textarea
-              value={remark}
-              onChange={(e) => setRemark(e.target.value)}
-              placeholder="Enter student remark..."
-              rows={3}
-              required
+          {showRemarkForm && (
+            <form
+              onSubmit={handleRemarkSubmit}
               style={{
-                width: "100%",
-                boxSizing: "border-box",
-                padding: 10,
-                border: `1px solid ${C.line}`,
-                borderRadius: 8,
-                fontFamily: fontBody,
-                fontSize: 13,
-                resize: "vertical"
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+                marginTop: 10,
+                minWidth: 220
               }}
-            />
-            
-          </form>
-        )}
-        {remarkMessage && (
-          <p role="status" style={{ fontFamily: fontBody, fontSize: 12, marginTop: 8, color: remarkMessage.includes("successfully") ? "green" : "red" }}>
-            {remarkMessage}
-          </p>
-        )}
-      </div>
+            >
+              <textarea
+                value={remark}
+                onChange={(e) => setRemark(e.target.value)}
+                placeholder="Enter student remark..."
+                rows={3}
+                required
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: 10,
+                  border: `1px solid ${C.line}`,
+                  borderRadius: 8,
+                  fontFamily: fontBody,
+                  fontSize: 13,
+                  resize: "vertical"
+                }}
+              />
+            </form>
+          )}
+          {remarkMessage && (
+            <p role="status" style={{ fontFamily: fontBody, fontSize: 12, marginTop: 8, color: remarkMessage.includes("successfully") ? "green" : "red" }}>
+              {remarkMessage}
+            </p>
+          )}
+        </div>
       }
       
-      {/* Notifications List */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {/* Notifications Accordion List */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {loading && (
           <div style={{ textAlign: "center", padding: 40, fontFamily: fontBody, color: C.slate, fontSize: 14 }}>
             Loading notifications...
@@ -293,110 +308,159 @@ export default function StudentDetail() {
           </div>
         )}
 
-        {!loading && !error && visible.map((n) => {
-          const meta = typeMeta[n.type];
-          const Icon = meta && meta.icon;
-          
-          if (meta !== undefined) {
-            return (
+        {!loading && !error && Object.keys(groupedNotifications).map((subjectKey) => {
+          const subjectNotifications = groupedNotifications[subjectKey];
+          const isOpen = openSubject === subjectKey;
+
+          return (
+            <div 
+              key={subjectKey}
+              style={{
+                border: `1px solid ${C.line}`,
+                borderRadius: 14,
+                background: "#73A5CA",
+                overflow: "hidden"
+              }}
+            >
+              {/* Accordion Header */}
               <div
-                key={n.id}
-                onClick={() => markRead(n.id)}
+                onClick={() => setOpenSubject(isOpen ? null : subjectKey)}
                 style={{
                   display: "flex",
-                  flexDirection: "row",
-                  alignItems: "flex-start",
                   justifyContent: "space-between",
-                  gap: 12,
-                  textAlign: "left",
-                  padding: "14px",
-                  background: C.paperCard,
-                  border: `1px solid ${n.read ? C.line : meta.color}`,
-                  borderRadius: 14,
-                  cursor: n.read ? "default" : "pointer",
-                  position: "relative",
-                  width: "100%",
-                  boxSizing: "border-box"
+                  alignItems: "center",
+                  padding: "14px 16px",
+                  background: isOpen ? `${C.line}33` : C.paperCard,
+                  cursor: "pointer",
+                  userSelect: "none"
                 }}
               >
-                {/* Main Content Group */}
-                <div style={{ display: "flex", gap: 12, flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 10,
-                      background: `${meta.color}1A`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Icon size={16} color={meta.color} />
-                  </div>
-                  
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                      <span style={{ fontFamily: fontBody, fontWeight: 500, fontSize: 14, color: C.ink, wordBreak: "break-word" }}>
-                        {n.title} {n.type == "marks" ? displayMarksCategory(n.marksCategory) : ""}
-                      </span>
-                      
-                    </div>
-                    <p style={{ fontWeight: 700, fontFamily: fontBody, fontSize: 15, color: C.slate, margin: "4px 0 0", wordBreak: "break-word" }}>
-                      Chapter: <i>{n.message}</i>
-                    </p>
-                    <span style={{ fontFamily: fontBody, fontSize: 11, color: C.slate, opacity: 0.8, display: "block", marginTop: 4 }}>
-                      {n.date}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Action Button or Green Checkmark */}
-                {n.status === "done" ? (
-                  <span
-                    style={{
-                      padding: "5px 10px",
-                      fontSize: 16,
-                      fontWeight: 700,
-                      color: "#22c55e",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      flexShrink: 0,
-                      alignSelf: "center"
-                    }}
-                  >
-                    {n.type == "marks" ? "Viewed by Parents" : "Done"}  ✓
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontFamily: fontBody, fontWeight: 700, fontSize: 16, color: C.ink }}>
+                    {subjectKey}
                   </span>
-                ) : whoIs !=null && (n.teacherId == null || whoIs == n.teacherId) ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleStatusChange(n._id, 'done');
-                    }}
-                    style={{
-                      padding: "5px 10px",
-                      fontSize: 11,
-                      fontFamily: fontBody,
-                      fontWeight: 600,
-                      background: "transparent",
-                      border: `1px solid ${C.line}`,
-                      borderRadius: 8,
-                      cursor: "pointer",
-                      color: C.ink,
-                      flexShrink: 0,
-                      alignSelf: "center"
-                    }}
-                  >
-                    {n.type == "marks" ? "Viewed by Parents" : "Received"}
-                  </button>
-                ) : null}
+                  <span style={{
+                    fontSize: 12,
+                    padding: "2px 8px",
+                    borderRadius: 999,
+                    background: `${C.ink}1A`,
+                    color: C.ink,
+                    fontWeight: 600
+                  }}>
+                    {subjectNotifications.length}
+                  </span>
+                </div>
+                {isOpen ? <ChevronUp size={20} color={C.ink} /> : <ChevronDown size={20} color={C.ink} />}
               </div>
-            );
-          } else {
-            return null;
-          }
+
+              {/* Accordion Content */}
+              {isOpen && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: 14, borderTop: `1px solid ${C.line}` }}>
+                  {subjectNotifications.map((n) => {
+                    const meta = typeMeta[n.type];
+                    const Icon = meta && meta.icon;
+                    
+                    if (meta === undefined) return null;
+
+                    return (
+                      <div
+                        key={n.id || n._id}
+                        onClick={() => markRead(n.id)}
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "flex-start",
+                          justifyContent: "space-between",
+                          gap: 12,
+                          textAlign: "left",
+                          padding: "14px",
+                          background: C.paperCard,
+                          border: `1px solid ${n.read ? C.line : meta.color}`,
+                          borderRadius: 12,
+                          cursor: n.read ? "default" : "pointer",
+                          width: "100%",
+                          boxSizing: "border-box"
+                        }}
+                      >
+                        {/* Main Content Group */}
+                        <div style={{ display: "flex", gap: 12, flex: 1, minWidth: 0 }}>
+                          <div
+                            style={{
+                              width: 34,
+                              height: 34,
+                              borderRadius: 10,
+                              background: `${meta.color}1A`,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexShrink: 0,
+                            }}
+                          >
+                            <Icon size={16} color={meta.color} />
+                          </div>
+                          
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                              <span style={{ fontFamily: fontBody, fontWeight: 500, fontSize: 14, color: C.ink, wordBreak: "break-word" }}>
+                                {n.title} {n.type == "marks" ? displayMarksCategory(n.marksCategory) : ""}
+                              </span>
+                            </div>
+                            <p style={{ fontWeight: 700, fontFamily: fontBody, fontSize: 15, color: C.slate, margin: "4px 0 0", wordBreak: "break-word" }}>
+                              Chapter: <i>{n.message}</i>
+                            </p>
+                            <span style={{ fontFamily: fontBody, fontSize: 11, color: C.slate, opacity: 0.8, display: "block", marginTop: 4 }}>
+                              {n.date}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Action Button or Green Checkmark */}
+                        {n.status === "done" ? (
+                          <span
+                            style={{
+                              padding: "5px 10px",
+                              fontSize: 14,
+                              fontWeight: 700,
+                              color: "#22c55e",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexShrink: 0,
+                              alignSelf: "center"
+                            }}
+                          >
+                            {n.type == "marks" ? "Viewed by Parents" : "Done"}  ✓
+                          </span>
+                        ) : whoIs != null && (n.teacherId == null || whoIs == n.teacherId) ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStatusChange(n._id, 'done');
+                            }}
+                            style={{
+                              padding: "5px 10px",
+                              fontSize: 11,
+                              fontFamily: fontBody,
+                              fontWeight: 600,
+                              background: "transparent",
+                              border: `1px solid ${C.line}`,
+                              borderRadius: 8,
+                              cursor: "pointer",
+                              color: C.ink,
+                              flexShrink: 0,
+                              alignSelf: "center"
+                            }}
+                          >
+                            {n.type == "marks" ? "Viewed by Parents" : "Received"}
+                          </button>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
         })}
 
         {!loading && !error && visible.length === 0 && (
