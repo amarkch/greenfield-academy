@@ -151,7 +151,7 @@ Thank you for being a part of Greenfield Academy.
           </div>
 
           <div className="ga-cards-container">
-            <div className="ga-section-princi-image-card" style={{backgroundImage: "url('/images/adv.jpg?a=2')"}}>
+            <div className="ga-section-princi-image-card" style={{backgroundImage: "url('/images/adv.jpg')"}}>
             </div>
             <div className="ga-section-image-text-card">
               <h3>At Greenfield Academy, You Are More Than Your Marks!</h3>
