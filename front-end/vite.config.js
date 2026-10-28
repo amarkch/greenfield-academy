@@ -11,12 +11,12 @@ export default defineConfig({
       // Note: Vite will apply this to all assets served by the dev server.
       // Be careful, as setting 'immutable' in development can sometimes 
       // prevent you from seeing your live image edits without a hard refresh.
-      'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0'
+      'Cache-Control': 'public, max-age=3600'
     },
   },
   preview: {
     headers: {
-      'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0'
+      'Cache-Control': 'public, max-age=3600'
     },
   },
 });
