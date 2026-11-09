@@ -36,7 +36,7 @@ export default function StudentDetail() {
   const [openSubject, setOpenSubject] = useState(null);
   
   const displayMarksCategory = (cat) => {
-    return <span style={{fontSize: "16px", color: cat == "Good" ? "green" :  cat == "Fail" ? "red" : "black" }}> - {cat}</span>
+    return <span style={{fontSize: "16px", color: cat == "Good" ? "green" :  cat == "Fail" ? "red" : "black" }}> Result: {cat}</span>
   }
 
   useEffect(() => {
@@ -406,7 +406,9 @@ export default function StudentDetail() {
                               </span>
                             </div>
                             <p style={{ fontWeight: 700, fontFamily: fontBody, fontSize: 15, color: C.slate, margin: "4px 0 0", wordBreak: "break-word" }}>
-                              Chapter: <i>{n.message}</i>
+                               
+                              {n.type == "marks" ? "" : "Chapter: "}
+                              {n.message}
                             </p>
                             <span style={{ fontFamily: fontBody, fontSize: 11, color: C.slate, opacity: 0.8, display: "block", marginTop: 4 }}>
                               Given on: {n.date}

@@ -141,26 +141,6 @@ const teachersData = [
         "rank": 11
     },
     {
-        "_id": "6ac50dca5e687eedea49871c",
-        "name": "Miss Doli Borah",
-        "subjects": null,
-        "qualification": "B.A",
-        "phone": "N.A",
-        "email": "borahdoli3333@gmail.com",
-        "classTeacherOf": "class-i",
-        "rank": 12
-    },
-    {
-        "_id": "6ac50d575e687eedea49871a",
-        "name": "Bidisha Kachari",
-        "subjects": null,
-        "qualification": "B.A",
-        "phone": "NA",
-        "email": "bidixak@gmail.com",
-        "classTeacherOf": "class-LKG",
-        "rank": 14
-    },
-    {
         "_id": "6a98284f551b3fd1d79b4317",
         "name": "Amar Kachari",
         "qualification": "MCA",
@@ -205,6 +185,15 @@ const teachersData = [
         "phone": "NA",
         "email": "plabitasaikia5@gmail.com",
         "rank": 17
+    },
+    {
+        "_id": "6ae73edd642384ddba1ff2af",
+        "name": "Pinki Gogoi",
+        "subjects": null,
+        "qualification": "H.S",
+        "phone": "NA",
+        "email": "gogoipinky789@gmail.com",
+        "rank": 18
     }
 ];
 export default function Layout() {
