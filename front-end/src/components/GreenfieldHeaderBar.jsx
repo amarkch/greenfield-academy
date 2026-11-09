@@ -60,7 +60,7 @@ const GreenfieldHeaderBar = () => {
           </div>
         }
 
-          <Link to="/parents-dashboard" className="ga-mobile-nav-link" onClick={closeAllMenus}>Parents</Link>
+          <Link to="/parents-dashboard?v=1.1" className="ga-mobile-nav-link" onClick={closeAllMenus}>Parents</Link>
         </nav>
 
         {/* Mobile Menu Toggle Button */}
@@ -97,7 +97,7 @@ const GreenfieldHeaderBar = () => {
             </>
           )}
           
-          <Link to="/parents-dashboard" className="ga-mobile-nav-link" onClick={closeAllMenus}>Parents <span>→</span></Link>
+          <Link to="/parents-dashboard?v=1.1" className="ga-mobile-nav-link" onClick={closeAllMenus}>Parents <span>→</span></Link>
           
         </nav>
       </header>

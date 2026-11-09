@@ -198,7 +198,7 @@ const GreenfieldHeaderBar = () => {
           <Link to="/teacher-data/" className="ga-desktop-nav-link">
             Enter Data
           </Link>
-          <Link to="/parents-dashboard/" className="ga-desktop-nav-link">
+          <Link to="/parents-dashboard/?v=1" className="ga-desktop-nav-link">
             Parents
           </Link>
           
