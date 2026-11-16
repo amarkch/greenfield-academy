@@ -220,6 +220,9 @@ const GreenfieldHeaderBar = () => {
           <Link to="/" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             Home <span>→</span>
           </Link>
+          <Link to="/photo" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
+            Photos <span>→</span>
+          </Link>
           <Link to="/class/all" className="ga-mobile-nav-link" onClick={() => setMobileMenuOpen(false)}>
             Class <span>→</span>
           </Link>

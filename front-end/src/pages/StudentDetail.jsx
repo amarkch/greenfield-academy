@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ClipboardList, CalendarDays, AlertTriangle, Megaphone, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
-import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx?v=1";
 
 const typeMeta = {
   assignment: { icon: ClipboardList, color: C.marigold, label: "Assignment" },

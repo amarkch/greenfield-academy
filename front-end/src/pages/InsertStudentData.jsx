@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx?v=1";
 
 const CLASS_OPTIONS = [
   "class-NURSERY",

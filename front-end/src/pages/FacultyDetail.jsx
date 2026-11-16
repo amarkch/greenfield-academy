@@ -3,7 +3,7 @@ import { NavLink, Outlet, useParams, Link } from "react-router-dom";
 import { CheckCircle2, CircleDot, Circle, ArrowLeft, Phone, Mail, GraduationCap, BriefcaseBusiness, Users, ChevronDown, Loader2 } from "lucide-react";
 import { C, fontDisplay, fontBody, fontMono, getRandomColor } from "../theme.js";
 import "./FacultyDetail.css";
-import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx?v=1";
 
 const host = "https://greenfield-academy-ipqx.onrender.com";
 //const host = "http://localhost:3000";

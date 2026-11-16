@@ -213,6 +213,7 @@ export default function Layout() {
           max-width: 1200px;
           margin: 0 auto;
           width: 100%;
+          padding-bottom: 150px;
         }
         .layout-content {
           padding 5;
@@ -220,6 +221,7 @@ export default function Layout() {
         @media screen and (max-width: 768px) {
           .layout-main {
             padding: 0;
+            padding-bottom: 150px;
           }
           .layout-content {
             padding: 10px;
@@ -229,12 +231,11 @@ export default function Layout() {
       `}</style>
       
       <main className="layout-main">
-
         <div className="layout-content">
           {
             !localStorage.getItem("teacherId") && new URLSearchParams(window.location.search).get("teach") == "_SECRET_KEY9_NOV_2026" && <div className="overlay">
               <h3 style={{color: "#fff"}}>Select Your Profile</h3>
-              <div style={{ maxHeight: "calc(100vh - 40px)", overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 7 }}>
+              <div style={{ paddingBottom: "100px", maxHeight: "calc(100vh - 40px)", overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 7 }}>
                 {teachersData.map((f) => (
                   <div
                     onClick={()=>{localStorage.setItem("teacherId", f._id); window.location.reload();}}

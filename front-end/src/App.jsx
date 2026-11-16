@@ -1,19 +1,21 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout.jsx?v=1";
+import Layout from "./components/Layout.jsx?v=3";
 import HomePage from "./pages/HomePage.jsx";
 import AcademicHome from "./pages/AcademicHome.jsx";
 import Academics from "./pages/Academics.jsx";
 import Notifications from "./pages/Notifications.jsx";
 import Faculty from "./pages/Faculty.jsx";
 import Students from "./pages/Students.jsx";
-import FacultyDetail from "./pages/FacultyDetail.jsx";
+import FacultyDetail from "./pages/FacultyDetail.jsx?v=1";
 import StudentDetail from "./pages/StudentDetail.jsx";
 import InsertTeacherData from "./pages/InsertTeacherData.jsx";
 import InsertStudentData from "./pages/InsertStudentData.jsx";
 import InsertSubjectData from "./pages/InsertSubjectData.jsx";
 import InsertMarks from "./pages/InsertMarks.jsx";
 import ParentsDashboard from "./pages/ParentsDashboard.jsx";
+import Photo from "./pages/Photo.jsx";
+
 
 
 export default function App() {
@@ -34,6 +36,7 @@ export default function App() {
           <Route path="/students-data" element={<InsertStudentData />} />
           <Route path="/subject-data" element={<InsertSubjectData />} />
           <Route path="/marks-data" element={<InsertMarks />} />
+          <Route path="/photo" element={<Photo />} />
           <Route
             path="/parents-dashboard/:name?/:stdClass?/:roll?/:gender?/:id?"
             element={<ParentsDashboard />}

@@ -32,6 +32,7 @@ const GreenfieldHeaderBar = () => {
         {/* Desktop Navigation */}
         <nav className="ga-desktop-nav">
           <Link to="/" className="ga-desktop-nav-link">Home</Link>
+          <Link to="/photo" className="ga-desktop-nav-link">Photos</Link>
           <Link to="/class/all" className="ga-desktop-nav-link">Class</Link>
           <Link to="/faculty/" className="ga-desktop-nav-link">Teachers</Link>
           
@@ -76,6 +77,7 @@ const GreenfieldHeaderBar = () => {
         <nav className={`ga-mobile-nav ${mobileMenuOpen ? 'mobile-open' : ''}`}>
           <div className="ga-nav-header">Navigation Menu</div>
           <Link to="/" className="ga-mobile-nav-link" onClick={closeAllMenus}>Home <span>→</span></Link>
+          <Link to="/photo" className="ga-mobile-nav-link" onClick={closeAllMenus}>Photos <span>→</span></Link>
           <Link to="/class/all" className="ga-mobile-nav-link" onClick={closeAllMenus}>Class <span>→</span></Link>
           <Link to="/faculty/" className="ga-mobile-nav-link" onClick={closeAllMenus}>Teachers <span>→</span></Link>
           

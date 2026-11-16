@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { C, fontDisplay, fontBody } from "../theme.js";
-import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
-import GreenfieldHomePageHeaderBar from "../components/GreenfieldHomePageHeaderBar.jsx";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx?v=1";
+import GreenfieldHomePageHeaderBar from "../components/GreenfieldHomePageHeaderBar.jsx?v=1";
 import { Link } from "react-router-dom";
 import "./Home.css";
 

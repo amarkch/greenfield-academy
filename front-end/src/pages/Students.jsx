@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { ChevronRight, Star, BookOpen, UserCheck, GraduationCap } from "lucide-react";
 import { C, fontDisplay, fontBody } from "../theme.js";
-import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx?v=1";
 import "./ClassDetails.css";
 const host = "https://greenfield-academy-ipqx.onrender.com";
 //const host = "http://localhost:3000";

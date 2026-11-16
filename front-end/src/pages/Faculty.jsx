@@ -15,7 +15,7 @@ import {
 } from "../theme.js";
 
 
-import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx";
+import GreenfieldHeaderBar from "../components/GreenfieldHeaderBar.jsx?v=1";
 
 const host = "https://greenfield-academy-ipqx.onrender.com";
 //const host = "http://localhost:3000";
